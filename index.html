@@ -223,6 +223,59 @@
             border-radius: 3px;
         }
 
+        /* Journey paths — marching ants */
+        @keyframes march {
+            to { stroke-dashoffset: -20; }
+        }
+
+        .journey-path {
+            animation: march 0.67s linear infinite;
+        }
+
+        /* Journey legend section */
+        .legend-divider {
+            border: none;
+            border-top: 1px solid #8b7355;
+            margin: 10px 0 8px;
+        }
+
+        .legend-journeys-title {
+            font-size: 12px;
+            color: #a89070;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .journey-toggle {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .journey-toggle:hover {
+            color: #f0e6cc;
+        }
+
+        .journey-toggle.disabled {
+            opacity: 0.4;
+        }
+
+        .journey-line {
+            width: 24px;
+            height: 3px;
+            margin-right: 8px;
+            flex-shrink: 0;
+            border-top: 3px dashed;
+        }
+
+        .journey-label {
+            font-size: 12px;
+        }
+
         /* Instructions toast */
         #toast {
             position: absolute;
@@ -352,7 +405,37 @@
                 characters: "Sauron"
             },
 
+            {
+                name: "Meneltarma — The Downfall of N\u00famenor",
+                category: 'silmarillion',
+                px: 229, py: 3749,
+                description: "Meneltarma, the Pillar of the Heavens, was the sacred mountain at the heart of N\u00famenor. When King Ar-Pharaz\u00f4n the Golden sailed with a great armada against Valinor, Eru Il\u00favatar broke and changed the world. N\u00famenor was swallowed by the sea, and the Undying Lands were removed from the circles of the world forever. Only the Faithful, led by Elendil and his sons, escaped to found the kingdoms of Arnor and Gondor.",
+                characters: "Ar-Pharaz\u00f4n, Sauron, Elendil, Isildur, An\u00e1rion"
+            },
+            {
+                name: "Umbar — Haven of the Corsairs",
+                category: 'silmarillion',
+                px: 4204, py: 3995,
+                description: "Umbar was a great natural harbour far to the south, first established as a fortress by the N\u00famen\u00f3reans in the Second Age. After the Downfall, the Black N\u00famen\u00f3reans held it as a base of power hostile to Gondor. It became the stronghold of the Corsairs, who raided Gondor's coasts for centuries. Their fleet sailed north during the War of the Ring, only to be captured by Aragorn at Pelargir.",
+                characters: "The Corsairs, Castamir, Aragorn"
+            },
+
+            {
+                name: "Dol Guldur — The Shadow over Mirkwood",
+                category: 'silmarillion',
+                px: 4672, py: 1578,
+                description: "Around TA 1000, Sauron took secret refuge in southern Mirkwood, building the fortress of Dol Guldur and disguising himself as 'the Necromancer.' His shadow corrupted the Greenwood, turning it dark. From here he bred evil creatures and searched for the One Ring, until the White Council drove him out in TA 2941.",
+                characters: "Sauron, Gandalf, Galadriel, Saruman"
+            },
+
             // ── The Hobbit ──
+            {
+                name: "Mount Gundabad — The Goblin Horde",
+                category: 'hobbit',
+                px: 3842, py: 447,
+                description: "An ancient Dwarven holy site where Durin first awoke, Mount Gundabad was long ago seized by Orcs. In the Battle of Five Armies, Bolg leads a vast goblin army from Gundabad to Erebor, turning what had been a standoff between Dwarves, Elves, and Men into a desperate battle for survival.",
+                characters: "Bolg, Thorin, D\u00e1in Ironfoot"
+            },
             {
                 name: "Bag End — An Unexpected Party",
                 category: 'hobbit',
@@ -401,6 +484,13 @@
                 px: 4637, py: 945,
                 description: "Without Gandalf, the company enters the dark forest of Mirkwood. They are ensnared by giant spiders. Bilbo uses the Ring and his Elven blade (which he names Sting) to free the Dwarves in his first true act of heroism.",
                 characters: "Bilbo, Thorin, the Dwarves"
+            },
+            {
+                name: "Dol Guldur — The White Council Strikes",
+                category: 'hobbit',
+                px: 4690, py: 1578,
+                description: "While the Dwarves journey through Mirkwood, Gandalf departs to join the White Council in an assault on Dol Guldur. They drive out the Necromancer\u2014revealed to be Sauron himself\u2014from the fortress. This is why Gandalf is absent during the company's capture by spiders and Wood-elves.",
+                characters: "Gandalf, Galadriel, Saruman, Elrond, Sauron"
             },
             {
                 name: "Thranduil's Halls — The Woodland Realm",
@@ -542,6 +632,20 @@
                 characters: "Gandalf, Denethor, Faramir, Pippin"
             },
             {
+                name: "Erech — The Paths of the Dead",
+                category: 'king',
+                px: 3886, py: 2470,
+                description: "Aragorn, Legolas, and Gimli ride the Paths of the Dead beneath the White Mountains and emerge at the Stone of Erech. There Aragorn, as heir of Isildur, summons the oathbreaking Dead Men of Dunharrow to fulfil their ancient pledge. The ghostly army follows him south to overwhelm the Corsairs of Umbar, seizing their ships to sail up the Anduin to the Pelennor Fields.",
+                characters: "Aragorn, Legolas, Gimli, the Dead Men of Dunharrow"
+            },
+            {
+                name: "Pelargir — Capture of the Corsair Fleet",
+                category: 'king',
+                px: 4509, py: 2977,
+                description: "Aragorn leads the Army of the Dead south from Erech to the ancient port of Pelargir, where the Corsairs of Umbar have anchored their fleet. The Dead sweep through the Corsairs in terror, and Aragorn seizes the ships. He then sails up the Anduin with reinforcements from southern Gondor, arriving at the Pelennor Fields to turn the tide of battle.",
+                characters: "Aragorn, Legolas, Gimli, the Dead Men of Dunharrow, the Corsairs of Umbar"
+            },
+            {
                 name: "Pelennor Fields — The Great Battle",
                 category: 'king',
                 px: 4784, py: 2638,
@@ -638,6 +742,140 @@
 
         Object.values(categoryLayers).forEach(layer => layer.addTo(map));
 
+        // ── Journey Paths ──────────────────────────────
+        const JOURNEYS = {
+            bilbo: {
+                label: "Bilbo's Journey",
+                color: '#5b8fb9',
+                points: [
+                    [2746, 1115],  // Bag End
+                    [3811, 937],   // Trollshaws
+                    [3922, 1096],  // Rivendell
+                    [4094, 1049],  // Misty Mountains
+                    [4325, 944],   // Carrock
+                    [4444, 944],   // Beorn's Hall
+                    [4637, 945],   // Mirkwood
+                    [4833, 960],   // Thranduil's Halls
+                    [5115, 1097],  // Lake-town
+                    [5161, 941]    // Erebor
+                ]
+            },
+            frodo: {
+                label: "Frodo's Journey",
+                color: '#c9a435',
+                points: [
+                    [2764, 1115],  // Bag End
+                    [3254, 1107],  // Bree
+                    [3488, 1077],  // Weathertop
+                    [3940, 1096],  // Rivendell
+                    [3981, 1515],  // Moria
+                    [4214, 1609],  // Lothlórien
+                    [4494, 2152],  // Amon Hen
+                    [4740, 2032],  // Emyn Muil
+                    [4894, 2150],  // Dead Marshes
+                    [5033, 2660],  // Minas Morgul
+                    [5106, 2544],  // Cirith Ungol
+                    [5419, 2532]   // Mount Doom
+                ]
+            },
+            aragorn: {
+                label: "Aragorn's Journey",
+                color: '#6a9f5b',
+                points: [
+                    [3254, 1107],  // Bree
+                    [3488, 1077],  // Weathertop
+                    [3940, 1096],  // Rivendell
+                    [3981, 1515],  // Moria
+                    [4214, 1609],  // Lothlórien
+                    [4494, 2152],  // Amon Hen
+                    [4043, 1918],  // Fangorn
+                    [4020, 2348],  // Edoras
+                    [3783, 2241],  // Helm's Deep
+                    [3748, 1999],  // Isengard
+                    [4020, 2348],  // Edoras (return)
+                    [3886, 2470],  // Erech
+                    [4509, 2977],  // Pelargir
+                    [4784, 2638],  // Pelennor Fields
+                    [4720, 2641],  // Minas Tirith
+                    [5141, 2272]   // Black Gate
+                ]
+            },
+            merry_pippin: {
+                label: "Merry & Pippin's Journey",
+                color: '#d4813a',
+                points: [
+                    // Shared path
+                    [2764, 1115],  // Bag End
+                    [3254, 1107],  // Bree
+                    [3488, 1077],  // Weathertop
+                    [3940, 1096],  // Rivendell
+                    [3981, 1515],  // Moria
+                    [4214, 1609],  // Lothlórien
+                    [4494, 2152],  // Amon Hen (captured)
+                    [4043, 1918],  // Fangorn (escape)
+                    [3748, 1999]   // Isengard (Ents)
+                ],
+                branches: {
+                    pippin: [
+                        [3748, 1999],  // Isengard
+                        [4720, 2641],  // Minas Tirith (with Gandalf)
+                        [4784, 2638],  // Pelennor Fields
+                        [5141, 2272]   // Black Gate
+                    ],
+                    merry: [
+                        [3748, 1999],  // Isengard
+                        [4020, 2348],  // Edoras (rides with Éowyn)
+                        [4784, 2638],  // Pelennor Fields
+                        [5141, 2272]   // Black Gate
+                    ]
+                }
+            },
+            gandalf: {
+                label: "Gandalf's Journey",
+                color: '#e0d5c0',
+                points: [
+                    [2764, 1115],  // Bag End
+                    [3940, 1096],  // Rivendell
+                    [3981, 1515],  // Moria (falls)
+                    [4043, 1918],  // Fangorn (returns)
+                    [4020, 2348],  // Edoras
+                    [3783, 2241],  // Helm's Deep
+                    [3748, 1999],  // Isengard
+                    [4720, 2641],  // Minas Tirith
+                    [4784, 2638],  // Pelennor Fields
+                    [5141, 2272]   // Black Gate
+                ]
+            }
+        };
+
+        const journeyLayers = {};
+
+        Object.keys(JOURNEYS).forEach(key => {
+            const journey = JOURNEYS[key];
+            const lines = [];
+            const latlngs = journey.points.map(([px, py]) => toLatLng(px, py));
+            lines.push(L.polyline(latlngs, {
+                color: journey.color,
+                weight: 3,
+                dashArray: '10 6',
+                opacity: 0.7,
+                className: 'journey-path'
+            }));
+            if (journey.branches) {
+                Object.values(journey.branches).forEach(branch => {
+                    const branchLatLngs = branch.map(([px, py]) => toLatLng(px, py));
+                    lines.push(L.polyline(branchLatLngs, {
+                        color: journey.color,
+                        weight: 3,
+                        dashArray: '10 6',
+                        opacity: 0.7,
+                        className: 'journey-path'
+                    }));
+                });
+            }
+            journeyLayers[key] = L.layerGroup(lines);
+        });
+
         // ── Legend ───────────────────────────────────────
         const legendEl = document.getElementById('legend-content');
 
@@ -690,6 +928,35 @@
             });
 
             legendEl.appendChild(div);
+        });
+
+        // ── Journey Toggles in Legend ──────────────────
+        const divider = document.createElement('hr');
+        divider.className = 'legend-divider';
+        legendEl.appendChild(divider);
+
+        const journeyTitle = document.createElement('div');
+        journeyTitle.className = 'legend-journeys-title';
+        journeyTitle.textContent = 'Journeys';
+        legendEl.appendChild(journeyTitle);
+
+        Object.keys(JOURNEYS).forEach(key => {
+            const journey = JOURNEYS[key];
+            const toggle = document.createElement('div');
+            toggle.className = 'journey-toggle disabled';
+            toggle.innerHTML = `
+                <div class="journey-line" style="border-color: ${journey.color};"></div>
+                <span class="journey-label">${journey.label}</span>
+            `;
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('disabled');
+                if (toggle.classList.contains('disabled')) {
+                    map.removeLayer(journeyLayers[key]);
+                } else {
+                    map.addLayer(journeyLayers[key]);
+                }
+            });
+            legendEl.appendChild(toggle);
         });
 
         // ── Legend Collapse (mobile) ────────────────────
