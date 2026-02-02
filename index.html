@@ -830,11 +830,36 @@
                     ]
                 }
             },
-            gandalf: {
-                label: "Gandalf's Journey",
+            gandalf_hobbit: {
+                label: "Gandalf's Journey (Hobbit)",
                 color: '#e0d5c0',
                 points: [
-                    [2764, 1115],  // Bag End
+                    [2746, 1115],  // Bag End
+                    [3811, 937],   // Trollshaws
+                    [3922, 1096],  // Rivendell
+                    [4094, 1049],  // Misty Mountains
+                    [4325, 944],   // Carrock
+                    [4444, 944],   // Beorn's Hall
+                    [4444, 944]    // Leaves company at Mirkwood edge
+                ],
+                branches: {
+                    dol_guldur: [
+                        [4444, 944],   // Leaves company
+                        [4672, 1578],  // Dol Guldur (White Council)
+                        [5161, 941]    // Erebor (returns for aftermath)
+                    ]
+                }
+            },
+            gandalf_lotr: {
+                label: "Gandalf's Journey (LOTR)",
+                color: '#e0d5c0',
+                points: [
+                    [2764, 1115],  // Bag End (Bilbo's birthday)
+                    [4720, 2641],  // Minas Tirith (researches the Ring)
+                    [2764, 1115],  // Bag End (returns to warn Frodo)
+                    [3748, 1999],  // Isengard (imprisoned by Saruman)
+                    [4020, 2348],  // Edoras (escapes via eagle, takes Shadowfax)
+                    [3488, 1077],  // Weathertop (arrives too late)
                     [3940, 1096],  // Rivendell
                     [3981, 1515],  // Moria (falls)
                     [4043, 1918],  // Fangorn (returns)
@@ -879,6 +904,36 @@
         // ── Legend ───────────────────────────────────────
         const legendEl = document.getElementById('legend-content');
 
+        // ── Journey Toggles (top of legend) ───────────
+        const journeyTitle = document.createElement('div');
+        journeyTitle.className = 'legend-journeys-title';
+        journeyTitle.textContent = 'Journeys';
+        legendEl.appendChild(journeyTitle);
+
+        Object.keys(JOURNEYS).forEach(key => {
+            const journey = JOURNEYS[key];
+            const toggle = document.createElement('div');
+            toggle.className = 'journey-toggle disabled';
+            toggle.innerHTML = `
+                <div class="journey-line" style="border-color: ${journey.color};"></div>
+                <span class="journey-label">${journey.label}</span>
+            `;
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('disabled');
+                if (toggle.classList.contains('disabled')) {
+                    map.removeLayer(journeyLayers[key]);
+                } else {
+                    map.addLayer(journeyLayers[key]);
+                }
+            });
+            legendEl.appendChild(toggle);
+        });
+
+        const divider = document.createElement('hr');
+        divider.className = 'legend-divider';
+        legendEl.appendChild(divider);
+
+        // ── Book Categories ────────────────────────────
         Object.keys(CATEGORY_LABELS).forEach(cat => {
             const catEvents = events.filter(e => e.category === cat);
 
@@ -930,34 +985,7 @@
             legendEl.appendChild(div);
         });
 
-        // ── Journey Toggles in Legend ──────────────────
-        const divider = document.createElement('hr');
-        divider.className = 'legend-divider';
-        legendEl.appendChild(divider);
-
-        const journeyTitle = document.createElement('div');
-        journeyTitle.className = 'legend-journeys-title';
-        journeyTitle.textContent = 'Journeys';
-        legendEl.appendChild(journeyTitle);
-
-        Object.keys(JOURNEYS).forEach(key => {
-            const journey = JOURNEYS[key];
-            const toggle = document.createElement('div');
-            toggle.className = 'journey-toggle disabled';
-            toggle.innerHTML = `
-                <div class="journey-line" style="border-color: ${journey.color};"></div>
-                <span class="journey-label">${journey.label}</span>
-            `;
-            toggle.addEventListener('click', () => {
-                toggle.classList.toggle('disabled');
-                if (toggle.classList.contains('disabled')) {
-                    map.removeLayer(journeyLayers[key]);
-                } else {
-                    map.addLayer(journeyLayers[key]);
-                }
-            });
-            legendEl.appendChild(toggle);
-        });
+        // (Journey toggles rendered at top of legend)
 
         // ── Legend Collapse (mobile) ────────────────────
         const legend = document.getElementById('legend');
