@@ -324,7 +324,8 @@
             hobbit:       '#5b8fb9',
             fellowship:   '#c9a435',
             towers:       '#b85c38',
-            king:         '#6a9f5b'
+            king:         '#6a9f5b',
+            appendix:     '#7f8c8d'
         };
 
         const CATEGORY_LABELS = {
@@ -332,7 +333,8 @@
             hobbit:       'The Hobbit',
             fellowship:   'The Fellowship of the Ring',
             towers:       'The Two Towers',
-            king:         'The Return of the King'
+            king:         'The Return of the King',
+            appendix:     'Appendices'
         };
 
         const CATEGORY_ICONS = {
@@ -340,7 +342,8 @@
             hobbit:       '\u2302',
             fellowship:   '\u2727',
             towers:       '\u2694',
-            king:         '\u2655'
+            king:         '\u2655',
+            appendix:     '\u2637'
         };
 
         // ── Event Data ──────────────────────────────────
@@ -426,6 +429,78 @@
                 px: 4672, py: 1578,
                 description: "Around TA 1000, Sauron took secret refuge in southern Mirkwood, building the fortress of Dol Guldur and disguising himself as 'the Necromancer.' His shadow corrupted the Greenwood, turning it dark. From here he bred evil creatures and searched for the One Ring, until the White Council drove him out in TA 2941.",
                 characters: "Sauron, Gandalf, Galadriel, Saruman"
+            },
+
+            // ── Appendices ──
+            {
+                name: "Annu\u0301minas — Capital of Arnor",
+                category: 'appendix',
+                px: 2835, py: 851,
+                description: "Built by Elendil on the shores of Lake Evendim after the Downfall of Nu\u0301menor, Annu\u0301minas served as the first capital of the North-kingdom of Arnor. As the Du\u0301nedain dwindled, the city was abandoned and fell into ruin. After the War of the Ring, Aragorn restored it as his northern seat of power.",
+                characters: "Elendil, Aragorn"
+            },
+            {
+                name: "Fornost — Fall of the North-kingdom",
+                category: 'appendix',
+                px: 3111, py: 866,
+                description: "Fornost Erain, the Norbury of the Kings, became the capital of Arthedain after Annu\u0301minas was abandoned. In TA 1974 the Witch-king of Angmar overran the city and destroyed Arthedain. A year later, a combined force from Gondor, Lindon, and Rivendell defeated the Witch-king at the Battle of Fornost\u2014but too late to save the kingdom.",
+                characters: "Arvedui, Ea\u0308rnur, Gl\u00f3rfindel, the Witch-king"
+            },
+            {
+                name: "Carn Du\u0302m — Fortress of Angmar",
+                category: 'appendix',
+                px: 3374, py: 357,
+                description: "The iron fortress of Carn Du\u0302m was the capital of Angmar, the realm the Witch-king founded around TA 1300 with the sole purpose of destroying the Du\u0301nedain of the North. For nearly 700 years, Angmar waged war against the successor kingdoms of Arnor, eventually destroying all three.",
+                characters: "The Witch-king"
+            },
+            {
+                name: "Forochel — The Last King of Arthedain",
+                category: 'appendix',
+                px: 2572, py: 266,
+                description: "After the fall of Fornost, King Arvedui fled north to the Ice Bay of Forochel, where the Lossoth (Snowmen) sheltered him. Ci\u0301rdan sent a ship to rescue him, but it was crushed in the ice and Arvedui drowned. With him were lost two of the seven Palanti\u0301ri, sinking beneath the frozen waters forever.",
+                characters: "Arvedui, the Lossoth, Ci\u0301rdan"
+            },
+            {
+                name: "Field of Celebrant — Birth of Rohan",
+                category: 'appendix',
+                px: 4310, py: 1723,
+                description: "In TA 2510, a great host of Easterlings invaded Gondor and pushed its armies back to the Field of Celebrant. In Gondor's darkest hour, Eorl the Young rode south from the far north with his entire people, the E\u0301otheo\u0301d, and routed the invaders. In gratitude, Steward Cirion granted Eorl the province of Calenardhon, which became Rohan.",
+                characters: "Eorl the Young, Cirion"
+            },
+            {
+                name: "Dol Amroth — City of the Swan Knights",
+                category: 'appendix',
+                px: 3702, py: 2892,
+                description: "The coastal stronghold of Dol Amroth was the seat of the Princes of Belfalas, who claimed descent from the Elves. Prince Imrahil led the renowned Swan Knights to the defence of Minas Tirith, and his company was among the most valiant at the Battle of the Pelennor Fields. He ruled Gondor briefly after Denethor's death.",
+                characters: "Imrahil, Galador"
+            },
+            {
+                name: "Iron Hills — Realm of Da\u0301in Ironfoot",
+                category: 'appendix',
+                px: 6154, py: 794,
+                description: "The Iron Hills were a Dwarven stronghold east of Erebor, ruled by Da\u0301in Ironfoot of Durin's line. When word reached him of Thorin's reclaiming of Erebor, Da\u0301in marched with 500 Dwarves and arrived just in time for the Battle of Five Armies. After Thorin's death, Da\u0301in became King under the Mountain.",
+                characters: "Da\u0301in Ironfoot, Na\u0301in"
+            },
+            {
+                name: "Fords of Isen — Death of The\u0301odred",
+                category: 'appendix',
+                px: 3496, py: 2181,
+                description: "The Fords of Isen were the main crossing of the River Isen and a key strategic point between Rohan and Isengard. Saruman's forces attacked the Fords twice. In the first battle, The\u0301odred, son of King The\u0301oden and heir to Rohan, was slain\u2014an event that plunged the kingdom into crisis and left it leaderless as war approached.",
+                characters: "The\u0301odred, Grimbold, E\u0301omer"
+            },
+            {
+                name: "Argonath — The Pillars of the Kings",
+                category: 'appendix',
+                px: 4515, py: 2071,
+                description: "Two immense stone statues of Isildur and Ana\u0301rion stand upon either side of the Anduin, their left hands raised in warning to enemies of Gondor. Built by Ro\u0301mendacil II, the Argonath marked the northern border of Gondor. The Fellowship passed between them on their journey south from Lothlo\u0301rien.",
+                characters: "Isildur, Ana\u0301rion, Ro\u0301mendacil II"
+            },
+            {
+                name: "Withered Heath — The Dragon Lands",
+                category: 'appendix',
+                px: 5020, py: 488,
+                description: "The Withered Heath lay between the arms of the Grey Mountains in the far north, and was the breeding ground of the great dragons. It was from here that Smaug descended upon Erebor in TA 2770, driving the Dwarves into exile. Other dragons from the Heath had previously attacked the Grey Mountains, slaying King Da\u0301in I.",
+                characters: "Smaug, Da\u0301in I"
             },
 
             // ── The Hobbit ──
@@ -709,7 +784,8 @@
             hobbit: L.layerGroup(),
             fellowship: L.layerGroup(),
             towers: L.layerGroup(),
-            king: L.layerGroup()
+            king: L.layerGroup(),
+            appendix: L.layerGroup()
         };
 
         events.forEach(evt => {
@@ -776,6 +852,7 @@
                     [3940, 1096],  // Rivendell
                     [3981, 1515],  // Moria
                     [4214, 1609],  // Lothlórien
+                    [4515, 2071],  // Argonath
                     [4494, 2152],  // Amon Hen
                     [4740, 2032],  // Emyn Muil
                     [4894, 2150],  // Dead Marshes
@@ -797,6 +874,7 @@
                     [3940, 1096],  // Rivendell
                     [3981, 1515],  // Moria
                     [4214, 1609],  // Lothlórien
+                    [4515, 2071],  // Argonath
                     [4494, 2152],  // Amon Hen
                     [4043, 1918],  // Fangorn
                     [4020, 2348],  // Edoras
@@ -821,6 +899,7 @@
                     [3940, 1096],  // Rivendell
                     [3981, 1515],  // Moria
                     [4214, 1609],  // Lothlórien
+                    [4515, 2071],  // Argonath
                     [4494, 2152],  // Amon Hen (captured)
                     [4043, 1918],  // Fangorn (escape)
                     [3748, 1999]   // Isengard (Ents)
