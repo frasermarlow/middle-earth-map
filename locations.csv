@@ -1,0 +1,156 @@
+Name,Type,Region,Source,Description
+Forochel,Region,Northern Waste,LOTR,Ice bay and surrounding frozen lands in the far north
+Northern Waste,Region,Forodwaith,LOTR,Frozen wasteland north of Eriador
+Forodwaith,Region,Forodwaith,Silmarillion,Northern region of Middle-earth
+Grey Havens,City,Lindon,LOTR/Silmarillion,Elven port city - Mithlond
+Lindon,Region,Eriador,Silmarillion,Elven realm west of the Blue Mountains
+Blue Mountains,Mountains,Eriador,LOTR/Hobbit,Ered Luin - mountain range on western edge
+The Shire,Region,Eriador,LOTR/Hobbit,Homeland of the Hobbits
+Hobbiton,Settlement,The Shire,LOTR/Hobbit,Village in the Shire - Bag End location
+Buckland,Settlement,The Shire,LOTR,Eastern region of the Shire
+Bree,Town,Eriador,LOTR,Town of Men and Hobbits - Prancing Pony
+Weathertop,Landmark,Eriador,LOTR,Amon Sûl - ancient watchtower
+Rivendell,City,Eriador,LOTR/Hobbit,Imladris - Last Homely House of Elrond
+Ettenmoors,Region,Eriador,LOTR,Troll-fells north of Rivendell
+Angmar,Region,Eriador,LOTR,Former realm of the Witch-king
+Mount Gundabad,Mountain,Misty Mountains,Hobbit,Orc stronghold in northern Misty Mountains
+Evendim,Region,Arnor,LOTR,Lake and surrounding region
+Lake Evendim,Lake,Arnor,LOTR,Nenuial - large lake in northern Eriador
+Annúminas,City,Arnor,LOTR,Ancient capital of Arnor on Lake Evendim
+Arnor,Region,Eriador,LOTR,Ancient Northern Kingdom of the Dúnedain
+Eriador,Region,Eriador,LOTR,Large region between Blue Mountains and Misty Mountains
+Tower Hills,Hills,Eriador,LOTR,Emyn Beraid - location of Elostirion
+Old Forest,Forest,Eriador,LOTR,Ancient forest east of the Shire
+Barrow-downs,Region,Eriador,LOTR,Burial mounds of ancient kings
+Midgewater Marshes,Swamp,Eriador,LOTR,Marshland between Bree and Weathertop
+Trollshaws,Forest,Eriador,Hobbit,Forest where Bilbo met the trolls
+South Downs,Hills,Eriador,LOTR,Hill region south of Bree
+Misty Mountains,Mountains,Central,LOTR/Hobbit,Hithaeglir - great mountain range
+Caradhras,Mountain,Misty Mountains,LOTR,Redhorn - one of the Mountains of Moria
+Moria,Underground,Misty Mountains,LOTR/Hobbit,Khazad-dûm - ancient Dwarf kingdom
+Dimrill Dale,Valley,Rhovanion,LOTR,Azanulbizar - valley east of Moria
+Mirrormere,Lake,Rhovanion,LOTR,Kheled-zâram - sacred Dwarf lake
+Lothlórien,Forest,Rhovanion,LOTR,Elven realm of Galadriel and Celeborn
+Caras Galadhon,City,Lothlórien,LOTR,City of the Galadhrim in Lothlórien
+Celebrant,River,Rhovanion,LOTR,Silverlode river from Mirrormere
+Fangorn,Forest,Rohan,LOTR,Ancient forest - home of Ents
+Isengard,Fortress,Rohan,LOTR,Orthanc tower - Saruman's stronghold
+Gap of Rohan,Pass,Rohan,LOTR,Pass between Misty Mountains and White Mountains
+Dunland,Region,Eriador,LOTR,Land of the Dunlendings
+Enedwaith,Region,Eriador,LOTR,Empty lands south of Eriador
+Tharbad,Ruins,Eriador,LOTR,Ruined city at Greyflood crossing
+Greyflood,River,Eriador,LOTR,Gwathló - major river of Eriador
+Minhiriath,Region,Eriador,LOTR,Region between Baranduin and Greyflood
+Cardolan,Region,Arnor,LOTR,Southern successor realm of Arnor
+Rhudaur,Region,Arnor,LOTR,Eastern successor realm of Arnor
+Arthedain,Region,Arnor,LOTR,Western successor realm of Arnor
+High Pass,Pass,Misty Mountains,Hobbit,Mountain pass - Goblin tunnels below
+Goblin-town,Underground,Misty Mountains,Hobbit,Goblin stronghold under High Pass
+Carrock,Landmark,Rhovanion,Hobbit,Great rock in the Anduin - Beorn's territory
+Beorn's Hall,Settlement,Rhovanion,Hobbit,Home of the skin-changer Beorn
+Mirkwood,Forest,Rhovanion,LOTR/Hobbit,Great forest - formerly Greenwood the Great
+Old Forest Road,Road,Mirkwood,Hobbit,Ancient road through Mirkwood
+Thranduil's Halls,Palace,Mirkwood,Hobbit,Woodland Realm of the Elven-king
+Dol Guldur,Fortress,Mirkwood,LOTR/Hobbit,Hill of Sorcery - Sauron's former lair
+Long Lake,Lake,Rhovanion,Hobbit,Lake near Dale and Erebor
+Esgaroth,Town,Rhovanion,Hobbit,Lake-town on Long Lake
+Dale,City,Rhovanion,Hobbit,City of Men near Erebor
+Erebor,Mountain,Rhovanion,Hobbit,The Lonely Mountain - Dwarf kingdom
+Iron Hills,Mountains,Rhovanion,Hobbit,Dwarf realm east of Erebor
+Withered Heath,Region,Rhovanion,Hobbit,Dragon breeding grounds
+Grey Mountains,Mountains,Rhovanion,Hobbit,Ered Mithrin - northern mountains
+Celduin,River,Rhovanion,Hobbit,River Running from Long Lake
+Sea of Rhûn,Sea,Rhûn,LOTR,Inland sea to the east
+Rhûn,Region,Eastern Lands,LOTR,Lands of the Easterlings
+Dorwinion,Region,Rhovanion,Hobbit,Wine-producing region
+Rhovanion,Region,Rhovanion,LOTR,Wilderland - large eastern region
+Brown Lands,Region,Rhovanion,LOTR,Desolate lands east of Anduin
+Emyn Muil,Hills,Rhovanion,LOTR,Rocky maze near Rauros Falls
+Rauros Falls,Waterfall,Rhovanion,LOTR,Great waterfall on the Anduin
+Amon Hen,Hill,Rhovanion,LOTR,Hill of Sight - western Emyn Muil
+Amon Lhaw,Hill,Rhovanion,LOTR,Hill of Hearing - eastern Emyn Muil
+Tol Brandir,Island,Rhovanion,LOTR,Impassable island above Rauros
+Dead Marshes,Swamp,Rhovanion,LOTR,Haunted marshland before Mordor
+Dagorlad,Plain,Mordor,LOTR,Battle Plain before the Black Gate
+Black Gate,Fortress,Mordor,LOTR,Morannon - main entrance to Mordor
+Mordor,Region,Mordor,LOTR,Dark land of Sauron
+Mount Doom,Volcano,Mordor,LOTR,Orodruin - where the Ring was forged
+Barad-dûr,Fortress,Mordor,LOTR,Dark Tower of Sauron
+Gorgoroth,Plain,Mordor,LOTR,Plateau of Mordor
+Udûn,Valley,Mordor,LOTR,Valley inside the Black Gate
+Cirith Ungol,Pass,Mordor,LOTR,Pass of the Spider - guarded tower
+Minas Morgul,City,Mordor,LOTR,Dead City - former Minas Ithil
+Morgul Vale,Valley,Mordor,LOTR,Valley before Minas Morgul
+Ephel Dúath,Mountains,Mordor,LOTR,Mountains of Shadow - western border
+Ash Mountains,Mountains,Mordor,LOTR,Ered Lithui - northern border of Mordor
+Nurn,Region,Mordor,LOTR,Slave farmlands of southern Mordor
+Sea of Núrnen,Lake,Mordor,LOTR,Inland sea in southern Mordor
+Ithilien,Region,Gondor,LOTR,Garden of Gondor east of Anduin
+North Ithilien,Region,Gondor,LOTR,Northern Ithilien - Henneth Annûn area
+Henneth Annûn,Cave,Gondor,LOTR,Window of the Sunset - ranger hideout
+Cair Andros,Island,Gondor,LOTR,Fortified island in Anduin
+Osgiliath,City,Gondor,LOTR,Ancient capital spanning the Anduin
+Minas Tirith,City,Gondor,LOTR,City of Kings - capital of Gondor
+Mindolluin,Mountain,Gondor,LOTR,Mountain behind Minas Tirith
+Pelennor Fields,Plain,Gondor,LOTR,Townlands around Minas Tirith
+Rammas Echor,Wall,Gondor,LOTR,Wall surrounding Pelennor
+Harlond,Port,Gondor,LOTR,Harbor of Minas Tirith
+Lossarnach,Region,Gondor,LOTR,Flowery vale south of Minas Tirith
+Lebennin,Region,Gondor,LOTR,Region of five streams
+Pelargir,City,Gondor,LOTR,Ancient port on the Anduin
+Anduin,River,Central,LOTR,The Great River
+Ethir Anduin,Delta,Gondor,LOTR,Mouths of Anduin
+Bay of Belfalas,Bay,Gondor,LOTR,Great bay of southern Gondor
+Dol Amroth,City,Gondor,LOTR,Coastal city of Prince Imrahil
+Belfalas,Region,Gondor,LOTR,Coastal region of Gondor
+Anfalas,Region,Gondor,LOTR,Langstrand - long coastal region
+Pinnath Gelin,Hills,Gondor,LOTR,Green Hills region
+Gondor,Region,Gondor,LOTR,Southern Kingdom of the Dúnedain
+White Mountains,Mountains,Gondor,LOTR,Ered Nimrais - mountain range
+Rohan,Region,Rohan,LOTR,Land of the Horse-lords
+Edoras,City,Rohan,LOTR,Capital of Rohan - Meduseld hall
+Helm's Deep,Fortress,Rohan,LOTR,Hornburg fortress in a mountain valley
+Dunharrow,Refuge,Rohan,LOTR,Mountain refuge of Rohan
+Paths of the Dead,Pass,Rohan,LOTR,Haunted pass through White Mountains
+Erech,Hill,Gondor,LOTR,Stone of Erech - oath site
+Dwimorberg,Mountain,Rohan,LOTR,Haunted Mountain above Dunharrow
+Westemnet,Plain,Rohan,LOTR,Western grasslands of Rohan
+Eastemnet,Plain,Rohan,LOTR,Eastern grasslands of Rohan
+Wold,Plain,Rohan,LOTR,Grassy uplands of northern Rohan
+East Emnet,Plain,Rohan,LOTR,Eastern grasslands near Entwash
+Fords of Isen,Ford,Rohan,LOTR,River crossing - battle site
+Isen,River,Rohan,LOTR,River flowing from Isengard
+Entwash,River,Rohan,LOTR,River from Fangorn through Rohan
+Snowbourn,River,Rohan,LOTR,River flowing past Edoras
+Harondor,Region,Gondor/Harad,LOTR,South Gondor - disputed lands
+Near Harad,Region,Harad,LOTR,Northern realm of the Haradrim
+Haradwaith,Region,Harad,LOTR,Lands of the Haradrim - Southrons
+Khand,Region,Eastern Lands,LOTR,Land of the Variags
+Umbar,City,Harad,LOTR,Corsair port city
+Tolfalas,Island,Gondor,LOTR,Island in Bay of Belfalas
+Andrast,Cape,Gondor,LOTR,Long cape of western Gondor
+Drúadan Forest,Forest,Gondor,LOTR,Forest of the Wild Men
+Anorien,Region,Gondor,LOTR,Northern region of Gondor
+Calenardhon,Region,Rohan,LOTR,Former name of Rohan
+Gladden Fields,Marsh,Rhovanion,LOTR,Where Isildur fell and Ring was lost
+Gladden River,River,Rhovanion,LOTR,River where Ring was lost
+Anduin Vale,Valley,Rhovanion,LOTR,Upper valley of the Anduin
+Field of Celebrant,Plain,Rhovanion,LOTR,Battle site - Eorl's victory
+Limlight,River,Rhovanion,LOTR,River marking Rohan's northern border
+Undeeps,Ford,Anduin,LOTR,Shallow crossings of the Anduin
+Mouths of Entwash,Delta,Rohan,LOTR,Where Entwash meets Anduin
+Nindalf,Swamp,Rhovanion,LOTR,Wetwang - marshes near Emyn Muil
+Argonath,Monument,Anduin,LOTR,Pillars of the Kings
+Tol Fuin,Island,The Sundering Seas,Silmarillion,Island off western coast
+Mountains of the East,Mountains,Eastern Lands,LOTR,Eastern mountain range
+Carn Dûm,Fortress,Angmar,LOTR,Capital of Angmar
+Coldfells,Hills,Eriador,LOTR,Cold hills south of Angmar
+Harlindon,Region,Lindon,Silmarillion,Southern Lindon
+Forlindon,Region,Lindon,Silmarillion,Northern Lindon
+Gulf of Lune,Bay,Lindon,LOTR,Bay between Harlindon and Forlindon
+Sarn Ford,Ford,Eriador,LOTR,Ford on the Baranduin
+Baranduin,River,Eriador,LOTR,Brandywine River
+Bruinen,River,Eriador,LOTR,Loudwater - river past Rivendell
+Hoarwell,River,Eriador,LOTR,Mitheithel - river of Eriador
+Loudwater,River,Eriador,LOTR,Bruinen tributary
+Last Bridge,Bridge,Eriador,LOTR,Bridge over the Hoarwell
