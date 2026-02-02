@@ -267,30 +267,91 @@
 
         // ── Category Colors ─────────────────────────────
         const COLORS = {
-            hobbit:     '#5b8fb9',
-            fellowship: '#c9a435',
-            towers:     '#b85c38',
-            king:       '#6a9f5b'
+            silmarillion: '#9b59b6',
+            hobbit:       '#5b8fb9',
+            fellowship:   '#c9a435',
+            towers:       '#b85c38',
+            king:         '#6a9f5b'
         };
 
         const CATEGORY_LABELS = {
-            hobbit:     'The Hobbit',
-            fellowship: 'The Fellowship of the Ring',
-            towers:     'The Two Towers',
-            king:       'The Return of the King'
+            silmarillion: 'The Silmarillion',
+            hobbit:       'The Hobbit',
+            fellowship:   'The Fellowship of the Ring',
+            towers:       'The Two Towers',
+            king:         'The Return of the King'
         };
 
         const CATEGORY_ICONS = {
-            hobbit:     '\u2302',
-            fellowship: '\u2727',
-            towers:     '\u2694',
-            king:       '\u2655'
+            silmarillion: '\u2756',
+            hobbit:       '\u2302',
+            fellowship:   '\u2727',
+            towers:       '\u2694',
+            king:         '\u2655'
         };
 
         // ── Event Data ──────────────────────────────────
         // Pixel positions (origin top-left) converted to Leaflet [lat, lng]
         // lat = IMG_H - py, lng = px
         const events = [
+            // ── The Silmarillion ──
+            {
+                name: "The Grey Havens — Mithlond",
+                category: 'silmarillion',
+                px: 2266, py: 1150,
+                description: "Founded by C\u00edrdan the Shipwright after the War of Wrath destroyed Beleriand, the Grey Havens became the chief port from which the Elves departed Middle-earth for the Undying Lands. It was from here that Gandalf, Frodo, Bilbo, Galadriel, and Elrond sailed at the end of the Third Age.",
+                characters: "C\u00edrdan, Gil-galad, Galadriel"
+            },
+            {
+                name: "Ered Luin — Nogrod & Belegost",
+                category: 'silmarillion',
+                px: 2192, py: 824,
+                description: "The Blue Mountains housed the great Dwarven cities of Nogrod and Belegost in the First Age. The Dwarves of Nogrod crafted the Nauglam\u00edr and later sacked Doriath to reclaim it. After the ruin of Beleriand, many Dwarves migrated east to Khazad-d\u00fbm.",
+                characters: "Durin's Folk, the Firebeards, the Broadbeams"
+            },
+            {
+                name: "Eregion — The Rings of Power",
+                category: 'silmarillion',
+                px: 3885, py: 1520,
+                description: "In the land of Holly near the West-gate of Moria, Celebrimbor and the Gwaith-i-M\u00edrdain were deceived by Sauron in his fair guise of Annatar, 'Lord of Gifts.' Together they forged the Rings of Power. When Sauron forged the One Ring, the Elves perceived his treachery. Sauron destroyed Eregion and slew Celebrimbor.",
+                characters: "Celebrimbor, Sauron (as Annatar), Elrond"
+            },
+            {
+                name: "Khazad-d\u00fbm — The Awakening of Durin",
+                category: 'silmarillion',
+                px: 4000, py: 1490,
+                description: "Durin the Deathless, eldest of the seven Fathers of the Dwarves, awoke at Mount Gundabad and wandered south to the Mirrormere. There he founded Khazad-d\u00fbm, the greatest mansion of the Dwarves, which endured through all the ages until the Balrog was awakened in its depths.",
+                characters: "Durin the Deathless"
+            },
+            {
+                name: "Gladden Fields — The Disaster of the Gladden Fields",
+                category: 'silmarillion',
+                px: 4283, py: 1347,
+                description: "Two years after the defeat of Sauron, Isildur and his company were ambushed by Orcs while marching north along the Anduin. Isildur put on the One Ring to escape, but it slipped from his finger in the river and he was slain by Orc arrows. The Ring was lost for nearly 2,500 years.",
+                characters: "Isildur, Ohtar"
+            },
+            {
+                name: "Dagorlad — The Last Alliance",
+                category: 'silmarillion',
+                px: 5100, py: 2220,
+                description: "The Last Alliance of Elves and Men, led by Gil-galad and Elendil, fought the greatest battle of the Second Age on the plains before the Black Gate. After seven years besieging Barad-d\u00fbr, they overthrew Sauron, but both Gil-galad and Elendil fell. Isildur cut the One Ring from Sauron's hand.",
+                characters: "Gil-galad, Elendil, Isildur, An\u00e1rion, Elrond, Sauron"
+            },
+            {
+                name: "Barad-d\u00fbr — The Dark Tower",
+                category: 'silmarillion',
+                px: 5613, py: 2466,
+                description: "Sauron began building his fortress in Mordor around SA 1000, using the power of the One Ring. The Dark Tower was besieged and thrown down by the Last Alliance, but because it was built with the Ring's power, it could not be fully destroyed while the Ring endured. Sauron rebuilt it when he returned to Mordor in the Third Age.",
+                characters: "Sauron, the Nazg\u00fbl"
+            },
+            {
+                name: "Mount Doom — The Forging of the One Ring",
+                category: 'silmarillion',
+                px: 5440, py: 2510,
+                description: "In the fires of Orodruin, Sauron forged the One Ring to control all the other Rings of Power: 'One Ring to rule them all, One Ring to find them, One Ring to bring them all, and in the darkness bind them.' The moment he put it on, the Elven ring-bearers became aware of his purpose.",
+                characters: "Sauron"
+            },
+
             // ── The Hobbit ──
             {
                 name: "Bag End — An Unexpected Party",
@@ -540,6 +601,7 @@
 
         // ── Create Markers ──────────────────────────────
         const categoryLayers = {
+            silmarillion: L.layerGroup(),
             hobbit: L.layerGroup(),
             fellowship: L.layerGroup(),
             towers: L.layerGroup(),
