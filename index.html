@@ -44,7 +44,33 @@
             text-align: center;
             border-bottom: 1px solid #8b7355;
             padding-bottom: 8px;
+            padding-right: 32px;
             letter-spacing: 1px;
+            position: relative;
+        }
+
+        #legend-close {
+            position: absolute;
+            top: -2px;
+            right: 0;
+            background: none;
+            border: 1px solid #8b7355;
+            border-radius: 4px;
+            color: #a89070;
+            font-size: 18px;
+            cursor: pointer;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        #legend-close:hover {
+            color: #f0e6cc;
+            border-color: #d4c5a9;
         }
 
         .legend-category {
@@ -122,15 +148,34 @@
             border: 2px solid #8b7355;
             border-radius: 8px;
             color: #d4c5a9;
-            padding: 8px 12px;
+            padding: 10px 14px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 14px;
             display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: background 0.2s, border-color 0.2s;
         }
 
         #collapse-btn:hover {
             background: rgba(60, 48, 30, 0.95);
+            border-color: #d4c5a9;
+        }
+
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 16px;
+            height: 2px;
+            background: #d4c5a9;
+            border-radius: 1px;
         }
 
         /* Custom marker styles */
@@ -354,11 +399,11 @@
     <div id="map"></div>
 
     <div id="legend">
-        <h2>Events of Middle-earth</h2>
+        <h2>Events of Middle-earth<button id="legend-close">&times;</button></h2>
         <div id="legend-content"></div>
     </div>
 
-    <button id="collapse-btn">Show Legend</button>
+    <button id="collapse-btn"><div class="menu-icon"><span></span><span></span><span></span></div> Legend</button>
 
     <div id="toast">Scroll to zoom &middot; Drag to pan &middot; Click markers for details</div>
 
@@ -639,7 +684,7 @@
             {
                 name: "Tharbad — Crossing of the Greyflood",
                 category: 'appendix',
-                px: 3359, py: 1541,
+                px: 3372, py: 1578,
                 description: "Once a thriving trade town at the crossing of the Greyflood on the North-South Road, Tharbad fell into ruin as both Arnor and Gondor declined. By the time of the War of the Ring, only crumbling walls remained. Boromir lost his horse fording the river here on his long journey from Minas Tirith to Rivendell, and had to continue on foot.",
                 characters: "Boromir"
             },
@@ -734,7 +779,7 @@
                 category: 'hobbit',
                 px: 4690, py: 1578,
                 description: "While the Dwarves journey through Mirkwood, Gandalf departs to join the White Council in an assault on Dol Guldur. They drive out the Necromancer\u2014revealed to be Sauron himself\u2014from the fortress. This is why Gandalf is absent during the company's capture by spiders and Wood-elves.",
-                characters: "Gandalf, Galadriel, Saruman, Elrond, Sauron"
+                characters: "Gandalf, Saruman, the White Council, Sauron"
             },
             {
                 name: "Thranduil's Halls — The Woodland Realm",
@@ -823,6 +868,13 @@
                 characters: "Frodo, Sam, Merry, Pippin, Aragorn"
             },
             {
+                name: "Midgewater Marshes",
+                category: 'fellowship',
+                px: 3367, py: 1084,
+                description: "After leaving Bree, Aragorn leads the hobbits off the Road to avoid the Nazg\u00fbl, and they spend several miserable days crossing the Midgewater Marshes \u2014 a trackless bog east of Bree infested with clouds of biting midges. It is unglamorous but necessary, and the hobbits begin to understand the hardship of life in the wild.",
+                characters: "Frodo, Sam, Merry, Pippin, Aragorn"
+            },
+            {
                 name: "Weathertop — Attack of the Nazg\u00fbl",
                 category: 'fellowship',
                 px: 3484, py: 1097,
@@ -849,6 +901,13 @@
                 px: 3973, py: 1447,
                 description: "The three peaks above Moria—Caradhras (Redhorn), Celebdil (Silvertine), and Fanuidhol (Cloudyhead)—guard the high pass the Fellowship attempts before being driven back by blizzard and malice. Their failure on the Redhorn Pass forces the fateful decision to go under the mountains through Moria.",
                 characters: "Gandalf, Aragorn, the Fellowship"
+            },
+            {
+                name: "Doors of Durin — Speak Friend and Enter",
+                category: 'fellowship',
+                px: 3940, py: 1490,
+                description: "At the West-gate of Moria, the Fellowship finds the ancient Doors of Durin sealed shut. An inscription reads 'Speak, friend, and enter.' Gandalf tries spell after spell before realising it is a simple riddle — the Elvish word for friend, mellon, opens the doors. As they enter, the Watcher in the Water attacks from the dark lake, seizing Frodo. The others rescue him, but the creature pulls the doors shut and collapses the entrance, trapping the Fellowship inside.",
+                characters: "Gandalf, Frodo, the Watcher in the Water, the Fellowship"
             },
             {
                 name: "Moria — The Bridge of Khazad-d\u00fbm",
@@ -883,7 +942,7 @@
                 category: 'fellowship',
                 px: 4480, py: 2174,
                 description: "Boromir succumbs to the Ring's temptation and tries to take it from Frodo. Orcs attack; Boromir redeems himself defending Merry and Pippin but is slain. Frodo and Sam depart alone for Mordor.",
-                characters: "Boromir, Frodo, Aragorn, Merry, Pippin, Lurtz"
+                characters: "Boromir, Frodo, Aragorn, Merry, Pippin"
             },
             {
                 name: "Rauros Falls — Boromir's Funeral",
@@ -920,7 +979,7 @@
                 category: 'towers',
                 px: 3760, py: 2277,
                 description: "The Rohirrim make a desperate stand against Saruman's army of 10,000 Uruk-hai at the fortress of Helm's Deep. Victory comes at dawn with the charge of Gandalf and the Rohirrim, and the arrival of the Huorns.",
-                characters: "Th\u00e9oden, Aragorn, Legolas, Gimli, Gandalf, Haldir"
+                characters: "Th\u00e9oden, Aragorn, Legolas, Gimli, Gandalf, Erkenbrand"
             },
             {
                 name: "Isengard — The Ents' Assault",
@@ -958,11 +1017,18 @@
                 characters: "Faramir, Frodo, Sam, Gollum"
             },
             {
-                name: "Osgiliath — Faramir's Choice",
+                name: "The Cross-roads — The Fallen King",
+                category: 'towers',
+                px: 4927, py: 2678,
+                description: "At the junction where the road from Osgiliath meets the southward road to Minas Morgul, Frodo finds the old statue of a seated king. Its head has been struck off and replaced with a crude stone carved with a leering face, but the severed head lies nearby in the grass, crowned by trailing plants with white and gold flowers. A fleeting beam of sunlight illuminates the crowned head — a quiet sign that Sauron cannot conquer all.",
+                characters: "Frodo, Sam, Gollum"
+            },
+            {
+                name: "Osgiliath — The Ruined Capital",
                 category: 'towers',
                 px: 4856, py: 2658,
-                description: "Faramir captures Frodo and Sam and brings them to Osgiliath. Unlike his brother Boromir, Faramir ultimately resists the Ring's pull and releases the hobbits to continue their quest.",
-                characters: "Faramir, Frodo, Sam, Gollum"
+                description: "The ancient capital of Gondor, once spanning both banks of the Anduin, now a shattered ruin contested by Gondor and Mordor. Boromir led the defence that held the western bank, and it was a dream of Osgiliath's fall that prompted his journey to Rivendell. During the War of the Ring, Faramir's forces fight a desperate rearguard action as Sauron's armies pour across the river toward Minas Tirith.",
+                characters: "Boromir, Faramir"
             },
 
             // ── The Return of the King ──
@@ -998,7 +1064,7 @@
                 name: "Erech — The Paths of the Dead",
                 category: 'king',
                 px: 3886, py: 2470,
-                description: "Aragorn, Legolas, and Gimli ride the Paths of the Dead beneath the White Mountains and emerge at the Stone of Erech. There Aragorn, as heir of Isildur, summons the oathbreaking Dead Men of Dunharrow to fulfil their ancient pledge. The ghostly army follows him south to overwhelm the Corsairs of Umbar, seizing their ships to sail up the Anduin to the Pelennor Fields.",
+                description: "Aragorn, Legolas, and Gimli ride the Paths of the Dead beneath the White Mountains and emerge at the Stone of Erech. There Aragorn, as heir of Isildur, summons the oathbreaking Dead Men of Dunharrow to fulfil their ancient pledge. The ghostly army follows him south to Pelargir, where they overwhelm the Corsairs of Umbar in terror. Their oath fulfilled, the Dead are released and depart forever.",
                 characters: "Aragorn, Legolas, Gimli, the Dead Men of Dunharrow"
             },
             {
@@ -1033,7 +1099,7 @@
                 name: "Pelargir — Capture of the Corsair Fleet",
                 category: 'king',
                 px: 4509, py: 2977,
-                description: "Aragorn leads the Army of the Dead south from Erech to the ancient port of Pelargir, where the Corsairs of Umbar have anchored their fleet. The Dead sweep through the Corsairs in terror, and Aragorn seizes the ships. He then sails up the Anduin with reinforcements from southern Gondor, arriving at the Pelennor Fields to turn the tide of battle.",
+                description: "Aragorn leads the Dead south from Erech to the ancient port of Pelargir, where the Corsairs of Umbar have anchored their fleet. The Dead sweep through the Corsairs in terror, and Aragorn seizes the ships. He releases the Dead Men from their oath, and they vanish at last. Aragorn then mans the ships with Rangers, men of Lebennin and Lamedon, and sails up the Anduin to the Pelennor Fields.",
                 characters: "Aragorn, Legolas, Gimli, the Dead Men of Dunharrow, the Corsairs of Umbar"
             },
             {
@@ -1047,7 +1113,7 @@
                 name: "Pelennor Fields — The Great Battle",
                 category: 'king',
                 px: 4784, py: 2638,
-                description: "The greatest battle of the War of the Ring. Th\u00e9oden leads the Rohirrim charge. \u00c9owyn and Merry slay the Witch-king. Aragorn arrives with the Army of the Dead to rout Sauron's forces.",
+                description: "The greatest battle of the War of the Ring. Th\u00e9oden leads the Rohirrim charge and falls beneath his horse. \u00c9owyn and Merry slay the Witch-king. Aragorn arrives on captured Corsair ships with reinforcements from southern Gondor to turn the tide.",
                 characters: "Th\u00e9oden, \u00c9owyn, Merry, Aragorn, the Witch-king"
             },
             {
@@ -1076,7 +1142,7 @@
                 category: 'king',
                 px: 4730, py: 2650,
                 description: "Aragorn is crowned King Elessar on the plain before Minas Tirith. Gandalf sets the White Crown upon his head, and Aragorn speaks the words of Elendil: 'Et E\u00e4rello Endorenna ut\u00falien.' At the city gate Arwen awaits him, and they are wed at last \u2014 the union of the lines of Elros and Elrond, long sundered.",
-                characters: "Aragorn, Arwen, Gandalf, Faramir, \u00c9owyn"
+                characters: "Aragorn, Arwen, Gandalf, Frodo, Faramir"
             },
             {
                 name: "Mindolluin — The White Tree",
@@ -1184,17 +1250,34 @@
             [3915, 1280],  // Western foothills
             [3900, 1370],  // Hollin (Eregion)
             [3930, 1440],  // Approaching Caradhras
+            [3940, 1490],  // Doors of Durin
             [3981, 1515],  // Moria
             [4026, 1516],  // Dimrill Dale
             [4214, 1609],  // Lothlórien
-            [4322, 1650],  // Anduin
-            [4371, 1684],  // Anduin
-            [4366, 1719],  // Anduin
-            [4469, 1712],  // Anduin
-            [4463, 1801],  // Anduin
-            [4576, 1817],  // Anduin
-            [4541, 1905],  // Anduin
-            [4569, 1985],  // Anduin
+            [4224, 1658, 1],  // Nimrodel
+            [4261, 1661, 1],  // Nimrodel
+            [4289, 1684, 1],  // Nimrodel
+            [4320, 1686, 1],  // Nimrodel merges into the Anduin
+            [4355, 1707, 1],  // Anduin
+            [4365, 1724, 1],  // Anduin
+            [4356, 1744, 1],  // Anduin
+            [4396, 1747, 1],  // Anduin
+            [4417, 1729, 1],  // Anduin
+            [4464, 1744, 1],  // Anduin
+            [4471, 1771, 1],  // Anduin
+            [4465, 1788, 1],  // Anduin
+            [4452, 1813, 1],  // Anduin
+            [4479, 1838, 1],  // Anduin
+            [4499, 1840, 1],  // Anduin
+            [4531, 1829, 1],  // Anduin
+            [4558, 1837, 1],  // Anduin
+            [4574, 1867, 1],  // Anduin
+            [4559, 1892, 1],  // Anduin
+            [4533, 1929, 1],  // Anduin
+            [4563, 1966, 1],  // Anduin
+            [4561, 2016, 1],  // Anduin
+            [4561, 2016, 1],  // Anduin
+            [4512, 2088, 1],  // Anduin
             [4511, 2105],  // Argonath
             [4480, 2174],  // Amon Hen
             [4502, 2196]   // Rauros Falls
@@ -1212,7 +1295,13 @@
                 points: [
                     [2746, 1115],  // Bag End
                     [2974, 1126],  // Brandywine Bridge
+                    [3254, 1139],  // Bree (lands where people spoke strangely)
+                    [3370, 1175],  // East Road (curving south)
+                    [3491, 1195],  // East Road (passing Weathertop)
+                    [3590, 1185],  // East Road (curving north)
+                    [3681, 1154],  // Last Bridge
                     [3811, 937],   // Trollshaws
+                    [3850, 1134],  // Ford of Bruinen
                     [3922, 1096],  // Rivendell
                     [4094, 1049],  // Misty Mountains
                     [4319, 976],   // Carrock
@@ -1225,6 +1314,10 @@
                     [4444, 944],   // Beorn's Hall (stays over winter)
                     [3922, 1096],  // Rivendell (stays with Elrond)
                     [3681, 1154],  // Last Bridge (return)
+                    [3590, 1200],  // East Road (curving south)
+                    [3491, 1210],  // East Road (passing Weathertop)
+                    [3370, 1190],  // East Road (curving north)
+                    [3254, 1139],  // Bree (return)
                     [2974, 1126],  // Brandywine Bridge (home)
                     [2746, 1115],  // Bag End (home)
                     [2974, 1126],  // Brandywine Bridge (retirement)
@@ -1245,20 +1338,32 @@
                     [3098, 1178],  // Old Forest
                     [3185, 1144],  // Barrow-downs
                     [3254, 1139],  // Bree
+                    [3367, 1084],  // Midgewater Marshes
                     [3484, 1097],  // Weathertop
                     [3681, 1154],  // Last Bridge
                     [3850, 1134],  // Ford of Bruinen
                     ...FELLOWSHIP_PATH,
                     [4740, 2032],  // Emyn Muil
                     [4894, 2150],  // Dead Marshes
+                    [5050, 2280],  // North Ithilien (turns south from Black Gate)
+                    [5029, 2491],  // Henneth Annûn (captured by Faramir)
+                    [4927, 2678],  // Cross-roads (statue of the king)
                     [5033, 2660],  // Minas Morgul
                     [5106, 2544],  // Cirith Ungol
                     [5120, 2530],  // Tower of Cirith Ungol
                     [5419, 2532],  // Mount Doom
                     [4799, 2565],  // Field of Cormallen
                     [4720, 2641],  // Minas Tirith (coronation)
+                    [3969, 2344],  // Edoras (Théoden's funeral)
+                    [3760, 2277],  // Helm's Deep (return)
+                    [3775, 2039],  // Isengard (farewell to Treebeard)
+                    [3742, 2135],  // Gap of Rohan (encounter Saruman)
+                    [3550, 1850],  // Dunland (northward)
+                    [3500, 1500],  // Eriador (north through the wilds)
                     [3940, 1096],  // Rivendell (return journey)
+                    [3850, 1134],  // Ford of Bruinen (return)
                     [3681, 1154],  // Last Bridge (return)
+                    [3254, 1139],  // Bree (Prancing Pony farewell)
                     [2974, 1126],  // Brandywine Bridge
                     [2848, 1147],  // Bywater (Scouring of the Shire)
                     [2764, 1115],  // Bag End (return to the Shire)
@@ -1271,6 +1376,7 @@
                 color: '#6a9f5b',
                 points: [
                     [3254, 1139],  // Bree
+                    [3367, 1084],  // Midgewater Marshes
                     [3484, 1097],  // Weathertop
                     [3681, 1154],  // Last Bridge
                     [3850, 1134],  // Ford of Bruinen
@@ -1296,12 +1402,13 @@
                 color: '#8e6b3e',
                 points: [
                     [4720, 2641],  // Minas Tirith
-                    [4856, 2658],  // Osgiliath
-                    [4600, 2400],  // Ithilien (northward)
-                    [4300, 2100],  // Eastern Rohan
-                    [3900, 1900],  // Gap region
-                    [3600, 1700],  // Dunland
-                    [3359, 1541],  // Tharbad (loses horse)
+                    [4400, 2550],  // Anorien (northwest along White Mountains)
+                    [4100, 2400],  // Rohan
+                    [3742, 2135],  // Gap of Rohan
+                    [3574, 2022],  // Dunland
+                    [3550, 1850],  // Enedwaith
+                    [3372, 1578],  // Tharbad (loses horse)
+                    [3500, 1350],  // Lone-lands (on foot, heading northeast)
                     [3681, 1154],  // Last Bridge
                     [3850, 1134],  // Ford of Bruinen
                     ...FELLOWSHIP_PATH
@@ -1317,6 +1424,7 @@
                     [3098, 1178],  // Old Forest
                     [3185, 1144],  // Barrow-downs
                     [3254, 1139],  // Bree
+                    [3367, 1084],  // Midgewater Marshes
                     [3484, 1097],  // Weathertop
                     [3681, 1154],  // Last Bridge
                     [3850, 1134],  // Ford of Bruinen
@@ -1328,12 +1436,24 @@
                 branches: {
                     pippin: [
                         [3775, 2039],  // Isengard
+                        [3742, 2135],  // Gap of Rohan
+                        [3969, 2380],  // Edoras (seen from afar, no stop)
+                        [4400, 2550],  // Anorien
                         [4720, 2641],  // Minas Tirith (with Gandalf)
                         [4784, 2638],  // Pelennor Fields
                         [5141, 2272],  // Black Gate
                         [4799, 2565],  // Field of Cormallen
                         [4720, 2641],  // Minas Tirith (coronation)
+                        [3969, 2344],  // Edoras (Théoden's funeral)
+                        [3760, 2277],  // Helm's Deep (return)
+                        [3775, 2039],  // Isengard (farewell to Treebeard)
+                        [3742, 2135],  // Gap of Rohan (encounter Saruman)
+                        [3550, 1850],  // Dunland (northward)
+                        [3500, 1500],  // Eriador (north through the wilds)
                         [3940, 1096],  // Rivendell
+                        [3850, 1134],  // Ford of Bruinen (return)
+                        [3681, 1154],  // Last Bridge (return)
+                        [3254, 1139],  // Bree (Prancing Pony farewell)
                         [2974, 1126],  // Brandywine Bridge
                         [2848, 1147],  // Bywater
                         [2764, 1115]   // Bag End
@@ -1341,11 +1461,22 @@
                     merry: [
                         [3775, 2039],  // Isengard
                         [3969, 2344],  // Edoras (rides with Éowyn)
+                        [4005, 2440],  // Dunharrow (muster of Rohan)
+                        [4618, 2531],  // Drúadan Forest (guided by Wild Men)
                         [4784, 2638],  // Pelennor Fields
                         [5141, 2272],  // Black Gate
                         [4799, 2565],  // Field of Cormallen
                         [4720, 2641],  // Minas Tirith (coronation)
+                        [3969, 2344],  // Edoras (Théoden's funeral)
+                        [3760, 2277],  // Helm's Deep (return)
+                        [3775, 2039],  // Isengard (farewell to Treebeard)
+                        [3742, 2135],  // Gap of Rohan (encounter Saruman)
+                        [3550, 1850],  // Dunland (northward)
+                        [3500, 1500],  // Eriador (north through the wilds)
                         [3940, 1096],  // Rivendell
+                        [3850, 1134],  // Ford of Bruinen (return)
+                        [3681, 1154],  // Last Bridge (return)
+                        [3254, 1139],  // Bree (Prancing Pony farewell)
                         [2974, 1126],  // Brandywine Bridge
                         [2848, 1147],  // Bywater
                         [2764, 1115]   // Bag End
@@ -1356,10 +1487,10 @@
                 label: "Gollum's Journey",
                 color: '#708090',
                 points: [
-                    [4417, 1370],  // River-folk (Sméagol's home)
-                    [4417, 1370],  // Gladden Fields (finds Ring)
+                    [4434, 1380],  // River-folk (Sméagol's home)
+                    [4434, 1380],  // Gladden Fields (finds Ring)
                     [4094, 1049],  // Misty Mountains (hides ~500 years)
-                    [4417, 1370],  // Gladden Fields (leaves mountains)
+                    [4400, 1360],  // Gladden Fields (leaves mountains)
                     [4463, 1801],  // Anduin valley (heading south)
                     [4740, 2032],  // Emyn Muil (passing through)
                     [4894, 2150],  // Dead Marshes (passing through)
@@ -1387,7 +1518,14 @@
                 color: '#00bcd4',
                 points: [
                     [2746, 1115],  // Bag End
+                    [2974, 1126],  // Brandywine Bridge
+                    [3254, 1139],  // Bree
+                    [3370, 1175],  // East Road (curving south)
+                    [3491, 1195],  // East Road (passing Weathertop)
+                    [3590, 1185],  // East Road (curving north)
+                    [3681, 1154],  // Last Bridge
                     [3811, 937],   // Trollshaws
+                    [3850, 1134],  // Ford of Bruinen
                     [3922, 1096],  // Rivendell
                     [4094, 1049],  // Misty Mountains
                     [4319, 976],   // Carrock
@@ -1423,6 +1561,9 @@
                     [3969, 2344],  // Edoras
                     [3760, 2277],  // Helm's Deep
                     [3775, 2039],  // Isengard
+                    [3742, 2135],  // Gap of Rohan (rides with Pippin)
+                    [3969, 2380],  // Edoras (seen from afar, no stop)
+                    [4400, 2550],  // Anorien
                     [4720, 2641],  // Minas Tirith
                     [4784, 2638],  // Pelennor Fields
                     [5141, 2272],  // Black Gate
@@ -1432,12 +1573,48 @@
             }
         };
 
+        // Catmull-Rom spline interpolation for smooth journey paths
+        // Only interpolate segments longer than minDist to avoid loops on close points
+        // Points with a truthy third element (e.g. [x, y, 1]) are always smoothed
+        function smoothPoints(points, segments = 6, minDist = 100) {
+            if (points.length < 3) return points;
+            const result = [];
+            for (let i = 0; i < points.length - 1; i++) {
+                const p1 = points[i];
+                const p2 = points[i + 1];
+                const forceSmooth = p1[2] && p2[2];
+                if (!forceSmooth) {
+                    const dx = p2[0] - p1[0];
+                    const dy = p2[1] - p1[1];
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < minDist) {
+                        result.push(p1);
+                        continue;
+                    }
+                }
+                const p0 = points[Math.max(0, i - 1)];
+                const p3 = points[Math.min(points.length - 1, i + 2)];
+                for (let t = 0; t < segments; t++) {
+                    const tt = t / segments;
+                    const tt2 = tt * tt;
+                    const tt3 = tt2 * tt;
+                    result.push([
+                        0.5 * ((2*p1[0]) + (-p0[0]+p2[0])*tt + (2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*tt2 + (-p0[0]+3*p1[0]-3*p2[0]+p3[0])*tt3),
+                        0.5 * ((2*p1[1]) + (-p0[1]+p2[1])*tt + (2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*tt2 + (-p0[1]+3*p1[1]-3*p2[1]+p3[1])*tt3)
+                    ]);
+                }
+            }
+            result.push(points[points.length - 1]);
+            return result;
+        }
+
         const journeyLayers = {};
 
         Object.keys(JOURNEYS).forEach(key => {
             const journey = JOURNEYS[key];
             const lines = [];
-            const latlngs = journey.points.map(([px, py]) => toLatLng(px, py));
+            const smoothed = smoothPoints(journey.points);
+            const latlngs = smoothed.map(([px, py]) => toLatLng(px, py));
             lines.push(L.polyline(latlngs, {
                 color: journey.color,
                 weight: 3,
@@ -1447,7 +1624,8 @@
             }));
             if (journey.branches) {
                 Object.values(journey.branches).forEach(branch => {
-                    const branchLatLngs = branch.map(([px, py]) => toLatLng(px, py));
+                    const smoothedBranch = smoothPoints(branch);
+                    const branchLatLngs = smoothedBranch.map(([px, py]) => toLatLng(px, py));
                     lines.push(L.polyline(branchLatLngs, {
                         color: journey.color,
                         weight: 3,
@@ -1565,37 +1743,35 @@
         });
         legendEl.appendChild(coordToggleRow);
 
-        // ── Legend Collapse (mobile) ────────────────────
+        // ── Legend Collapse ────────────────────
         const legend = document.getElementById('legend');
         const collapseBtn = document.getElementById('collapse-btn');
+        const legendClose = document.getElementById('legend-close');
 
-        function checkMobile() {
-            if (window.innerWidth < 600) {
-                legend.style.display = 'none';
-                collapseBtn.style.display = 'block';
-            } else {
-                legend.style.display = 'block';
-                collapseBtn.style.display = 'none';
-            }
+        function hideLegend() {
+            legend.style.display = 'none';
+            collapseBtn.style.display = 'flex';
         }
 
-        collapseBtn.addEventListener('click', () => {
-            if (legend.style.display === 'none') {
-                legend.style.display = 'block';
-                collapseBtn.style.display = 'none';
-            }
-        });
+        function showLegend() {
+            legend.style.display = 'block';
+            collapseBtn.style.display = 'none';
+        }
+
+        legendClose.addEventListener('click', hideLegend);
+        collapseBtn.addEventListener('click', showLegend);
+
+        // Auto-collapse on mobile
+        if (window.innerWidth < 600) {
+            hideLegend();
+        }
 
         // Close legend on map click (mobile)
         map.on('click', () => {
             if (window.innerWidth < 600) {
-                legend.style.display = 'none';
-                collapseBtn.style.display = 'block';
+                hideLegend();
             }
         });
-
-        window.addEventListener('resize', checkMobile);
-        checkMobile();
 
         // ── Coordinate Picker (calibration tool) ────────
         const coordDisplay = document.createElement('div');
