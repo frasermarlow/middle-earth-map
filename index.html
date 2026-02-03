@@ -366,7 +366,7 @@
     <script>
         // ── Map Dimensions ──────────────────────────────
         const IMG_W = 7680;
-        const IMG_H = 4320;
+        const IMG_H = 4386;
 
         // ── Category Colors ─────────────────────────────
         const COLORS = {
@@ -546,6 +546,13 @@
                 characters: "The\u0301odred, Grimbold, E\u0301omer"
             },
             {
+                name: "Gap of Rohan",
+                category: 'appendix',
+                px: 3742, py: 2135,
+                description: "The wide pass between the southern end of the Misty Mountains and the northern end of the White Mountains, the Gap of Rohan was the only major land route between Eriador and Gondor that avoided mountain crossings. Saruman's control of Isengard at its northern end made the Gap a contested corridor throughout the War of the Ring.",
+                characters: "Saruman"
+            },
+            {
                 name: "Fornost — Fall of the North-kingdom",
                 category: 'appendix',
                 px: 3111, py: 866,
@@ -695,6 +702,13 @@
                 characters: "Bilbo, Gollum, the Great Goblin"
             },
             {
+                name: "Goblin-town / High Pass",
+                category: 'hobbit',
+                px: 4080, py: 1030,
+                description: "The High Pass over the Misty Mountains conceals Goblin-town beneath it, a sprawling underground warren ruled by the Great Goblin. Thorin's company is captured here while sheltering from a thunder-battle, and Gandalf slays the Great Goblin to lead their escape through the tunnels.",
+                characters: "Gandalf, Thorin, the Great Goblin"
+            },
+            {
                 name: "The Carrock — Rescue by Eagles",
                 category: 'hobbit',
                 px: 4325, py: 944,
@@ -802,6 +816,13 @@
                 characters: "Frodo, Gandalf, Aragorn, Legolas, Gimli, Boromir, Sam, Merry, Pippin"
             },
             {
+                name: "Caradhras, Celebdil & Fanuidhol — The Redhorn Pass",
+                category: 'fellowship',
+                px: 3973, py: 1447,
+                description: "The three peaks above Moria—Caradhras (Redhorn), Celebdil (Silvertine), and Fanuidhol (Cloudyhead)—guard the high pass the Fellowship attempts before being driven back by blizzard and malice. Their failure on the Redhorn Pass forces the fateful decision to go under the mountains through Moria.",
+                characters: "Gandalf, Aragorn, the Fellowship"
+            },
+            {
                 name: "Moria — The Bridge of Khazad-d\u00fbm",
                 category: 'fellowship',
                 px: 3981, py: 1515,
@@ -839,6 +860,13 @@
 
             // ── The Two Towers ──
             {
+                name: "Eaves of Fangorn — Escape from the Uruk-hai",
+                category: 'towers',
+                px: 4029, py: 1818,
+                description: "At the edge of Fangorn Forest, the Riders of Rohan under \u00c9omer surround and destroy the Uruk-hai band carrying Merry and Pippin. In the chaos of the night battle, the two hobbits slip their bonds and crawl into the eaves of the forest, where they will encounter Treebeard. Aragorn, Legolas, and Gimli arrive the next morning to find the smouldering orc pyre and track the hobbits' trail into the trees.",
+                characters: "\u00c9omer, Merry, Pippin, Ugl\u00fak, Grish\u00e1kh, Aragorn, Legolas, Gimli"
+            },
+            {
                 name: "Fangorn Forest — The White Wizard",
                 category: 'towers',
                 px: 4043, py: 1918,
@@ -848,7 +876,7 @@
             {
                 name: "Edoras — The Golden Hall of Meduseld",
                 category: 'towers',
-                px: 4020, py: 2348,
+                px: 3969, py: 2344,
                 description: "Gandalf frees King Th\u00e9oden from the influence of Saruman, channeled through Gr\u00edma Wormtongue. The people of Rohan prepare for war against Isengard's forces.",
                 characters: "Gandalf, Th\u00e9oden, \u00c9owyn, \u00c9omer, Gr\u00edma"
             },
@@ -970,13 +998,17 @@
 
         // ── Helper: pixel coords → Leaflet coords ──────
         function toLatLng(px, py) {
-            return [IMG_H - py, px];
+            return [py, px];
         }
 
         // ── Map Setup ───────────────────────────────────
+        const MapCRS = L.Util.extend({}, L.CRS.Simple, {
+            transformation: new L.Transformation(1, 0, 1, 0)
+        });
+
         const map = L.map('map', {
-            crs: L.CRS.Simple,
-            minZoom: -2,
+            crs: MapCRS,
+            minZoom: -4,
             maxZoom: 3,
             zoomSnap: 0.25,
             zoomDelta: 0.5,
@@ -985,7 +1017,16 @@
         });
 
         const bounds = [[0, 0], [IMG_H, IMG_W]];
-        L.imageOverlay('middle_earth.jpeg', bounds).addTo(map);
+        L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
+            minZoom: -4,
+            maxZoom: 3,
+            maxNativeZoom: 0,
+            minNativeZoom: -2,
+            zoomOffset: 2,
+            tileSize: 256,
+            noWrap: true,
+            bounds: bounds
+        }).addTo(map);
         map.fitBounds(bounds);
         const PAD = Math.max(IMG_W, IMG_H);
         map.setMaxBounds([[-PAD, -PAD], [IMG_H + PAD, IMG_W + PAD]]);
@@ -1122,11 +1163,12 @@
                     [3488, 1077],  // Weathertop
                     [3692, 1122],  // Last Bridge
                     ...FELLOWSHIP_PATH,
+                    [4029, 1818],  // Eaves of Fangorn
                     [4043, 1918],  // Fangorn
-                    [4020, 2348],  // Edoras
+                    [3969, 2344],  // Edoras
                     [3783, 2241],  // Helm's Deep
                     [3748, 1999],  // Isengard
-                    [4020, 2348],  // Edoras (return)
+                    [3969, 2344],  // Edoras (return)
                     [3886, 2470],  // Erech
                     [4509, 2977],  // Pelargir
                     [4784, 2638],  // Pelennor Fields
@@ -1145,7 +1187,8 @@
                     [3488, 1077],  // Weathertop
                     [3692, 1122],  // Last Bridge
                     ...FELLOWSHIP_PATH,
-                    [4043, 1918],  // Fangorn (escape)
+                    [4029, 1818],  // Eaves of Fangorn (escape from Uruk-hai)
+                    [4043, 1918],  // Fangorn
                     [3748, 1999]   // Isengard (Ents)
                 ],
                 branches: {
@@ -1161,7 +1204,7 @@
                     ],
                     merry: [
                         [3748, 1999],  // Isengard
-                        [4020, 2348],  // Edoras (rides with Éowyn)
+                        [3969, 2344],  // Edoras (rides with Éowyn)
                         [4784, 2638],  // Pelennor Fields
                         [5141, 2272],  // Black Gate
                         [4720, 2641],  // Minas Tirith (return)
@@ -1199,7 +1242,7 @@
                     [4720, 2641],  // Minas Tirith (researches the Ring)
                     [2764, 1115],  // Bag End (returns to warn Frodo)
                     [3748, 1999],  // Isengard (imprisoned by Saruman)
-                    [4020, 2348],  // Edoras (escapes via eagle, takes Shadowfax)
+                    [3969, 2344],  // Edoras (escapes via eagle, takes Shadowfax)
                     [3488, 1077],  // Weathertop (arrives too late)
                     [3692, 1122],  // Last Bridge
                     [3940, 1096],  // Rivendell
@@ -1209,7 +1252,7 @@
                     [3930, 1440],  // Approaching Caradhras
                     [3981, 1515],  // Moria (falls)
                     [4043, 1918],  // Fangorn (returns)
-                    [4020, 2348],  // Edoras
+                    [3969, 2344],  // Edoras
                     [3783, 2241],  // Helm's Deep
                     [3748, 1999],  // Isengard
                     [4720, 2641],  // Minas Tirith
@@ -1393,7 +1436,7 @@
         map.on('click', function(e) {
             if (!coordsEnabled) return;
             const px = Math.round(e.latlng.lng);
-            const py = IMG_H - Math.round(e.latlng.lat);
+            const py = Math.round(e.latlng.lat);
             coordDisplay.style.display = 'block';
             coordDisplay.textContent = `px: ${px}, py: ${py}`;
             console.log(`{ px: ${px}, py: ${py} }`);
@@ -1402,7 +1445,7 @@
         map.on('contextmenu', function(e) {
             if (!coordsEnabled) return;
             const px = Math.round(e.latlng.lng);
-            const py = IMG_H - Math.round(e.latlng.lat);
+            const py = Math.round(e.latlng.lat);
             const text = `px: ${px}, py: ${py}`;
             navigator.clipboard.writeText(text);
             coordDisplay.style.display = 'block';
