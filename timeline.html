@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Middle-earth &mdash; Timeline &amp; Narrative</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+            background: #1a1a1a;
+            color: #d4c5a9;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #8b7355; border-radius: 3px; }
+
+        /* ── Nav Bar ───────────────────────────── */
+        #nav-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 44px;
+            z-index: 1100;
+            background: rgba(26, 26, 26, 0.92);
+            border-bottom: 1px solid #5a4a36;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .nav-link {
+            color: #8b7355;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #e8d9b0;
+            background: rgba(139, 115, 85, 0.2);
+        }
+        .nav-title {
+            font-size: 15px;
+            color: #e8d9b0;
+            letter-spacing: 2px;
+        }
+
+        /* ── Controls Bar ──────────────────────── */
+        #controls {
+            position: fixed;
+            top: 44px; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(26, 26, 26, 0.95);
+            border-bottom: 1px solid #5a4a36;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        #play-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        #play-controls button, #speed-select {
+            background: rgba(44, 36, 24, 0.95);
+            border: 1px solid #5a4a36;
+            border-radius: 4px;
+            color: #d4c5a9;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        #play-controls button:hover, #speed-select:hover {
+            border-color: #8b7355;
+            background: rgba(60, 48, 30, 0.95);
+        }
+        #speed-select { padding: 4px 6px; font-size: 12px; }
+        #speed-select option { background: #2c2418; }
+
+        #scrubber-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        #scrubber {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: #5a4a36;
+            border-radius: 2px;
+            outline: none;
+            min-width: 60px;
+        }
+        #scrubber::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: #c9a435;
+            border: 2px solid #e8d9b0;
+            cursor: pointer;
+        }
+        #scrubber::-moz-range-thumb {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: #c9a435;
+            border: 2px solid #e8d9b0;
+            cursor: pointer;
+        }
+        #scrubber-label {
+            font-size: 11px;
+            color: #8b7355;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        #filter-toggle {
+            display: none;
+            background: rgba(44, 36, 24, 0.95);
+            border: 1px solid #5a4a36;
+            border-radius: 4px;
+            color: #d4c5a9;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+        }
+        #filter-panel {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            color: #a89070;
+            transition: color 0.2s;
+        }
+        .filter-label:hover { color: #e8d9b0; }
+        .filter-checkbox { display: none; }
+        .filter-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: opacity 0.2s;
+        }
+        .filter-checkbox:not(:checked) ~ .filter-dot { opacity: 0.3; }
+        .filter-checkbox:not(:checked) ~ .filter-name { text-decoration: line-through; opacity: 0.5; }
+
+        /* ── Timeline Container ────────────────── */
+        #timeline-container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 110px 20px 60px 20px;
+            position: relative;
+        }
+
+        /* Vertical line */
+        .timeline-line {
+            position: absolute;
+            left: 118px;
+            top: 110px;
+            bottom: 60px;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #5a4a36 2%, #5a4a36 98%, transparent);
+        }
+
+        /* ── Era Headers ───────────────────────── */
+        .era-header {
+            text-align: center;
+            padding: 48px 0 28px;
+            position: relative;
+        }
+        .era-header h2 {
+            font-size: 24px;
+            color: #e8d9b0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+        .era-header .era-range {
+            display: block;
+            font-size: 12px;
+            color: #8b7355;
+            font-style: italic;
+            margin-top: 4px;
+        }
+        .era-header::after {
+            content: '';
+            display: block;
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #8b7355, transparent);
+            margin: 16px auto 0;
+        }
+
+        /* ── Time Gap ──────────────────────────── */
+        .time-gap {
+            text-align: center;
+            padding: 12px 0;
+            color: #5a4a36;
+            font-size: 11px;
+            letter-spacing: 3px;
+            font-style: italic;
+        }
+
+        /* ── Event Cards ───────────────────────── */
+        .timeline-event {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            position: relative;
+        }
+        .timeline-event.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-event.highlighted .event-card {
+            border-color: #c9a435;
+            box-shadow: 0 0 20px rgba(201, 164, 53, 0.15);
+        }
+
+        .event-date {
+            width: 100px;
+            text-align: right;
+            padding-right: 14px;
+            flex-shrink: 0;
+            padding-top: 10px;
+        }
+        .era-tag {
+            display: block;
+            font-size: 9px;
+            color: #8b7355;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .year-num {
+            font-size: 16px;
+            color: #e8d9b0;
+            font-weight: bold;
+        }
+
+        .event-dot {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 2;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        .event-card {
+            flex: 1;
+            margin-left: 14px;
+            background: rgba(44, 36, 24, 0.92);
+            border: 1px solid #3d3225;
+            border-radius: 6px;
+            padding: 14px 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            cursor: default;
+        }
+        .event-card:hover {
+            border-color: #5a4a36;
+        }
+
+        .event-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .category-badge {
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            color: rgba(255,255,255,0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            flex-shrink: 0;
+        }
+        .event-name {
+            font-size: 15px;
+            color: #e8d9b0;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+
+        .event-desc {
+            font-size: 13px;
+            line-height: 1.55;
+            color: #b8a88a;
+            margin: 6px 0;
+        }
+        .event-desc.truncated { cursor: pointer; }
+        .desc-full { display: none; }
+        .desc-ellipsis { color: #8b7355; }
+        .read-toggle {
+            color: #c9a435;
+            cursor: pointer;
+            font-size: 12px;
+            border: none;
+            background: none;
+            font-family: inherit;
+            padding: 0;
+            margin-left: 4px;
+        }
+        .read-toggle:hover { color: #e8d9b0; }
+
+        .event-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .event-characters {
+            font-size: 11px;
+            color: #8b7355;
+            font-style: italic;
+        }
+        .event-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .event-actions button {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            border: 1px solid #5a4a36;
+            background: transparent;
+            color: #a89070;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .event-actions button:hover {
+            color: #e8d9b0;
+            border-color: #8b7355;
+        }
+
+        /* ── Links Panel ───────────────────────── */
+        .links-panel {
+            display: none;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #3d3225;
+        }
+        .links-panel.open { display: block; }
+        .links-title {
+            font-size: 11px;
+            color: #8b7355;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        .link-arrow { font-size: 12px; }
+        .link-type {
+            font-size: 10px;
+            color: #8b7355;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            min-width: 65px;
+        }
+        .link-target {
+            color: #c9a435;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .link-target:hover { color: #e8d9b0; }
+        .link-era {
+            font-size: 10px;
+            color: #5a4a36;
+            margin-left: 4px;
+        }
+
+        /* Link type colors */
+        .link-item[data-type="cause"] .link-arrow { color: #b85c38; }
+        .link-item[data-type="sequel"] .link-arrow { color: #6a9f5b; }
+        .link-item[data-type="parallel"] .link-arrow { color: #c9a435; }
+        .link-item[data-type="legacy"] .link-arrow { color: #9b59b6; }
+        .link-item[data-type="location"] .link-arrow { color: #5b8fb9; }
+
+        /* ── Keyboard hint ─────────────────────── */
+        #keyboard-hint {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #5a4a36;
+            opacity: 1;
+            transition: opacity 2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #keyboard-hint.hidden { opacity: 0; }
+
+        /* ── Responsive ────────────────────────── */
+        @media (max-width: 500px) {
+            .nav-title { display: none; }
+        }
+        @media (max-width: 768px) {
+            #controls { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+            #filter-panel { display: none; }
+            #filter-panel.open { display: flex; width: 100%; }
+            #filter-toggle { display: block; }
+
+            .timeline-line { left: 18px; }
+            .event-date {
+                width: auto;
+                text-align: left;
+                padding-left: 38px;
+                padding-right: 0;
+                padding-top: 0;
+                margin-bottom: 2px;
+            }
+            .era-tag, .year-num { display: inline; font-size: 11px; }
+            .era-tag { margin-right: 4px; }
+            .year-num { font-size: 13px; }
+
+            .timeline-event { flex-wrap: wrap; }
+            .event-dot {
+                position: absolute;
+                left: 6px;
+                top: 2px;
+                width: 22px; height: 22px;
+                font-size: 10px;
+            }
+            .event-card {
+                margin-left: 0;
+                width: 100%;
+                padding: 10px 12px;
+            }
+            #timeline-container { padding: 100px 10px 50px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav id="nav-bar">
+        <a href="index.html" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
+        <span class="nav-title">Middle-earth</span>
+        <a href="timeline.html" class="nav-link active">&#x23f3;&#xfe0e; Timeline</a>
+    </nav>
+
+    <div id="controls">
+        <div id="play-controls">
+            <button id="play-btn" title="Play / Pause (Space)">&#9654;</button>
+            <button id="prev-btn" title="Previous (&larr;)">&#9664;&#9664;</button>
+            <button id="next-btn" title="Next (&rarr;)">&#9654;&#9654;</button>
+            <select id="speed-select" title="Playback speed">
+                <option value="4000">Slow</option>
+                <option value="2000" selected>Normal</option>
+                <option value="800">Fast</option>
+            </select>
+        </div>
+        <div id="scrubber-container">
+            <input type="range" id="scrubber" min="0" max="100" value="0">
+            <span id="scrubber-label"></span>
+        </div>
+        <button id="filter-toggle">Filter &darr;</button>
+        <div id="filter-panel"></div>
+    </div>
+
+    <div id="timeline-container">
+        <div class="timeline-line"></div>
+        <div id="timeline-content"></div>
+    </div>
+
+    <div id="keyboard-hint">Space: play &middot; &larr;&rarr;: navigate &middot; Esc: stop</div>
+
+    <script src="data.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // ── Helpers ──────────────────────────────────
+        const ERA_LABELS = { FA: 'First Age', SA: 'Second Age', TA: 'Third Age' };
+        const ERA_ORDER = ['FA', 'SA', 'TA'];
+        const ERA_RANGES = {
+            FA: 'Years of the Sun \u2014 FA 590',
+            SA: 'SA 1 \u2014 SA 3441',
+            TA: 'TA 1 \u2014 TA 3021'
+        };
+        const LINK_LABELS = {
+            cause: 'Leads to',
+            sequel: 'Follows from',
+            parallel: 'Simultaneous',
+            legacy: 'Legacy',
+            location: 'Same place'
+        };
+        const LINK_ARROWS = {
+            cause: '\u2192',
+            sequel: '\u2190',
+            parallel: '\u21c4',
+            legacy: '\u21dd',
+            location: '\u25cb'
+        };
+
+        function formatDate(evt) {
+            return ERA_LABELS[evt.era] + ' ' + evt.year;
+        }
+        function formatShortDate(evt) {
+            return evt.era + ' ' + evt.year;
+        }
+        function truncate(text, max) {
+            if (text.length <= max) return { html: text, truncated: false };
+            const cut = text.substring(0, max).replace(/\s+\S*$/, '');
+            return {
+                html: `<span class="desc-short">${cut}<span class="desc-ellipsis">\u2026</span></span><span class="desc-full">${text}</span>`,
+                truncated: true
+            };
+        }
+
+        // ── Sort events ─────────────────────────────
+        const sortedEvents = [...events].sort((a, b) => a.sortKey - b.sortKey);
+        let filteredEvents = sortedEvents.slice();
+
+        // Build event lookup by id
+        const eventById = {};
+        events.forEach(e => { if (e.id) eventById[e.id] = e; });
+
+        // Build links lookup
+        const linksFrom = {};
+        const linksTo = {};
+        if (typeof EVENT_LINKS !== 'undefined') {
+            EVENT_LINKS.forEach(link => {
+                if (!linksFrom[link.from]) linksFrom[link.from] = [];
+                linksFrom[link.from].push(link);
+                if (!linksTo[link.to]) linksTo[link.to] = [];
+                linksTo[link.to].push(link);
+            });
+        }
+
+        // ── Render Timeline ─────────────────────────
+        function renderTimeline() {
+            const container = document.getElementById('timeline-content');
+            container.innerHTML = '';
+            let lastEra = null;
+            let lastYear = null;
+
+            filteredEvents.forEach((evt, idx) => {
+                // Era header
+                if (evt.era !== lastEra) {
+                    const header = document.createElement('div');
+                    header.className = 'era-header';
+                    header.innerHTML = `<h2>${ERA_LABELS[evt.era]}</h2><span class="era-range">${ERA_RANGES[evt.era]}</span>`;
+                    container.appendChild(header);
+                    lastEra = evt.era;
+                    lastYear = null;
+                }
+
+                // Time gap indicator
+                if (lastYear !== null && evt.era === lastEra) {
+                    const gap = Math.floor(evt.sortKey) - Math.floor(lastYear);
+                    if (gap > 100) {
+                        const gapEl = document.createElement('div');
+                        gapEl.className = 'time-gap';
+                        gapEl.textContent = `\u007e \u007e \u007e ${gap.toLocaleString()} years \u007e \u007e \u007e`;
+                        container.appendChild(gapEl);
+                    }
+                }
+                lastYear = evt.sortKey;
+
+                // Event card
+                const el = document.createElement('div');
+                el.className = 'timeline-event';
+                el.dataset.id = evt.id || '';
+                el.dataset.sortkey = evt.sortKey;
+                el.dataset.category = evt.category;
+                el.dataset.index = idx;
+
+                const color = COLORS[evt.category];
+                const icon = CATEGORY_ICONS[evt.category];
+                const desc = truncate(evt.description, 220);
+
+                // Count links
+                const outLinks = (linksFrom[evt.id] || []);
+                const inLinks = (linksTo[evt.id] || []);
+                const linkCount = outLinks.length + inLinks.length;
+
+                el.innerHTML = `
+                    <div class="event-date">
+                        <span class="era-tag">${evt.era}</span>
+                        <span class="year-num">${evt.year}</span>
+                    </div>
+                    <div class="event-dot" style="background: radial-gradient(circle at 35% 35%, ${color}, ${darken(color, 50)});">${icon}</div>
+                    <div class="event-card">
+                        <div class="event-card-header">
+                            <span class="category-badge" style="background: ${color};">${CATEGORY_LABELS[evt.category]}</span>
+                            <span class="event-name">${evt.name}</span>
+                        </div>
+                        <div class="event-desc${desc.truncated ? ' truncated' : ''}">${desc.html}</div>
+                        <div class="event-footer">
+                            <span class="event-characters">${evt.characters}</span>
+                            <div class="event-actions">
+                                <button class="view-map-btn" data-px="${evt.px}" data-py="${evt.py}" data-name="${evt.name}">View on Map</button>
+                                ${linkCount > 0 ? `<button class="show-links-btn" data-id="${evt.id}">Related (${linkCount})</button>` : ''}
+                            </div>
+                        </div>
+                        ${linkCount > 0 ? renderLinksPanel(evt) : ''}
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+
+            // Attach event listeners
+            attachCardListeners();
+            observeVisibility();
+        }
+
+        function renderLinksPanel(evt) {
+            const outLinks = linksFrom[evt.id] || [];
+            const inLinks = linksTo[evt.id] || [];
+            let html = '<div class="links-panel"><div class="links-title">Related Events</div>';
+
+            outLinks.forEach(link => {
+                const target = eventById[link.to];
+                if (!target) return;
+                html += `<div class="link-item" data-type="${link.type}">
+                    <span class="link-arrow">${LINK_ARROWS[link.type]}</span>
+                    <span class="link-type">${LINK_LABELS[link.type]}</span>
+                    <span class="link-target" data-id="${link.to}">${target.name} <span class="link-era">${formatShortDate(target)}</span></span>
+                </div>`;
+            });
+            inLinks.forEach(link => {
+                const source = eventById[link.from];
+                if (!source) return;
+                const reverseLabel = link.type === 'cause' ? 'Caused by'
+                    : link.type === 'sequel' ? 'Leads to'
+                    : LINK_LABELS[link.type];
+                html += `<div class="link-item" data-type="${link.type}">
+                    <span class="link-arrow">${LINK_ARROWS[link.type]}</span>
+                    <span class="link-type">${reverseLabel}</span>
+                    <span class="link-target" data-id="${link.from}">${source.name} <span class="link-era">${formatShortDate(source)}</span></span>
+                </div>`;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        function attachCardListeners() {
+            // Read more / less
+            document.querySelectorAll('.event-desc.truncated').forEach(el => {
+                el.addEventListener('click', () => {
+                    const short = el.querySelector('.desc-short');
+                    const full = el.querySelector('.desc-full');
+                    if (full.style.display === 'inline') {
+                        full.style.display = 'none';
+                        short.style.display = 'inline';
+                    } else {
+                        full.style.display = 'inline';
+                        short.style.display = 'none';
+                    }
+                });
+            });
+
+            // View on Map
+            document.querySelectorAll('.view-map-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const px = btn.dataset.px;
+                    const py = btn.dataset.py;
+                    const name = btn.dataset.name;
+                    window.location.href = `index.html?fly=${px},${py}&event=${encodeURIComponent(name)}`;
+                });
+            });
+
+            // Show links
+            document.querySelectorAll('.show-links-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const card = btn.closest('.event-card');
+                    const panel = card.querySelector('.links-panel');
+                    if (panel) panel.classList.toggle('open');
+                });
+            });
+
+            // Link targets (scroll to event)
+            document.querySelectorAll('.link-target').forEach(el => {
+                el.addEventListener('click', () => {
+                    const targetId = el.dataset.id;
+                    scrollToEvent(targetId);
+                });
+            });
+        }
+
+        function scrollToEvent(id) {
+            const el = document.querySelector(`.timeline-event[data-id="${id}"]`);
+            if (!el) return;
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('visible');
+            highlightEvent(el);
+        }
+
+        function highlightEvent(el) {
+            document.querySelectorAll('.timeline-event.highlighted').forEach(e => e.classList.remove('highlighted'));
+            el.classList.add('highlighted');
+            setTimeout(() => el.classList.remove('highlighted'), 3000);
+        }
+
+        // ── IntersectionObserver ─────────────────────
+        let observer;
+        function observeVisibility() {
+            if (observer) observer.disconnect();
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+            document.querySelectorAll('.timeline-event').forEach(el => observer.observe(el));
+        }
+
+        // ── Play Mode ───────────────────────────────
+        const STOPPED = 0, PLAYING = 1, PAUSED = 2;
+        let playState = STOPPED;
+        let currentIndex = 0;
+        let playTimer = null;
+        let playSpeed = 2000;
+
+        const playBtn = document.getElementById('play-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const speedSelect = document.getElementById('speed-select');
+        const scrubber = document.getElementById('scrubber');
+        const scrubberLabel = document.getElementById('scrubber-label');
+
+        function play() {
+            playState = PLAYING;
+            updatePlayBtn();
+            advanceTo(currentIndex);
+        }
+        function pause() {
+            playState = PAUSED;
+            clearTimeout(playTimer);
+            updatePlayBtn();
+        }
+        function stop() {
+            playState = STOPPED;
+            clearTimeout(playTimer);
+            currentIndex = 0;
+            updatePlayBtn();
+            document.querySelectorAll('.timeline-event.highlighted').forEach(e => e.classList.remove('highlighted'));
+        }
+
+        function advanceTo(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= filteredEvents.length) { stop(); return; }
+            currentIndex = idx;
+
+            const evt = filteredEvents[idx];
+            const el = document.querySelector(`.timeline-event[data-id="${evt.id}"]`);
+            if (!el) {
+                if (playState === PLAYING) playTimer = setTimeout(() => advanceTo(idx + 1), 100);
+                return;
+            }
+
+            el.classList.add('visible');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => highlightEvent(el), 300);
+
+            // Update scrubber
+            scrubber.value = Math.round((idx / Math.max(1, filteredEvents.length - 1)) * 100);
+            scrubberLabel.textContent = formatShortDate(evt);
+
+            if (playState === PLAYING) {
+                const next = filteredEvents[idx + 1];
+                const eraChange = next && next.era !== evt.era;
+                playTimer = setTimeout(() => advanceTo(idx + 1), eraChange ? playSpeed * 2 : playSpeed);
+            }
+        }
+
+        function updatePlayBtn() {
+            playBtn.innerHTML = playState === PLAYING ? '&#9646;&#9646;' : '&#9654;';
+            playBtn.title = playState === PLAYING ? 'Pause (Space)' : 'Play (Space)';
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (playState === PLAYING) pause();
+            else play();
+        });
+        prevBtn.addEventListener('click', () => {
+            if (playState === PLAYING) pause();
+            advanceTo(currentIndex - 1);
+        });
+        nextBtn.addEventListener('click', () => {
+            if (playState === PLAYING) pause();
+            advanceTo(currentIndex + 1);
+        });
+        speedSelect.addEventListener('change', () => {
+            playSpeed = parseInt(speedSelect.value);
+        });
+        scrubber.addEventListener('input', () => {
+            const pct = parseInt(scrubber.value);
+            const idx = Math.round((pct / 100) * (filteredEvents.length - 1));
+            if (playState === PLAYING) pause();
+            advanceTo(idx);
+        });
+
+        // ── Category Filters ────────────────────────
+        function buildFilters() {
+            const panel = document.getElementById('filter-panel');
+            const order = ['silmarillion', 'hobbit', 'fellowship', 'towers', 'king', 'appendix'];
+            order.forEach(cat => {
+                const label = document.createElement('label');
+                label.className = 'filter-label';
+                label.innerHTML = `<input type="checkbox" class="filter-checkbox" data-category="${cat}" checked>
+                    <span class="filter-dot" style="background: ${COLORS[cat]};"></span>
+                    <span class="filter-name">${CATEGORY_LABELS[cat]}</span>`;
+                label.querySelector('input').addEventListener('change', applyFilters);
+                panel.appendChild(label);
+            });
+        }
+
+        function applyFilters() {
+            const checked = new Set();
+            document.querySelectorAll('.filter-checkbox:checked').forEach(cb => checked.add(cb.dataset.category));
+            filteredEvents = sortedEvents.filter(e => checked.has(e.category));
+
+            document.querySelectorAll('.timeline-event').forEach(el => {
+                if (checked.has(el.dataset.category)) {
+                    el.style.display = '';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+
+            // Update era headers and time gaps visibility
+            document.querySelectorAll('.era-header, .time-gap').forEach(el => {
+                el.style.display = '';
+            });
+
+            if (playState !== STOPPED) { stop(); }
+        }
+
+        // Filter toggle for mobile
+        document.getElementById('filter-toggle').addEventListener('click', () => {
+            document.getElementById('filter-panel').classList.toggle('open');
+        });
+
+        // ── Keyboard Controls ───────────────────────
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            switch (e.key) {
+                case ' ':
+                    e.preventDefault();
+                    playState === PLAYING ? pause() : play();
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (playState === PLAYING) pause();
+                    advanceTo(currentIndex + 1);
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (playState === PLAYING) pause();
+                    advanceTo(Math.max(0, currentIndex - 1));
+                    break;
+                case 'Escape':
+                    stop();
+                    break;
+            }
+        });
+
+        // ── Darken helper ───────────────────────────
+        function darken(hex, amount) {
+            hex = hex.replace('#', '');
+            const r = Math.max(0, parseInt(hex.substring(0, 2), 16) - amount);
+            const g = Math.max(0, parseInt(hex.substring(2, 4), 16) - amount);
+            const b = Math.max(0, parseInt(hex.substring(4, 6), 16) - amount);
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // ── Init ────────────────────────────────────
+        buildFilters();
+        renderTimeline();
+
+        // Auto-hide keyboard hint
+        setTimeout(() => {
+            document.getElementById('keyboard-hint').classList.add('hidden');
+        }, 6000);
+
+        // Init scrubber label
+        if (filteredEvents.length > 0) {
+            scrubberLabel.textContent = formatShortDate(filteredEvents[0]);
+        }
+    })();
+    </script>
+</body>
+</html>
