@@ -429,6 +429,146 @@
         #toast.hidden {
             opacity: 0;
         }
+
+        /* Splash overlay */
+        #splash-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease;
+        }
+        #splash-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .splash-card {
+            background: #2c2418;
+            border: 2px solid #8b7355;
+            border-radius: 10px;
+            padding: 32px 28px 24px;
+            max-width: 480px;
+            width: 90%;
+            color: #d4c5a9;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .splash-card h2 {
+            color: #e8d9b0;
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .splash-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .splash-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 16px;
+        }
+        .splash-card ul li {
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 3px 0 3px 16px;
+            position: relative;
+        }
+        .splash-card ul li::before {
+            content: '\00b7';
+            position: absolute;
+            left: 2px;
+            color: #8b7355;
+            font-weight: bold;
+        }
+        .splash-card .splash-disclaimer {
+            font-size: 11px;
+            color: #8b7355;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .splash-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #c9a435;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .splash-btn:hover {
+            background: #d4b445;
+        }
+
+        /* Info button */
+        #info-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 16px;
+            z-index: 1000;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(44, 36, 24, 0.9);
+            border: 1px solid #8b7355;
+            color: #8b7355;
+            font-size: 14px;
+            font-family: Georgia, serif;
+            font-style: italic;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        #info-btn:hover {
+            color: #e8d9b0;
+            border-color: #d4c5a9;
+        }
+
+        /* Copyright disclaimer */
+        #map-copyright {
+            position: fixed;
+            bottom: 8px;
+            right: 16px;
+            z-index: 1000;
+            font-size: 10px;
+            color: #8b7355;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Distance measure tool */
+        .measure-active #map { cursor: crosshair; }
+
+        #measure-display {
+            position: absolute;
+            bottom: 60px;
+            left: 16px;
+            z-index: 1000;
+            background: rgba(44, 36, 24, 0.95);
+            border: 2px solid #8b7355;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #d4c5a9;
+            font-size: 13px;
+            font-family: monospace;
+            pointer-events: none;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -446,7 +586,26 @@
 
     <button id="collapse-btn"><div class="menu-icon"><span></span><span></span><span></span></div> Legend</button>
 
+    <div id="measure-display"></div>
     <div id="toast">Scroll to zoom &middot; Drag to pan &middot; Click markers for details</div>
+
+    <div id="splash-overlay" class="hidden">
+        <div class="splash-card">
+            <h2>Welcome to Middle-earth</h2>
+            <p>An interactive map of Tolkien&#8217;s Middle-earth, with events from across the legendarium plotted as markers.</p>
+            <ul>
+                <li>Click markers to read about key events</li>
+                <li>Use the Legend panel to filter by book or toggle journey paths</li>
+                <li>Enable &#8220;Measure distance&#8221; in the Legend to measure between two points</li>
+                <li>Visit the <a href="timeline.html" style="color:#c9a435;">Timeline page</a> for a chronological view</li>
+            </ul>
+            <p class="splash-disclaimer">The base map image is sourced from the internet and is used here for fan/educational purposes. We do not claim copyright over the map artwork.</p>
+            <button class="splash-btn" id="splash-enter">Enter Middle-earth</button>
+        </div>
+    </div>
+
+    <button id="info-btn" title="About this map">i</button>
+    <div id="map-copyright">Map artwork is not owned by this project and is used for fan/educational purposes only.</div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="data.js"></script>
@@ -701,6 +860,77 @@
         });
         legendEl.appendChild(coordToggleRow);
 
+        // ── Distance Measure Tool ───────────────────
+        const PIXELS_PER_MILE = 4.05;
+        const MILES_PER_LEAGUE = 3;
+
+        let measureEnabled = false;
+        let measurePoints = [];
+        let measureLayers = [];
+        const measureDisplay = document.getElementById('measure-display');
+
+        const measureToggleRow = document.createElement('div');
+        measureToggleRow.className = 'coord-toggle-row';
+        measureToggleRow.innerHTML = `
+            <div class="coord-toggle-switch"></div>
+            <span class="coord-toggle-label">Measure distance</span>
+        `;
+        measureToggleRow.addEventListener('click', () => {
+            measureEnabled = !measureEnabled;
+            measureToggleRow.classList.toggle('active', measureEnabled);
+            document.body.classList.toggle('measure-active', measureEnabled);
+            if (!measureEnabled) clearMeasure();
+        });
+        legendEl.appendChild(measureToggleRow);
+
+        function clearMeasure() {
+            measurePoints = [];
+            measureLayers.forEach(l => map.removeLayer(l));
+            measureLayers = [];
+            measureDisplay.style.display = 'none';
+        }
+
+        map.on('click', function(e) {
+            if (!measureEnabled) return;
+
+            // Third click — clear and start fresh
+            if (measurePoints.length >= 2) clearMeasure();
+
+            measurePoints.push(e.latlng);
+
+            // Place circle marker at clicked point
+            const circle = L.circleMarker(e.latlng, {
+                radius: 5,
+                color: '#c9a435',
+                fillColor: '#c9a435',
+                fillOpacity: 0.8,
+                weight: 2
+            }).addTo(map);
+            measureLayers.push(circle);
+
+            // Second click — draw line and show distance
+            if (measurePoints.length === 2) {
+                const line = L.polyline(measurePoints, {
+                    color: '#c9a435',
+                    weight: 2,
+                    dashArray: '8 6',
+                    opacity: 0.8
+                }).addTo(map);
+                measureLayers.push(line);
+
+                const pxA = measurePoints[0];
+                const pxB = measurePoints[1];
+                const dx = pxA.lng - pxB.lng;
+                const dy = pxA.lat - pxB.lat;
+                const pxDist = Math.sqrt(dx * dx + dy * dy);
+                const miles = pxDist / PIXELS_PER_MILE;
+                const leagues = miles / MILES_PER_LEAGUE;
+
+                measureDisplay.textContent = `A \u2192 B: ${Math.round(miles)} miles (${leagues.toFixed(1)} leagues)`;
+                measureDisplay.style.display = 'block';
+            }
+        });
+
         // ── Legend Collapse ────────────────────
         const legend = document.getElementById('legend');
         const collapseBtn = document.getElementById('collapse-btn');
@@ -791,6 +1021,36 @@
                     }
                 }, 500);
             }
+        })();
+
+        // ── Splash Screen ────────────────────────────────
+        (function() {
+            const overlay = document.getElementById('splash-overlay');
+            const enterBtn = document.getElementById('splash-enter');
+            const infoBtn = document.getElementById('info-btn');
+
+            function showSplash() {
+                overlay.style.display = 'flex';
+                // Force reflow so transition triggers
+                overlay.offsetHeight;
+                overlay.classList.remove('hidden');
+            }
+
+            function hideSplash() {
+                overlay.classList.add('hidden');
+                localStorage.setItem('me-map-welcomed', '1');
+                overlay.addEventListener('transitionend', function handler() {
+                    overlay.style.display = 'none';
+                    overlay.removeEventListener('transitionend', handler);
+                });
+            }
+
+            if (!localStorage.getItem('me-map-welcomed')) {
+                showSplash();
+            }
+
+            enterBtn.addEventListener('click', hideSplash);
+            infoBtn.addEventListener('click', showSplash);
         })();
     </script>
 </body>
