@@ -305,6 +305,15 @@ const events = [
         characters: "Bilbo, Frodo, Sam, Merry, Pippin, the Thain, the Mayor"
     },
     {
+        id: "michel-delving",
+        name: "Michel Delving \u2014 Chief Town of the Shire",
+        category: 'appendix',
+        era: "TA", year: 1601, sortKey: 5632.1,
+        px: 2648, py: 1144,
+        description: "Michel Delving on the White Downs was the chief town of the Shire and seat of the Mayor, the only real official in the land. It was the closest thing the hobbits had to a capital. The Mathom-house, the Shire's museum of curiosities, was located here \u2014 Bilbo donated the mithril coat he received from Thorin to its collection before later reclaiming it. The Lockholes, converted smials used as prisons by Sharkey's ruffians during the occupation, were also in Michel Delving.",
+        characters: "Will Whitfoot (the Mayor), Lobelia Sackville-Baggins"
+    },
+    {
         id: "fornost-fall",
         name: "Fornost \u2014 Fall of the North-kingdom",
         category: 'appendix',
