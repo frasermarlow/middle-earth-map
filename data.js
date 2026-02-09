@@ -188,6 +188,15 @@ const events = [
         characters: "The Lossoth, Morgoth"
     },
     {
+        id: "fanuidhol",
+        name: "Fanuidhol \u2014 Cloudyhead",
+        category: 'appendix',
+        era: "FA", year: 1, sortKey: 1.04,
+        px: 4023, py: 1430,
+        description: "Fanuidhol, Cloudyhead (Bundushath\u00fbr in Khuzdul), is the easternmost of the three peaks above Moria, overlooking the Dimrill Dale and the Mirrormere from the south. Together with Caradhras to the north and Celebdil to the west, these three mountains form the crown above the ancient Dwarven kingdom of Khazad-d\u00fbm.",
+        characters: ""
+    },
+    {
         id: "tol-fuin",
         name: "Tol Fuin \u2014 Remnant of Dorthonion",
         category: 'appendix',
@@ -706,11 +715,11 @@ const events = [
     },
     {
         id: "caradhras",
-        name: "Caradhras, Celebdil & Fanuidhol \u2014 The Redhorn Pass",
+        name: "Caradhras \u2014 The Redhorn Pass",
         category: 'fellowship',
         era: "TA", year: 3019, sortKey: 7050.0112,
         px: 3973, py: 1447,
-        description: "The three peaks above Moria\u2014Caradhras (Redhorn), Celebdil (Silvertine), and Fanuidhol (Cloudyhead)\u2014guard the high pass the Fellowship attempts before being driven back by blizzard and malice. Their failure on the Redhorn Pass forces the fateful decision to go under the mountains through Moria.",
+        description: "Caradhras, the Redhorn (Barazinbar in Khuzdul), is the northernmost and tallest of the three peaks above Moria. The Fellowship attempts to cross the Redhorn Pass over its shoulder but is driven back by blizzard and malice \u2014 whether from the cruel mountain itself or from Sauron. Their failure on the pass forces the fateful decision to go under the mountains through Moria.",
         characters: "Gandalf, Aragorn, the Fellowship"
     },
     {
@@ -736,7 +745,7 @@ const events = [
         name: "Dimrill Dale \u2014 The Mirrormere",
         category: 'fellowship',
         era: "TA", year: 3019, sortKey: 7050.0115,
-        px: 4026, py: 1516,
+        px: 4058, py: 1555,
         description: "Emerging grief-stricken from Moria after Gandalf's fall, the Fellowship pauses at the Dimrill Dale. Gimli looks into the Mirrormere (Kheled-z\u00e2ram), the sacred lake where Durin the Deathless first saw a crown of stars reflected about his head, and the sight strengthens his resolve.",
         characters: "Aragorn, Legolas, Gimli, Frodo, Sam, Merry, Pippin, Boromir"
     },
@@ -778,6 +787,15 @@ const events = [
     },
 
     // ── The Two Towers ──
+    {
+        id: "celebdil",
+        name: "Celebdil \u2014 Durin\u2019s Tower",
+        category: 'towers',
+        era: "TA", year: 3019, sortKey: 7050.0125,
+        px: 3917, py: 1457,
+        description: "Celebdil, the Silvertine (Zirakzigil in Khuzdul), is the westernmost of the three peaks above Moria. At its summit stands Durin\u2019s Tower, carved in the living rock and reached by the Endless Stair spiralling up from the deepest foundations of Khazad-d\u00fbm. After falling from the Bridge, Gandalf pursues the Balrog up the Endless Stair to this peak. For two days they battle on the mountainside until Gandalf throws down the Balrog, shattering the tower and the mountainside where he fell. Gandalf himself passes away on the peak before being sent back as the White.",
+        characters: "Gandalf, Durin\u2019s Bane (the Balrog)"
+    },
     {
         id: "eaves-fangorn",
         name: "Eaves of Fangorn \u2014 Escape from the Uruk-hai",

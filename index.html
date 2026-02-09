@@ -328,6 +328,36 @@
             margin-bottom: 6px;
         }
 
+        .legend-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .legend-section-header .legend-journeys-title {
+            margin-bottom: 0;
+        }
+
+        .legend-section-toggle {
+            font-size: 11px;
+            color: #8b7355;
+            cursor: pointer;
+            user-select: none;
+            background: none;
+            border: 1px solid #5a4a36;
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-family: inherit;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+        }
+
+        .legend-section-toggle:hover {
+            color: #e8d9b0;
+            border-color: #8b7355;
+            background: rgba(90, 74, 54, 0.4);
+        }
+
         .journey-toggle {
             display: flex;
             align-items: center;
@@ -759,15 +789,24 @@
         const legendEl = document.getElementById('legend-content');
 
         // ── Journey Toggles (top of legend) ───────────
+        const journeyHeader = document.createElement('div');
+        journeyHeader.className = 'legend-section-header';
         const journeyTitle = document.createElement('div');
         journeyTitle.className = 'legend-journeys-title';
         journeyTitle.textContent = 'Journeys';
-        legendEl.appendChild(journeyTitle);
+        const journeyClearBtn = document.createElement('button');
+        journeyClearBtn.className = 'legend-section-toggle';
+        journeyClearBtn.textContent = 'show all';
+        journeyHeader.appendChild(journeyTitle);
+        journeyHeader.appendChild(journeyClearBtn);
+        legendEl.appendChild(journeyHeader);
 
+        const journeyToggles = [];
         Object.keys(JOURNEYS).forEach(key => {
             const journey = JOURNEYS[key];
             const toggle = document.createElement('div');
             toggle.className = 'journey-toggle disabled';
+            toggle.dataset.key = key;
             toggle.innerHTML = `
                 <div class="journey-line" style="border-color: ${journey.color};"></div>
                 <span class="journey-label">${journey.label}</span>
@@ -779,8 +818,30 @@
                 } else {
                     map.addLayer(journeyLayers[key]);
                 }
+                updateJourneyClearBtn();
             });
+            journeyToggles.push(toggle);
             legendEl.appendChild(toggle);
+        });
+
+        function updateJourneyClearBtn() {
+            const anyEnabled = journeyToggles.some(t => !t.classList.contains('disabled'));
+            journeyClearBtn.textContent = anyEnabled ? 'clear all' : 'show all';
+        }
+
+        journeyClearBtn.addEventListener('click', () => {
+            const anyEnabled = journeyToggles.some(t => !t.classList.contains('disabled'));
+            journeyToggles.forEach(toggle => {
+                const key = toggle.dataset.key;
+                if (anyEnabled) {
+                    toggle.classList.add('disabled');
+                    map.removeLayer(journeyLayers[key]);
+                } else {
+                    toggle.classList.remove('disabled');
+                    map.addLayer(journeyLayers[key]);
+                }
+            });
+            updateJourneyClearBtn();
         });
 
         const divider = document.createElement('hr');
@@ -788,6 +849,19 @@
         legendEl.appendChild(divider);
 
         // ── Book Categories ────────────────────────────
+        const eventsHeader = document.createElement('div');
+        eventsHeader.className = 'legend-section-header';
+        const eventsTitle = document.createElement('div');
+        eventsTitle.className = 'legend-journeys-title';
+        eventsTitle.textContent = 'Events';
+        const eventsClearBtn = document.createElement('button');
+        eventsClearBtn.className = 'legend-section-toggle';
+        eventsClearBtn.textContent = 'clear all';
+        eventsHeader.appendChild(eventsTitle);
+        eventsHeader.appendChild(eventsClearBtn);
+        legendEl.appendChild(eventsHeader);
+
+        const categoryDivs = [];
         Object.keys(CATEGORY_LABELS).forEach(cat => {
             const catEvents = events.filter(e => e.category === cat);
 
@@ -817,6 +891,7 @@
                     map.addLayer(categoryLayers[cat]);
                     toggle.innerHTML = '&#9660;';
                 }
+                updateEventsClearBtn();
             });
 
             // Click legend item to fly to marker
@@ -836,7 +911,31 @@
                 });
             });
 
+            categoryDivs.push(div);
             legendEl.appendChild(div);
+        });
+
+        function updateEventsClearBtn() {
+            const anyEnabled = categoryDivs.some(d => !d.classList.contains('disabled'));
+            eventsClearBtn.textContent = anyEnabled ? 'clear all' : 'show all';
+        }
+
+        eventsClearBtn.addEventListener('click', () => {
+            const anyEnabled = categoryDivs.some(d => !d.classList.contains('disabled'));
+            categoryDivs.forEach(div => {
+                const cat = div.dataset.category;
+                const toggle = div.querySelector('.legend-toggle');
+                if (anyEnabled) {
+                    div.classList.add('disabled');
+                    map.removeLayer(categoryLayers[cat]);
+                    toggle.innerHTML = '&#9654;';
+                } else {
+                    div.classList.remove('disabled');
+                    map.addLayer(categoryLayers[cat]);
+                    toggle.innerHTML = '&#9660;';
+                }
+            });
+            updateEventsClearBtn();
         });
 
         // ── Coordinate Toggle (bottom of legend) ──────
