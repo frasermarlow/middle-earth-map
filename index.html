@@ -680,7 +680,7 @@
                         <div class="popup-description">${evt.description}</div>
                         <div class="popup-characters"><strong>Key figures:</strong> ${evt.characters}</div>
                     </div>
-                `, { maxWidth: 300 });
+                `, { maxWidth: 300, autoPanPaddingTopLeft: L.point(10, 54) });
 
             marker._eventData = evt;
             categoryLayers[evt.category].addLayer(marker);

@@ -42,6 +42,15 @@ const CATEGORY_ICONS = {
 const events = [
     // ── The Silmarillion ──
     {
+        id: "cuivienen",
+        name: "Cuivi\u00e9nen \u2014 Awakening of the Elves",
+        category: 'silmarillion',
+        era: "FA", year: 1, sortKey: 0.5,
+        px: 7091, py: 1327,
+        description: "Cuivi\u00e9nen, the Water of Awakening, was a bay on the shores of the great inland Sea of Helcar in the far east of Middle-earth. Here the first Elves awoke under starlight, long before the rising of the Sun and Moon. The Valar discovered them and summoned them westward on the Great Journey to Valinor \u2014 though some refused the call and remained, becoming the Avari, the Unwilling.",
+        characters: "The first Elves, Orom\u00eb"
+    },
+    {
         id: "khazad-dum-awakening",
         name: "Khazad-d\u00fbm \u2014 The Awakening of Durin",
         category: 'silmarillion',
@@ -58,6 +67,15 @@ const events = [
         px: 2192, py: 824,
         description: "The Blue Mountains housed the great Dwarven cities of Nogrod and Belegost in the First Age. The Dwarves of Nogrod crafted the Nauglam\u00edr and later sacked Doriath to reclaim it. After the ruin of Beleriand, many Dwarves migrated east to Khazad-d\u00fbm.",
         characters: "Durin's Folk, the Firebeards, the Broadbeams"
+    },
+    {
+        id: "forlindon",
+        name: "Forlindon \u2014 Northern Lindon",
+        category: 'silmarillion',
+        era: "SA", year: 1, sortKey: 590.5,
+        px: 1872, py: 1008,
+        description: "Forlindon, or North Lindon, is the land north of the Gulf of Lune and west of the Blue Mountains. A surviving remnant of ancient Beleriand after the War of Wrath drowned most of that continent, it was part of Gil-galad\u2019s realm in the Second Age. By the Third Age the region was sparsely populated, its Elven inhabitants slowly departing for the Undying Lands.",
+        characters: "Gil-galad, C\u00edrdan"
     },
     {
         id: "grey-havens",
@@ -109,7 +127,7 @@ const events = [
         name: "Meneltarma \u2014 The Downfall of N\u00famenor",
         category: 'silmarillion',
         era: "SA", year: 3319, sortKey: 3909,
-        px: 229, py: 3749,
+        px: 237, py: 3780,
         description: "Meneltarma, the Pillar of the Heavens, was the sacred mountain at the heart of N\u00famenor. When King Ar-Pharaz\u00f4n the Golden sailed with a great armada against Valinor, Eru Il\u00favatar broke and changed the world. N\u00famenor was swallowed by the sea, and the Undying Lands were removed from the circles of the world forever. Only the Faithful, led by Elendil and his sons, escaped to found the kingdoms of Arnor and Gondor.",
         characters: "Ar-Pharaz\u00f4n, Sauron, Elendil, Isildur, An\u00e1rion"
     },
@@ -231,6 +249,15 @@ const events = [
         px: 4253, py: 2607,
         description: "The great mountain range running east to west between Rohan and Gondor. Beneath its peaks lie the Paths of the Dead, and along its northern feet stand Edoras, Dunharrow, and Helm's Deep. Its eastern end overlooks Minas Tirith and the Pelennor Fields. The beacons of Gondor are lit along its summits to call Rohan to war.",
         characters: "Th\u00e9oden, Aragorn"
+    },
+    {
+        id: "brown-lands",
+        name: "The Brown Lands \u2014 Gardens of the Entwives",
+        category: 'appendix',
+        era: "SA", year: 3429, sortKey: 4019,
+        px: 4975, py: 1915,
+        description: "Once a fertile region east of the Anduin tended by the Entwives, the Brown Lands were scorched and destroyed by Sauron during the War of the Last Alliance. The Entwives vanished and were never found \u2014 their loss is the source of Treebeard\u2019s great sorrow. By the Third Age the land was a barren, treeless waste. The Fellowship passed along its western edge while travelling down the Great River.",
+        characters: "Treebeard, the Entwives"
     },
     {
         id: "emyn-nu-fuin",
@@ -420,6 +447,15 @@ const events = [
         px: 5229, py: 3697,
         description: "The northern lands of the Haradrim, or Southrons, who were long enemies of Gondor. They fought alongside Sauron in the War of the Ring, riding great M\u00fbmakil (Oliphaunts) into battle at the Pelennor Fields. In Ithilien, Sam witnesses a skirmish between Faramir's rangers and a Haradrim column and reflects on the humanity of a fallen Southron warrior.",
         characters: "The Haradrim, Faramir, Sam"
+    },
+    {
+        id: "khand",
+        name: "Khand \u2014 Land of the Variags",
+        category: 'appendix',
+        era: "TA", year: 3019, sortKey: 7050.038,
+        px: 6771, py: 3513,
+        description: "Khand is a little-known land southeast of Mordor, home to the Variags \u2014 a fierce warrior people under Sauron\u2019s dominion. The Variags marched to war alongside the Haradrim and Easterlings at the Battle of the Pelennor Fields. Tolkien reveals almost nothing else of their culture or history, leaving Khand one of the most mysterious regions on the map of Middle-earth.",
+        characters: "The Variags"
     },
     {
         id: "fords-isen",
@@ -747,18 +783,27 @@ const events = [
         name: "Eaves of Fangorn \u2014 Escape from the Uruk-hai",
         category: 'towers',
         era: "TA", year: 3019, sortKey: 7050.0229,
-        px: 4029, py: 1818,
+        px: 4017, py: 2086,
         description: "At the edge of Fangorn Forest, the Riders of Rohan under \u00c9omer surround and destroy the Uruk-hai band carrying Merry and Pippin. In the chaos of the night battle, the two hobbits slip their bonds and crawl into the eaves of the forest, where they will encounter Treebeard. Aragorn, Legolas, and Gimli arrive the next morning to find the smouldering orc pyre and track the hobbits' trail into the trees.",
         characters: "\u00c9omer, Merry, Pippin, Ugl\u00fak, Grish\u00e1kh, Aragorn, Legolas, Gimli"
+    },
+    {
+        id: "fangorn-treebeard",
+        name: "Fangorn Forest \u2014 The Meeting with Treebeard",
+        category: 'towers',
+        era: "TA", year: 3019, sortKey: 7050.0299,
+        px: 4043, py: 1918,
+        description: "After escaping the Uruk-hai during the battle at the forest\u2019s edge, Merry and Pippin flee into the depths of Fangorn. There they encounter Treebeard, the oldest of the Ents and shepherd of the trees. He carries them to his home at Wellinghall, and their tales of Saruman\u2019s treachery against the forest rouse the Ents to march on Isengard.",
+        characters: "Treebeard, Merry, Pippin"
     },
     {
         id: "fangorn-white-wizard",
         name: "Fangorn Forest \u2014 The White Wizard",
         category: 'towers',
         era: "TA", year: 3019, sortKey: 7050.0301,
-        px: 4043, py: 1918,
-        description: "Merry and Pippin escape the Uruk-hai and meet Treebeard the Ent. Meanwhile, Aragorn, Legolas, and Gimli encounter Gandalf reborn as Gandalf the White.",
-        characters: "Gandalf, Treebeard, Merry, Pippin, Aragorn, Legolas, Gimli"
+        px: 4004, py: 2000,
+        description: "Tracking Merry and Pippin into Fangorn, Aragorn, Legolas, and Gimli encounter a figure in white they mistake for Saruman. It is Gandalf, returned from death after his battle with the Balrog in the depths of Moria. Reborn as Gandalf the White, he tells them the hobbits are safe and leads them to Edoras to free King Th\u00e9oden from Saruman\u2019s influence.",
+        characters: "Gandalf, Aragorn, Legolas, Gimli"
     },
     {
         id: "emyn-muil",
@@ -795,6 +840,15 @@ const events = [
         px: 4894, py: 2150,
         description: "Gollum leads the hobbits through the treacherous Dead Marshes, where ghostly lights and the faces of the ancient dead lie beneath the water. A Nazg\u00fbl on a fell beast passes overhead.",
         characters: "Frodo, Sam, Gollum"
+    },
+    {
+        id: "isen-dam",
+        name: "Dam on the River Isen",
+        category: 'towers',
+        era: "TA", year: 3019, sortKey: 7050.0303,
+        px: 3793, py: 1978,
+        description: "The Ents broke the great dam on the River Isen during their assault on Isengard, unleashing the waters into the Ring of Isengard and flooding Saruman\u2019s underground armouries, furnaces, and war machinery. The deluge drowned his forces and rendered the fortress useless, trapping the wizard in the tower of Orthanc.",
+        characters: "Treebeard, the Ents"
     },
     {
         id: "isengard-ents",
@@ -1012,7 +1066,6 @@ const EVENT_LINKS = [
 
     // ── Gandalf's arc ──
     { from: "dol-guldur-shadow", to: "dol-guldur-council", type: "sequel", label: "White Council drives out Sauron" },
-    { from: "bridge-khazad-dum", to: "fangorn-white-wizard", type: "sequel", label: "Gandalf returns as the White" },
 
     // ── N\u00famenor → Exile Kingdoms ──
     { from: "numenor-downfall", to: "annuminas", type: "sequel", label: "Faithful found Arnor" },
@@ -1046,6 +1099,8 @@ const EVENT_LINKS = [
 
     // ── Breaking of the Fellowship ──
     { from: "amon-hen", to: "eaves-fangorn", type: "sequel", label: "Merry and Pippin taken to Fangorn" },
+    { from: "eaves-fangorn", to: "fangorn-treebeard", type: "sequel", label: "Hobbits flee into the forest" },
+    { from: "bridge-khazad-dum", to: "fangorn-white-wizard", type: "sequel", label: "Gandalf returns as the White" },
     { from: "amon-hen", to: "emyn-muil", type: "sequel", label: "Frodo and Sam go alone to Mordor" },
 
     // ── Scouring ──
@@ -1174,6 +1229,7 @@ const JOURNEYS = {
             [4799, 2565],  // Field of Cormallen
             [4720, 2641],  // Minas Tirith
             [3969, 2344],  // Edoras
+            [3849, 2295],  // en route to Helm's Deep
             [3760, 2277],  // Helm's Deep
             [3775, 2039],  // Isengard
             [3742, 2135],  // Gap of Rohan
@@ -1200,9 +1256,10 @@ const JOURNEYS = {
             [3681, 1154],  // Last Bridge
             [3850, 1134],  // Ford of Bruinen
             ...FELLOWSHIP_PATH,
-            [4029, 1818],  // Eaves of Fangorn
-            [4043, 1918],  // Fangorn
+            [4017, 2086],  // Eaves of Fangorn
+            [4004, 2000],  // Fangorn (White Wizard)
             [3969, 2344],  // Edoras
+            [3849, 2295],  // en route to Helm's Deep
             [3760, 2277],  // Helm's Deep
             [3775, 2039],  // Isengard
             [3969, 2344],  // Edoras (return)
@@ -1251,8 +1308,8 @@ const JOURNEYS = {
             [3484, 1097],  // Weathertop
             [3681, 1154],  // Last Bridge
             [3850, 1134],  // Ford of Bruinen
-            ...FELLOWSHIP_PATH,
-            [4029, 1818],  // Eaves of Fangorn
+            ...FELLOWSHIP_PATH.slice(0, -1),  // Up to Amon Hen (excludes Rauros Falls)
+            [4017, 2086],  // Eaves of Fangorn
             [4043, 1918],  // Fangorn
             [3775, 2039]   // Isengard
         ],
@@ -1391,9 +1448,12 @@ const JOURNEYS = {
             [3900, 1370],  // Hollin
             [3930, 1440],  // Approaching Caradhras
             [3981, 1515],  // Moria (falls)
-            [4043, 1918],  // Fangorn (returns)
+            [4004, 2000],  // Fangorn (returns as the White)
             [3969, 2344],  // Edoras
+            [3849, 2295],  // en route to Helm's Deep
             [3760, 2277],  // Helm's Deep
+            [3700, 2104],  // Fords of Isen (rallies Erkenbrand)
+            [3760, 2277],  // Helm's Deep (returns at dawn)
             [3775, 2039],  // Isengard
             [3742, 2135],  // Gap of Rohan
             [3969, 2380],  // Edoras
