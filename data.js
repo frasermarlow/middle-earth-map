@@ -197,6 +197,42 @@ const events = [
         characters: ""
     },
     {
+        id: "eryn-vorn",
+        name: "Eryn Vorn \u2014 The Dark Wood",
+        category: 'appendix',
+        era: "FA", year: 1, sortKey: 1.05,
+        px: 2742, py: 1929,
+        description: "A dense, dark cape of ancient forest jutting into the sea south of the mouth of the Brandywine. Eryn Vorn is one of the last remnants of the vast primeval woodlands that once covered all of Eriador. When the N\u00famen\u00f3reans felled great swathes of forest for their shipbuilding in the Second Age, the native pre-N\u00famen\u00f3rean peoples \u2014 hostile to the newcomers \u2014 retreated into this dark wood and were left alone. It remained wild and uninhabited through all the ages that followed.",
+        characters: ""
+    },
+    {
+        id: "lond-daer",
+        name: "Lond Daer \u2014 Great Haven of the N\u00famen\u00f3reans",
+        category: 'appendix',
+        era: "SA", year: 800, sortKey: 1390,
+        px: 3043, py: 2039,
+        description: "Lond Daer Enedh, the Great Middle Haven, was the first major N\u00famen\u00f3rean harbour in Middle-earth. Founded by Tar-Aldarion as Vinyalond\u00eb around SA 800 at the mouth of the River Gwathl\u00f3 (Greyflood), it served as a shipbuilding port that consumed the vast forests of Enedwaith and Minhiriath on an enormous scale. This deforestation earned the lasting hatred of the native peoples, who retreated into refuges like Eryn Vorn. The haven remained important through the Second Age but declined after the Downfall of N\u00famenor and lay in ruins by the Third Age.",
+        characters: "Tar-Aldarion"
+    },
+    {
+        id: "andrast",
+        name: "Andrast \u2014 The Long Cape",
+        category: 'appendix',
+        era: "FA", year: 1, sortKey: 1.06,
+        px: 2770, py: 2828,
+        description: "Andrast, also called Ras Morthil (Dark Cape), is the long uninhabited promontory jutting westward into the sea south of the Gap of Rohan, forming the northern arm of the Bay of Belfalas. The Dr\u00faedain (Woses) once lived in its forests, but they were hunted and persecuted by the N\u00famen\u00f3reans and eventually driven out or into hiding. The cape was left wild and shunned \u2014 Gondor's coastal defences and beacons never extended to it, and mariners avoided its shores.",
+        characters: ""
+    },
+    {
+        id: "edhellond",
+        name: "Edhellond \u2014 The Elf-haven",
+        category: 'appendix',
+        era: "FA", year: 1, sortKey: 1.07,
+        px: 3787, py: 2803,
+        description: "Edhellond, the Elf-haven, was a small Elvish port hidden at the mouth of the River Ringl\u00f3 near Dol Amroth in Belfalas. Founded by Sindarin Elves who fled the ruin of Beleriand, it was one of the last places in southern Middle-earth where Elves lingered, quietly building ships and departing west over the centuries. When Amroth, King of L\u00f3rien, and his beloved Nimrodel tried to reach Edhellond to sail into the West together, Nimrodel was lost in the White Mountains. Amroth arrived to find the last ship breaking its moorings in a storm. He leapt into the sea to swim ashore but was swept away and drowned \u2014 giving nearby Dol Amroth its name.",
+        characters: "Amroth, Nimrodel"
+    },
+    {
         id: "tol-fuin",
         name: "Tol Fuin \u2014 Remnant of Dorthonion",
         category: 'appendix',
@@ -237,7 +273,7 @@ const events = [
         name: "Ann\u00faminas \u2014 Capital of Arnor",
         category: 'appendix',
         era: "SA", year: 3320, sortKey: 3910,
-        px: 2847, py: 885,
+        px: 2765, py: 919,
         description: "Built by Elendil on the shores of Lake Evendim after the Downfall of N\u00famenor, Ann\u00faminas served as the first capital of the North-kingdom of Arnor. As the D\u00fanedain dwindled, the city was abandoned and fell into ruin. After the War of the Ring, Aragorn restored it as his northern seat of power.",
         characters: "Elendil, Aragorn"
     },
@@ -357,6 +393,15 @@ const events = [
         px: 5020, py: 488,
         description: "The Withered Heath lay between the arms of the Grey Mountains in the far north, and was the breeding ground of the great dragons. It was from here that Smaug descended upon Erebor in TA 2770, driving the Dwarves into exile. Other dragons from the Heath had previously attacked the Grey Mountains, slaying King D\u00e1in I.",
         characters: "Smaug, D\u00e1in I"
+    },
+    {
+        id: "crossings-poros",
+        name: "Crossings of Poros \u2014 The Mound of the Twins",
+        category: 'appendix',
+        era: "TA", year: 2885, sortKey: 6916,
+        px: 4769, py: 3122,
+        description: "The fords across the River Poros marked the southern boundary of Gondor. In TA 2885, Haradrim invaded in force across the crossing. Steward T\u00farin II called on Rohan for aid, and King Folcwine sent his twin sons Fastred and Folcred south to honour the Oath of Eorl. Gondor won the battle, but both twins were slain. T\u00farin built the Haudh in Gwan\u00fbr, the Mound of the Twins, on the battlefield \u2014 and the enemy did not cross the Poros again for nearly a century.",
+        characters: "Fastred, Folcred, T\u00farin II, King Folcwine"
     },
     {
         id: "east-bight",
@@ -974,7 +1019,7 @@ const events = [
         name: "Pelargir \u2014 Capture of the Corsair Fleet",
         category: 'king',
         era: "TA", year: 3019, sortKey: 7050.0313,
-        px: 4509, py: 2977,
+        px: 4508, py: 3010,
         description: "Aragorn leads the Dead south from Erech to the ancient port of Pelargir, where the Corsairs of Umbar have anchored their fleet. The Dead sweep through the Corsairs in terror, and Aragorn seizes the ships. He releases the Dead Men from their oath, and they vanish at last. Aragorn then mans the ships with Rangers, men of Lebennin and Lamedon, and sails up the Anduin to the Pelennor Fields.",
         characters: "Aragorn, Legolas, Gimli, the Dead Men of Dunharrow, the Corsairs of Umbar"
     },
@@ -986,6 +1031,15 @@ const events = [
         px: 4125, py: 2795,
         description: "A valley fiefdom of Gondor on the southern slopes of the White Mountains, along the River Ciril. After Aragorn emerged from the Paths of the Dead and routed the Corsairs at Pelargir, Lord Angbor of Lamedon rallied his men and joined Aragorn's force sailing up the Anduin to relieve Minas Tirith at the Battle of the Pelennor Fields.",
         characters: "Angbor, Aragorn"
+    },
+    {
+        id: "linhir",
+        name: "Linhir \u2014 Battle at the Gilrain Crossing",
+        category: 'king',
+        era: "TA", year: 3019, sortKey: 7050.03135,
+        px: 4130, py: 2892,
+        description: "A town in Lebennin at the crossing of the River Gilrain. During the War of the Ring, the Corsairs of Umbar and their Haradrim allies advanced inland and fought a battle here, overwhelming the local defenders. Aragorn arrived with the Grey Company and the Army of the Dead, whose terrifying presence routed the enemy. From Linhir, Aragorn pressed on south to seize the Corsair fleet at Pelargir.",
+        characters: "Aragorn, Legolas, Gimli, the Dead Men of Dunharrow"
     },
     {
         id: "druadan-forest",
@@ -1292,7 +1346,11 @@ const JOURNEYS = {
             [3969, 2344],  // Edoras (return)
             [4005, 2440],  // Dunharrow
             [3886, 2470],  // Erech
-            [4509, 2977],  // Pelargir
+            [3779, 2638],  // Morthond Vale
+            [3890, 2767],  // Calembel
+            [4125, 2795],  // Lamedon
+            [4130, 2892],  // Linhir
+            [4508, 3010],  // Pelargir
             [4784, 2638],  // Pelennor Fields
             [4720, 2641],  // Minas Tirith
             [4939, 2329],  // Ithilien
