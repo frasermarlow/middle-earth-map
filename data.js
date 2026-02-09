@@ -1221,7 +1221,15 @@ const EVENT_LINKS = [
 
     // ── Dwarven heritage ──
     { from: "ered-luin", to: "khazad-dum-awakening", type: "legacy", label: "Dwarven kingdoms east and west" },
-    { from: "withered-heath", to: "erebor-inside", type: "cause", label: "Smaug descends from the north" }
+    { from: "withered-heath", to: "erebor-inside", type: "cause", label: "Smaug descends from the north" },
+
+    // ── New marker connections ──
+    { from: "framsburg", to: "field-celebrant", type: "cause", label: "Eorl rides south from Framsburg" },
+    { from: "lond-daer", to: "eryn-vorn", type: "cause", label: "Deforestation drives natives into the dark wood" },
+    { from: "mount-gram", to: "shire-homeland", type: "legacy", label: "Battle of Greenfields" },
+    { from: "edhellond", to: "dol-amroth", type: "legacy", label: "Amroth\u2019s drowning names the city" },
+    { from: "mount-gundabad", to: "five-armies", type: "cause", label: "Goblin army marches on Erebor" },
+    { from: "crossings-poros", to: "pelennor-fields", type: "legacy", label: "Rohan honours the alliance again" }
 ];
 
 // ── Journey Paths ──────────────────────────────
@@ -1539,6 +1547,12 @@ const JOURNEYS = {
             dol_guldur: [
                 [4444, 944],   // Leaves company
                 [4672, 1578],  // Dol Guldur
+                [4521, 1430],  // Northwest out of Mirkwood
+                [4358, 917],   // Anduin vales
+                [4324, 777],   // Upper Anduin
+                [4467, 676],   // North of Mirkwood
+                [4973, 688],   // Grey Mountains foothills
+                [5114, 890],   // Approach to Erebor
                 [5161, 941]    // Erebor
             ]
         }
