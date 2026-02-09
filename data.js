@@ -368,6 +368,15 @@ const events = [
         characters: "Arvedui, the Lossoth, C\u00edrdan"
     },
     {
+        id: "mount-gram",
+        name: "Mount Gram \u2014 Goblins of the North",
+        category: 'appendix',
+        era: "TA", year: 2747, sortKey: 6778,
+        px: 3463, py: 726,
+        description: "An Orc stronghold in the northern Misty Mountains. In TA 2747, a goblin army under chieftain Golfimbul marched from Mount Gram and invaded the Shire. Bandobras \u2018Bullroarer\u2019 Took \u2014 the tallest hobbit ever to live, big enough to ride a horse \u2014 led the defence at the Battle of Greenfields and knocked Golfimbul's head clean off with a club. It sailed through the air and down a rabbit hole, thus (according to hobbit legend) inventing the game of golf. It was the only battle fought inside the Shire before the Scouring of the Shire.",
+        characters: "Golfimbul, Bandobras \u2018Bullroarer\u2019 Took"
+    },
+    {
         id: "gollum-origin",
         name: "River-folk \u2014 The Origin of Gollum",
         category: 'appendix',
@@ -386,6 +395,15 @@ const events = [
         characters: "Eorl the Young, Cirion"
     },
     {
+        id: "framsburg",
+        name: "Framsburg \u2014 Home of the \u00c9oth\u00e9od",
+        category: 'appendix',
+        era: "TA", year: 2000, sortKey: 6031,
+        px: 4177, py: 685,
+        description: "Framsburg was the chief settlement of the \u00c9oth\u00e9od, the horse-lords who were ancestors of the Rohirrim. It stood in the far north between the Grey Mountains and the upper vales of the Anduin, and was named after Fram son of Frumgar, who slew the great cold-drake Scatha and claimed its hoard \u2014 sparking a bitter quarrel with the Dwarves, who held the treasure was theirs. In TA 2510, Eorl the Young led the entire \u00c9oth\u00e9od south from here to answer Gondor's call at the Field of Celebrant. They never returned north; Framsburg was abandoned when they settled in Calenardhon, the land that became Rohan.",
+        characters: "Fram, Eorl the Young"
+    },
+    {
         id: "withered-heath",
         name: "Withered Heath \u2014 The Dragon Lands",
         category: 'appendix',
@@ -402,6 +420,15 @@ const events = [
         px: 4769, py: 3122,
         description: "The fords across the River Poros marked the southern boundary of Gondor. In TA 2885, Haradrim invaded in force across the crossing. Steward T\u00farin II called on Rohan for aid, and King Folcwine sent his twin sons Fastred and Folcred south to honour the Oath of Eorl. Gondor won the battle, but both twins were slain. T\u00farin built the Haudh in Gwan\u00fbr, the Mound of the Twins, on the battlefield \u2014 and the enemy did not cross the Poros again for nearly a century.",
         characters: "Fastred, Folcred, T\u00farin II, King Folcwine"
+    },
+    {
+        id: "harondor",
+        name: "Harondor \u2014 South Gondor",
+        category: 'appendix',
+        era: "TA", year: 1944, sortKey: 5975,
+        px: 4598, py: 3388,
+        description: "Harondor, or South Gondor, was the contested borderland between the Rivers Poros and Harnen. In Gondor's prime it was a settled province, but as Gondor waned and Harad waxed, the region became a desolate no-man's-land fought over for centuries. Neither side held it securely for long. By the time of the War of the Ring, Harondor was effectively abandoned \u2014 a buffer zone between two hostile powers.",
+        characters: ""
     },
     {
         id: "east-bight",
