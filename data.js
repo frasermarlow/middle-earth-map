@@ -1002,7 +1002,7 @@ const events = [
         category: 'king',
         era: "TA", year: 3019, sortKey: 7050.0310,
         px: 5033, py: 2660,
-        description: "The hobbits pass the dread city of Minas Morgul, once Minas Ithil, now home to the Witch-king and his Nazg\u00fbl. As they climb the stairs beside it, the army of Morgul issues forth, led by the Witch-king, marching to war against Gondor.",
+        description: "The hobbits pass the Dead City of Minas Morgul, once Minas Ithil, now home to the Witch-king and his Nazg\u00fbl. As they climb the stairs beside it, the army of Morgul issues forth, led by the Witch-king, marching to war against Gondor.",
         characters: "Frodo, Sam, Gollum, the Witch-king"
     },
     {
