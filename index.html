@@ -664,7 +664,7 @@
         });
 
         const bounds = [[0, 0], [IMG_H, IMG_W]];
-        L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
+        const tileOpts = {
             minZoom: -4,
             maxZoom: 3,
             maxNativeZoom: 0,
@@ -673,7 +673,9 @@
             tileSize: 256,
             noWrap: true,
             bounds: bounds
-        }).addTo(map);
+        };
+        const mapTiles = L.tileLayer('tiles/{z}/{x}/{y}.jpg', tileOpts).addTo(map);
+        const satTiles = L.tileLayer('tiles-sat/{z}/{x}/{y}.jpg', tileOpts);
         map.fitBounds(bounds);
         const PAD = Math.max(IMG_W, IMG_H);
         map.setMaxBounds([[-PAD, -PAD], [IMG_H + PAD, IMG_W + PAD]]);
@@ -982,6 +984,25 @@
         });
         legendEl.appendChild(measureToggleRow);
 
+        // ── Satellite View Toggle ─────────────────────
+        const satToggleRow = document.createElement('div');
+        satToggleRow.className = 'coord-toggle-row';
+        satToggleRow.innerHTML = `
+            <div class="coord-toggle-switch"></div>
+            <span class="coord-toggle-label">Satellite view</span>
+        `;
+        satToggleRow.addEventListener('click', () => {
+            const active = satToggleRow.classList.toggle('active');
+            if (active) {
+                map.removeLayer(mapTiles);
+                map.addLayer(satTiles);
+            } else {
+                map.removeLayer(satTiles);
+                map.addLayer(mapTiles);
+            }
+        });
+        legendEl.appendChild(satToggleRow);
+
         function clearMeasure() {
             measurePoints = [];
             measureLayers.forEach(l => map.removeLayer(l));
@@ -1120,6 +1141,13 @@
                     }
                 }, 500);
             }
+
+            // ?view=satellite activates satellite tiles on load
+            if (params.get('view') === 'satellite') {
+                map.removeLayer(mapTiles);
+                map.addLayer(satTiles);
+                satToggleRow.classList.add('active');
+            }
         })();
 
         // ── Splash Screen ────────────────────────────────
@@ -1151,6 +1179,7 @@
             enterBtn.addEventListener('click', hideSplash);
             infoBtn.addEventListener('click', showSplash);
         })();
+
     </script>
 </body>
 </html>
