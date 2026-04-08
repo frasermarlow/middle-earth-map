@@ -1,2 +1,10 @@
 .firebase
 .DS_Store
+.env
+.env.*
+*.key
+*.pem
+__pycache__/
+*.pyc
+_sat_*.jpg
+_test_*.jpg
