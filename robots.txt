@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://frasermarlow.github.io/middle-earth-map/sitemap.xml

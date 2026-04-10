@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="30" fill="#2c2418" stroke="#8b7355" stroke-width="2"/>
+  <path d="M32 8 L32 56 M8 32 L56 32" stroke="#5a4a36" stroke-width="1" opacity="0.5"/>
+  <circle cx="32" cy="32" r="20" fill="none" stroke="#5a4a36" stroke-width="1" opacity="0.5"/>
+  <polygon points="32,10 35,28 32,24 29,28" fill="#e8d9b0"/>
+  <polygon points="32,54 29,36 32,40 35,36" fill="#8b7355"/>
+  <polygon points="10,32 28,29 24,32 28,35" fill="#8b7355"/>
+  <polygon points="54,32 36,35 40,32 36,29" fill="#8b7355"/>
+  <text x="32" y="38" text-anchor="middle" font-family="serif" font-size="8" fill="#e8d9b0" opacity="0.7">ME</text>
+</svg>
