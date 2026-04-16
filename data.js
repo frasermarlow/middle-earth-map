@@ -972,7 +972,7 @@ const events = [
         name: "Henneth Ann\u00fbn \u2014 Window of the Sunset",
         category: 'towers',
         era: "TA", year: 3019, sortKey: 7050.0307,
-        px: 5029, py: 2491,
+        px: 4920, py: 2560,
         description: "A hidden refuge of the Rangers of Ithilien behind a curtain waterfall. Faramir brings Frodo and Sam here after capturing them in the wilds of Ithilien. Behind the falls, Faramir questions Frodo about the Ring and learns of Boromir's death \u2014 and unlike his brother, chooses not to seize the Ring.",
         characters: "Faramir, Frodo, Sam, Gollum"
     },
@@ -1028,7 +1028,7 @@ const events = [
         name: "Cirith Ungol \u2014 Shelob's Lair",
         category: 'king',
         era: "TA", year: 3019, sortKey: 7050.0312,
-        px: 5082, py: 2526,
+        px: 5055, py: 2610,
         description: "Gollum's treachery is revealed as he leads the hobbits into the lair of the giant spider Shelob. Frodo is stung and paralyzed. Sam drives Shelob away with the Phial of Galadriel and Sting, then rescues Frodo from the tower of Cirith Ungol.",
         characters: "Frodo, Sam, Gollum, Shelob"
     },
@@ -1037,7 +1037,7 @@ const events = [
         name: "Tower of Cirith Ungol \u2014 Sam's Rescue",
         category: 'king',
         era: "TA", year: 3019, sortKey: 7050.0314,
-        px: 5120, py: 2530,
+        px: 5080, py: 2618,
         description: "After Shelob stings Frodo, the orcs of the tower carry his body inside. Sam, believing Frodo dead, takes the Ring \u2014 but overhears the orcs and realises Frodo is alive. He storms the tower alone, finding the garrison has slaughtered itself in a quarrel over Frodo's mithril coat. Sam returns the Ring and the two hobbits escape disguised as orcs into Mordor.",
         characters: "Sam, Frodo, Shagrat, Gorbag"
     },
@@ -1336,11 +1336,11 @@ const JOURNEYS = {
             [4623, 2147],  // Emyn Muil
             [4894, 2150],  // Dead Marshes
             [5050, 2280],  // North Ithilien
-            [5029, 2491],  // Henneth Ann\u00fbn
+            [4920, 2560],  // Henneth Ann\u00fbn
             [4927, 2678],  // Cross-roads
             [5033, 2660],  // Minas Morgul
-            [5082, 2526],  // Cirith Ungol
-            [5120, 2530],  // Tower of Cirith Ungol
+            [5055, 2610],  // Cirith Ungol
+            [5080, 2618],  // Tower of Cirith Ungol
             [5419, 2532],  // Mount Doom
             [4799, 2565],  // Field of Cormallen
             [4720, 2641],  // Minas Tirith
@@ -1517,10 +1517,10 @@ const JOURNEYS = {
             [4623, 2147],  // Emyn Muil
             [4894, 2150],  // Dead Marshes
             [5141, 2272],  // Black Gate
-            [5029, 2491],  // Henneth Ann\u00fbn
+            [4920, 2560],  // Henneth Ann\u00fbn
             [5033, 2660],  // Minas Morgul
-            [5082, 2526],  // Cirith Ungol
-            [5120, 2530],  // Tower of Cirith Ungol
+            [5055, 2610],  // Cirith Ungol
+            [5080, 2618],  // Tower of Cirith Ungol
             [5419, 2532]   // Mount Doom
         ]
     },
