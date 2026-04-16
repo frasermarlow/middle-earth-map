@@ -175,7 +175,7 @@ const events = [
         category: 'appendix',
         era: "FA", year: 1, sortKey: 1.02,
         px: 7252, py: 2538,
-        description: "The Orocarni, or Red Mountains, formed the eastern boundary of Middle-earth in the earliest ages. In Tolkien's cosmology, four of the seven Dwarf clans \u2014 the Ironfists, Stiffbeards, Blacklocks, and Stonefoots \u2014 awoke at sites in or near these mountains. The Blue Wizards, Alatar and Pallando, were sent east and may have worked among the peoples of these distant lands to counter Sauron's influence.",
+        description: "The Orocarni, or Red Mountains, formed the eastern boundary of Middle-earth in the earliest ages. In Tolkien's cosmology, four of the seven Dwarf clans (the Ironfists, Stiffbeards, Blacklocks, and Stonefoots) awoke at sites in or near these mountains. The Blue Wizards, Alatar and Pallando, were sent east and may have worked among the peoples of these distant lands to counter Sauron's influence.",
         characters: "Alatar, Pallando (Blue Wizards)"
     },
     {
@@ -202,7 +202,7 @@ const events = [
         category: 'appendix',
         era: "FA", year: 1, sortKey: 1.05,
         px: 2742, py: 1929,
-        description: "A dense, dark cape of ancient forest jutting into the sea south of the mouth of the Brandywine. Eryn Vorn is one of the last remnants of the vast primeval woodlands that once covered all of Eriador. When the N\u00famen\u00f3reans felled great swathes of forest for their shipbuilding in the Second Age, the native pre-N\u00famen\u00f3rean peoples \u2014 hostile to the newcomers \u2014 retreated into this dark wood and were left alone. It remained wild and uninhabited through all the ages that followed.",
+        description: "A dense, dark cape of ancient forest jutting into the sea south of the mouth of the Brandywine. Eryn Vorn is one of the last remnants of the vast primeval woodlands that once covered all of Eriador. When the N\u00famen\u00f3reans felled great swathes of forest for their shipbuilding in the Second Age, the native pre-N\u00famen\u00f3rean peoples, hostile to the newcomers, retreated into this dark wood and were left alone. It remained wild and uninhabited through all the ages that followed.",
         characters: ""
     },
     {
@@ -373,7 +373,7 @@ const events = [
         category: 'appendix',
         era: "TA", year: 2747, sortKey: 6778,
         px: 3463, py: 726,
-        description: "An Orc stronghold in the northern Misty Mountains. In TA 2747, a goblin army under chieftain Golfimbul marched from Mount Gram and invaded the Shire. Bandobras \u2018Bullroarer\u2019 Took \u2014 the tallest hobbit ever to live, big enough to ride a horse \u2014 led the defence at the Battle of Greenfields and knocked Golfimbul's head clean off with a club. It sailed through the air and down a rabbit hole, thus (according to hobbit legend) inventing the game of golf. It was the only battle fought inside the Shire before the Scouring of the Shire.",
+        description: "An Orc stronghold in the northern Misty Mountains. In TA 2747, a goblin army under chieftain Golfimbul marched from Mount Gram and invaded the Shire. Bandobras \u2018Bullroarer\u2019 Took, the tallest hobbit ever to live and big enough to ride a horse, led the defence at the Battle of Greenfields and knocked Golfimbul's head clean off with a club. It sailed through the air and down a rabbit hole, thus (according to hobbit legend) inventing the game of golf. It was the only battle fought inside the Shire before the Scouring of the Shire.",
         characters: "Golfimbul, Bandobras \u2018Bullroarer\u2019 Took"
     },
     {
@@ -681,7 +681,7 @@ const events = [
         category: 'hobbit',
         era: "TA", year: 2941, sortKey: 6972.11,
         px: 5140, py: 1125,
-        description: "Enraged by Bilbo's theft, Smaug descends on Lake-town in a storm of fire, setting the town ablaze. As the dragon wheels for another pass, Bard the Bowman\u2014guided by the thrush's message about the bare patch in Smaug's jewelled armour\u2014looses the Black Arrow and strikes true. Smaug crashes down full upon the town, his last throes splintering it to sparks. The lake roars in over the ruins, swallowing the dragon forever.",
+        description: "Enraged by Bilbo's theft, Smaug descends on Lake-town in a storm of fire, setting the town ablaze. As the dragon wheels for another pass, Bard the Bowman, guided by the thrush's message about the bare patch in Smaug's jewelled armour, looses the Black Arrow and strikes true. Smaug crashes down full upon the town, his last throes splintering it to sparks. The lake roars in over the ruins, swallowing the dragon forever.",
         characters: "Smaug, Bard the Bowman, Bilbo"
     },
     {
@@ -738,6 +738,15 @@ const events = [
         era: "TA", year: 3018, sortKey: 7049.0926,
         px: 3098, py: 1178,
         description: "Leaving the Shire through the High Hay, the hobbits enter the ancient Old Forest where Old Man Willow traps Merry and Pippin. They are rescued by Tom Bombadil, the enigmatic master of the forest, who is unaffected by the One Ring's power \u2014 one of the great mysteries of Middle-earth.",
+        characters: "Frodo, Sam, Merry, Pippin, Tom Bombadil, Goldberry"
+    },
+    {
+        id: "tom-bombadil",
+        name: "Tom Bombadil's House \u2014 The Master of the Forest",
+        category: 'fellowship',
+        era: "TA", year: 3018, sortKey: 7049.0927,
+        px: 3140, py: 1200,
+        description: "Rescued from Old Man Willow by Tom Bombadil, the hobbits spend two nights in his ancient house on the banks of the Withywindle with his wife Goldberry. Tom is the oldest living being in Middle-earth, bound to no master and untouched by the Ring \u2014 it has no power over him. He teaches the hobbits a call for help before sending them on their way across the Barrow-downs.",
         characters: "Frodo, Sam, Merry, Pippin, Tom Bombadil, Goldberry"
     },
     {
@@ -941,6 +950,15 @@ const events = [
         characters: "Frodo, Sam, Gollum"
     },
     {
+        id: "black-gate-frodo",
+        name: "The Black Gate \u2014 The Gate is Closed",
+        category: 'towers',
+        era: "TA", year: 3019, sortKey: 7050.0305,
+        px: 5110, py: 2285,
+        description: "Gollum leads Frodo and Sam to the Morannon, the Black Gate of Mordor. They find it impassable \u2014 two great watchtowers, an iron gate, and an army of orcs and men. As they watch, a column of Easterlings marches in. Gollum urges them not to enter by this road and offers to show them a secret way: the pass of Cirith Ungol, watched over by \u2018Her\u2019 \u2014 whom he does not name.",
+        characters: "Frodo, Sam, Gollum"
+    },
+    {
         id: "isen-dam",
         name: "Dam on the River Isen",
         category: 'towers',
@@ -966,6 +984,15 @@ const events = [
         px: 3744, py: 2017,
         description: "After the flooding of Isengard, Gandalf and the company confront Saruman atop the tower of Orthanc. Saruman attempts to sway them with his persuasive voice but is broken by Gandalf, who casts him from the order. Gr\u00edma Wormtongue hurls the palant\u00edr of Orthanc from the tower. That night Pippin steals a look into the seeing-stone and is seen by Sauron \u2014 forcing Gandalf to ride at once to Minas Tirith with Pippin.",
         characters: "Gandalf, Saruman, Gr\u00edma, Pippin, Aragorn, Th\u00e9oden"
+    },
+    {
+        id: "ithilien-capture",
+        name: "Ithilien \u2014 Captured by the Rangers",
+        category: 'towers',
+        era: "TA", year: 3019, sortKey: 7050.0306,
+        px: 4970, py: 2400,
+        description: "In the wooded highlands of Ithilien, Faramir\u2019s Rangers of Gondor ambush a column of Haradrim marching to Mordor. Frodo and Sam, hiding nearby, witness the skirmish and Sam reflects on the humanity of a fallen Southron warrior. Afterwards Faramir\u2019s men seize the two hobbits and blindfold them for the journey to the hidden refuge of Henneth Ann\u00fbn. Gollum slips away into a pool.",
+        characters: "Faramir, Frodo, Sam, Gollum, the Haradrim"
     },
     {
         id: "henneth-annun",
@@ -1078,6 +1105,15 @@ const events = [
         characters: "Gh\u00e2n-buri-Gh\u00e2n, Th\u00e9oden, \u00c9omer, Merry"
     },
     {
+        id: "osgiliath-faramir",
+        name: "Osgiliath \u2014 Faramir's Last Stand",
+        category: 'king',
+        era: "TA", year: 3019, sortKey: 7050.0311,
+        px: 4823, py: 2659,
+        description: "Denethor sends Faramir on a near-suicidal mission to retake and hold the ruined city of Osgiliath against Sauron's advancing host. Faramir leads the defence knowing it is hopeless, then covers the retreat of his men across the Pelennor while Nazg\u00fbl wheel overhead. Gandalf rides out to shield the retreat with light. Faramir is struck by a Morgul dart and brought back to Minas Tirith gravely wounded, driving Denethor to despair.",
+        characters: "Faramir, Gandalf, Denethor, Pippin"
+    },
+    {
         id: "minas-tirith-siege",
         name: "Minas Tirith \u2014 The Siege of Gondor",
         category: 'king',
@@ -1148,6 +1184,15 @@ const events = [
         px: 2848, py: 1147,
         description: "Returning home, the four hobbits find the Shire under the tyranny of 'Sharkey' \u2014 Saruman, diminished but vengeful. Merry and Pippin rouse the Shire-folk, and at the Battle of Bywater the ruffians are overthrown. Frodo confronts Saruman at Bag End and offers mercy, but Gr\u00edma Wormtongue turns on his master and slays him. It is the last killing in the War of the Ring.",
         characters: "Frodo, Sam, Merry, Pippin, Saruman, Gr\u00edma"
+    },
+    {
+        id: "grey-havens-departure",
+        name: "The Grey Havens \u2014 Departure to the West",
+        category: 'king',
+        era: "TA", year: 3021, sortKey: 7052.05,
+        px: 2266, py: 1150,
+        description: "At the Grey Havens, Frodo, Bilbo, Gandalf, Galadriel, and Elrond board the last ship sailing into the West. Sam, Merry, and Pippin ride with them to the shore, then watch the white ship pass out of sight beyond the evening star. Frodo, as a Ring-bearer, is granted passage to the Undying Lands \u2014 the only mortal hobbit ever to make the crossing. Sam returns to Bag End and to Rose, and his family, and the life he helped to save.",
+        characters: "Frodo, Bilbo, Gandalf, Galadriel, Elrond, Sam, Merry, Pippin, C\u00edrdan"
     },
     {
         id: "westmarch",
@@ -1335,7 +1380,9 @@ const JOURNEYS = {
             ...FELLOWSHIP_PATH,
             [4623, 2147],  // Emyn Muil
             [4894, 2150],  // Dead Marshes
-            [5050, 2280],  // North Ithilien
+            [5110, 2285],  // Black Gate (Frodo's approach)
+            [5050, 2280],  // North Ithilien (turn south)
+            [4970, 2400],  // Ithilien \u2014 captured by Rangers
             [4920, 2560],  // Henneth Ann\u00fbn
             [4927, 2678],  // Cross-roads
             [5033, 2660],  // Minas Morgul
@@ -1349,11 +1396,16 @@ const JOURNEYS = {
             [3760, 2277],  // Helm's Deep
             [3775, 2039],  // Isengard
             [3742, 2135],  // Gap of Rohan
+            [3595, 2015],  // Enedwaith
             [3550, 1850],  // Dunland
+            [3642, 1718],  // Enedwaith north
             [3500, 1500],  // Eriador
+            [3858, 1303],  // Lone-lands
+            [3946, 1173],  // Approaches to Rivendell
             [3940, 1096],  // Rivendell
             [3850, 1134],  // Ford of Bruinen
             [3681, 1154],  // Last Bridge
+            [3484, 1097],  // Weathertop
             [3254, 1139],  // Bree
             [2974, 1126],  // Brandywine Bridge
             [2848, 1147],  // Bywater
@@ -1516,7 +1568,9 @@ const JOURNEYS = {
             [4511, 2105],  // Argonath area
             [4623, 2147],  // Emyn Muil
             [4894, 2150],  // Dead Marshes
-            [5141, 2272],  // Black Gate
+            [5110, 2285],  // Black Gate (Frodo's approach)
+            [5050, 2280],  // North Ithilien (turn south)
+            [4970, 2400],  // Ithilien \u2014 captured by Rangers
             [4920, 2560],  // Henneth Ann\u00fbn
             [5033, 2660],  // Minas Morgul
             [5055, 2610],  // Cirith Ungol
