@@ -24,7 +24,7 @@ const CATEGORY_LABELS = {
 };
 
 const CATEGORY_ICONS = {
-    silmarillion: '\u2756',
+    silmarillion: '&#128270',
     hobbit:       '\u2302',
     fellowship:   '\u2727',
     towers:       '\u2694',
@@ -43,11 +43,11 @@ const events = [
     // ── The Silmarillion ──
     {
         id: "cuivienen",
-        name: "Cuivi\u00e9nen \u2014 Awakening of the Elves",
+        name: "Le stade",
         category: 'silmarillion',
         era: "FA", year: 1, sortKey: 0.5,
-        px: 7091, py: 1327,
-        description: "Cuivi\u00e9nen, the Water of Awakening, was a bay on the shores of the great inland Sea of Helcar in the far east of Middle-earth. Here the first Elves awoke under starlight, long before the rising of the Sun and Moon. The Valar discovered them and summoned them westward on the Great Journey to Valinor \u2014 though some refused the call and remained, becoming the Avari, the Unwilling.",
+        px: 1054, py: 399,
+        description: "Ceci est un stade. Here the first Elves awoke under starlight, long before the rising of the Sun and Moon. The Valar discovered them and summoned them westward on the Great Journey to Valinor \u2014 though some refused the call and remained, becoming the Avari, the Unwilling.",
         characters: "The first Elves, Orom\u00eb"
     },
     {
