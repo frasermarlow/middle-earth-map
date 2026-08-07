@@ -12,6 +12,7 @@
       "*.jpeg",
       "*.png",
       "*.pth",
+      "*.psd",
       "_*"
     ],
     "headers": [
@@ -23,6 +24,12 @@
       },
       {
         "source": "tiles/**",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=86400" }
+        ]
+      },
+      {
+        "source": "tiles-sat/**",
         "headers": [
           { "key": "Cache-Control", "value": "public, max-age=86400" }
         ]
