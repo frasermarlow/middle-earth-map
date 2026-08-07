@@ -333,7 +333,8 @@
 
         <div class="callout callout-strong">
             <span class="label">Important &mdash; I did not create this map</span>
-            <p>The parchment artwork that this entire site is built on is not mine. I found it in a Reddit thread, already circulating without any credit attached, and despite searching I have not been able to trace it back to whoever actually drew it. I believe it originates from the Peter Jackson films, or from artwork produced around them, but I have not been able to confirm even that.</p>
+            <p>The parchment artwork that this entire site is built on is not mine. I found it in <a href="https://www.reddit.com/r/lotr/comments/18fy0ga/middleearth_map_on_the_movies_8k_7680_4320/" rel="noopener nofollow">a Reddit thread</a> where it was already circulating without any credit attached, and despite searching I have not been able to trace it back to whoever actually drew it.</p>
+            <p>That post is as far back as the trail goes. The file this site is built from is byte-for-byte identical to <a href="https://i.redd.it/r8403tg0wo5c1.jpeg" rel="noopener nofollow">the image posted there</a> &mdash; the same 7680 &times; 4320 pixels and the same 20.6&nbsp;MB, down to the checksum. The thread describes it as a map &ldquo;on the movies&rdquo;, and it does appear to derive from the Peter Jackson films or from artwork produced around them, but I have found no original credited posting.</p>
             <p>Everything described on this page concerns what was done <em>to</em> that image &mdash; slicing it into tiles, deriving terrain from it, building an interface around it. None of it is a claim on the artwork itself, which remains the work of an illustrator I would very much like to name. If you know who created it, I would genuinely welcome being told, and I will correct this page as soon as I can.</p>
         </div>
 
@@ -360,6 +361,14 @@
 
         <p>Leaflet's zoom levels are offset so that directory <code>2</code> &mdash; the native-resolution tiles &mdash; sits at map zoom 0, with the half and quarter scales at &minus;1 and &minus;2. Zooming beyond that upscales the native tiles rather than loading anything sharper, because nothing sharper exists. The parchment's own paper grain sets the real limit on useful magnification.</p>
 
+        <h3>Why not MBTiles, or a tile server?</h3>
+
+        <p>This is the question that comes up most often, so it is worth answering directly: <strong>there is no tile server here at all</strong>. Nothing runs. Every tile is an ordinary file on disk at <code>tiles/{z}/{x}/{y}.jpg</code>, served by a CDN exactly like any other static asset.</p>
+
+        <p>That layout is not homemade &mdash; it is the standard XYZ or &ldquo;slippy map&rdquo; convention that Leaflet, OpenStreetMap and most web maps already speak, which is why the tile layer is a one-line declaration with a URL template in it. <strong>MBTiles</strong>, by contrast, packs tiles into a SQLite container. That is genuinely useful when you are shipping a tileset as one file or serving it from an application that can query it &mdash; but it requires something to unpack and serve the rows. Here it would mean introducing a server purely to undo the packaging, in exchange for a directory listing nobody sees.</p>
+
+        <p>The trade is real, though, and worth being honest about: this approach means <strong>1,400 small files in version control</strong>, which is not what git is designed for, and regenerating a tileset rewrites all of them at once. A container format would make that far tidier. For a map that changes roughly never and is read constantly, the cost falls in the right place.</p>
+
         <h2><span class="num">Part Two</span>Putting 128 events in the right place</h2>
 
         <p>Every marker needs a pixel coordinate, and reading them off a fantasy map by eye is less accurate than it sounds. The first pass was visibly wrong in places &mdash; drifting further off toward the edges, which is the signature of a systematic error rather than random sloppiness.</p>
@@ -370,7 +379,21 @@
 
         <p>The dataset that all of this reads from holds <strong>128 events</strong> across six categories, <strong>43 typed links</strong> between them (cause, sequel, parallel, legacy, location), and the nine journeys. It is a single plain JavaScript file shared by the map and the timeline, so both pages always agree.</p>
 
+        <p>For all the machinery described elsewhere on this page, placing the markers was comfortably the hardest part of the project, and the part that most resisted automation. Asking a language model for a pixel coordinate on an unlabelled fantasy map turns out to be something they are genuinely bad at &mdash; even with a dozen correct pins already on the map to reason from, the next one would still land in the wrong valley. Every marker here has been checked by eye, and readers have caught ones I missed: Cirith Ungol and Henneth Ann&ucirc;n were both sitting too far north and east until someone pointed it out.</p>
+
+        <h3>Which age is this map, though?</h3>
+
+        <p>A fair challenge, and the site papers over it slightly. <strong>This is a Third Age map</strong>, and Middle-earth was not a fixed place. Using one map for the whole legendarium is a compromise, not an accuracy claim.</p>
+
+        <p>The sharpest limit is <strong>Beleriand</strong>, the entire north-western region where most of <em>The Silmarillion</em> takes place. It broke and sank beneath the sea at the end of the First Age, in the War of Wrath. It is not that those events are hard to place on this map &mdash; the land they happened on is not on it at all, because it no longer exists. So they are absent.</p>
+
+        <p>What survives is mostly Second Age, which maps onto this geography without much trouble. A handful of First Age markers are approximations and should be read as such: <strong>Cuivi&eacute;nen</strong>, where the Elves awoke, sat by the inland Sea of Helcar, and that whole region was reshaped when Morgoth's northern strongholds were destroyed.</p>
+
+        <p>Several place names are also late-Third-Age labels applied to much older places. Dol Guldur was <strong>Amon Lanc</strong> in the Second Age; Lothl&oacute;rien was <strong>Laurelind&oacute;renan</strong>; Mirkwood, Minas Tirith and Minas Morgul are all later names too. The map shows the names a reader of <em>The Lord of the Rings</em> will recognise, which is the right call for a companion to the books, but it does mean an event pinned to &ldquo;Dol Guldur&rdquo; in the Second Age is being labelled with a name nobody used yet.</p>
+
         <h2><span class="num">Part Three</span>Building a satellite view of a place that does not exist</h2>
+
+        <p>This layer was not part of the plan. It exists because someone reading about the project said they would love to see the map fed through an image generator to look like satellite imagery &mdash; so I tried it that evening, and the result was bad enough to be interesting. Nearly every design decision described below is a direct response to a specific complaint about that first attempt.</p>
 
         <p>Here is the actual problem. A satellite image of Middle-earth cannot be photographed, and cannot be derived from real elevation data, because there is none. The only source of truth is a drawing &mdash; and a stylised one, where a mountain range is a row of little hand-inked triangles and a forest is a texture of scribbled canopy.</p>
 
@@ -524,6 +547,10 @@
 
         <p><strong>Straight image-to-image on the parchment.</strong> The first approach upscaled the map and ran diffusion over it with a single global prompt about satellite photography. Without masks the model had no idea what it was looking at, and without per-region prompting it applied one aesthetic everywhere. The output was recognisably Earth rather than Middle-earth: one generation covered the north-west of the map in desert scrub cut through by a highway interchange, complete with the straight lines and right angles of modern road engineering. It was committed to version control before anyone looked at it closely, which is its own lesson.</p>
 
+        <p>The public verdict was blunt and completely correct. <em>The sea is very dry.</em> The water was rendered as land. Everything came out arid because the model was reading the parchment's brown ink as desert, when the terrain it should have been suggesting is closer to New Zealand. Zooming into Fangorn set off at least one reader's trypophobia. And the obvious diagnosis came with it: the model needed a metadata layer telling it water from land from prairie from forest, and the whole thing needed rerunning with that context.</p>
+
+        <p>That suggestion is the entire reason stage 1 exists. The 13 hand-painted masks are that metadata layer.</p>
+
         <p><strong>Fully procedural, no diffusion.</strong> The opposite extreme also exists in the repository: a generator that builds the terrain entirely from masks, hillshade, hypsometric colour ramps and fractal noise, with no model at all. It is completely controllable and completely consistent &mdash; and it looks synthetic, because procedural noise does not produce the irregularity of real landscape. It is what stage 4 of the final pipeline is descended from. Its lesson was that the model earns its place at exactly one job: surface texture.</p>
 
         <p><strong>Too much freedom over water.</strong> Uniform denoising strength across the whole map let the model treat open ocean as an invitation. Oceans acquired texture, currents and the occasional island. Hence the per-biome strengths, and hence ocean being clamped hardest of all.</p>
@@ -538,6 +565,18 @@
         <p>There is no build step, no framework and no bundler. The site is hand-written HTML, CSS and JavaScript, with Leaflet as the only runtime dependency, and every page is a static file. The tiles are static files too, which is the whole point of pre-generating them: serving a tile is serving a JPEG, and it costs a CDN nothing.</p>
 
         <p>It is hosted on Firebase Hosting, with tiles cached for 24 hours and the shared data file for one hour. About 1,400 tiles across the two layers total roughly 26&nbsp;MB &mdash; a large repository, but a small page, because any single view only ever fetches the few dozen tiles you can actually see.</p>
+
+        <h2><span class="num">Part Six</span>A note on how this was made</h2>
+
+        <p>Much of the code here was written with a language model, a fair amount of it from an economy seat somewhere over the middle of America. I have seen the reasonable objection to that: knowing a thing was built with AI can drain away the sense that someone cared enough to make it. That is a real reaction and I do not think it is unfair.</p>
+
+        <p>What I would offer against it is where the hours actually went. The model wrote code quickly and was useless at the parts that mattered most. It could not place a marker on an unlabelled map to save its life. It could not decide which of the Silmarillion's events survive the drowning of Beleriand. It certainly did not trace 13 terrain masks over a 7680-pixel image by hand, which is the single most laborious thing in this repository and the thing everything else depends on. The project started as a way to read more carefully &mdash; to work out what happened where, and in what order &mdash; and that reading is not something that can be delegated.</p>
+
+        <p>The satellite pipeline makes the same point in miniature. Every version got better by giving the model <em>less</em> to decide.</p>
+
+        <h3>What people have asked for next</h3>
+
+        <p>Recurring requests, recorded here mostly so I do not forget them: a proper First Age map of Beleriand, which needs a source map I do not yet have; smoother pinch-zoom on mobile, which is a genuine rough edge; restructuring the markers so that a place and the events at that place are separate things rather than competing pins; alternate era-appropriate names; year labels on every event that can be pinned down; and a spoiler warning, from someone reading the books for the first time who reached the end of the story on a map before reaching it in the text. Sorry about that one.</p>
 
         <footer>
             <p><strong>Tools:</strong> Photoshop for the masks, Python with Pillow, NumPy and psd-tools for the image pipeline, Stable Diffusion 1.5 via Hugging Face Diffusers running locally on Apple Silicon, and Leaflet in the browser.</p>
