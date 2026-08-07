@@ -8,3 +8,4 @@ __pycache__/
 *.pyc
 _sat_*.jpg
 _test_*.jpg
+.playwright-mcp/

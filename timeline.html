@@ -54,9 +54,9 @@
             z-index: 1100;
             background: rgba(26, 26, 26, 0.92);
             border-bottom: 1px solid #5a4a36;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            justify-content: space-between;
             padding: 0 20px;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
@@ -78,6 +78,8 @@
             color: #e8d9b0;
             letter-spacing: 2px;
         }
+        #nav-bar > .nav-link:first-child { justify-self: start; }
+        .nav-right { justify-self: end; display: flex; align-items: center; gap: 2px; }
 
         /* ── Controls Bar ──────────────────────── */
         #controls {
@@ -541,7 +543,10 @@
     <nav id="nav-bar">
         <a href="index.html" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
         <span class="nav-title">Middle-earth</span>
-        <a href="timeline.html" class="nav-link active">&#x23f3;&#xfe0e; Timeline</a>
+        <span class="nav-right">
+            <a href="timeline.html" class="nav-link active">&#x23f3;&#xfe0e; Timeline</a>
+            <a href="about.html" class="nav-link">&#x1f4dc;&#xfe0e; About</a>
+        </span>
     </nav>
 
     <main>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Middle-earth &mdash; How This Map Was Built</title>
+    <meta name="description" content="A technical account of how the Middle-earth interactive map was built: the tile pyramid, the coordinate system, and the six-stage pipeline that turned a hand-drawn parchment map into a synthetic satellite view using hand-painted masks, a synthetic elevation model, hillshading and Stable Diffusion.">
+    <link rel="canonical" href="https://middle-earth-interactive-map.web.app/about.html">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Middle-earth — How This Map Was Built">
+    <meta property="og:description" content="How a hand-drawn parchment map became a tiled, zoomable interactive map — and how the satellite layer was synthesised from hand-painted masks, a fake elevation model, and diffusion.">
+    <meta property="og:url" content="https://middle-earth-interactive-map.web.app/about.html">
+    <meta property="og:image" content="https://middle-earth-interactive-map.web.app/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Middle-earth — How This Map Was Built">
+    <meta name="twitter:description" content="How a hand-drawn parchment map became a tiled, zoomable interactive map — and how the satellite layer was synthesised.">
+    <meta name="twitter:image" content="https://middle-earth-interactive-map.web.app/og-image.jpg">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "How the Middle-earth Interactive Map Was Built",
+        "url": "https://middle-earth-interactive-map.web.app/about.html",
+        "description": "A technical account of the tile pyramid, coordinate system, and the six-stage pipeline that generated the synthetic satellite layer.",
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "Middle-earth Interactive Map",
+            "url": "https://middle-earth-interactive-map.web.app/"
+        }
+    }
+    </script>
+    <script>
+        // The analytics module below is deferred, so it runs after the page
+        // script. Queue anything fired during load and flush it on init.
+        window._trackQueue = [];
+        window.track = (name, params) => window._trackQueue.push([name, params]);
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCp2XeX3C6nu19X1-f3gZRX9HT_BBxg-Fo",
+            authDomain: "middle-earth-interactive-map.firebaseapp.com",
+            projectId: "middle-earth-interactive-map",
+            storageBucket: "middle-earth-interactive-map.firebasestorage.app",
+            messagingSenderId: "590463727876",
+            appId: "1:590463727876:web:f8bd2c82420a94d44cb851",
+            measurementId: "G-LMZ2Z5W05J"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        // Only report from the live site. Without this, localhost and
+        // tunnel previews write dev traffic into the production property.
+        const ANALYTICS_HOSTS = [
+            "middle-earth-interactive-map.web.app",
+            "middle-earth-interactive-map.firebaseapp.com"
+        ];
+        if (ANALYTICS_HOSTS.includes(location.hostname)) {
+            const analytics = getAnalytics(app);
+            const queued = window._trackQueue;
+            window.track = (name, params = {}) => logEvent(analytics, name, params);
+            queued.forEach(([name, params]) => window.track(name, params));
+        } else {
+            window.track = () => {};
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+            background: #1a1a1a;
+            color: #d4c5a9;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #8b7355; border-radius: 3px; }
+
+        /* ── Nav Bar ───────────────────────────── */
+        #nav-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 44px;
+            z-index: 1100;
+            background: rgba(26, 26, 26, 0.92);
+            border-bottom: 1px solid #5a4a36;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 0 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .nav-link {
+            color: #8b7355;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #e8d9b0;
+            background: rgba(139, 115, 85, 0.2);
+        }
+        .nav-title {
+            font-size: 15px;
+            color: #e8d9b0;
+            letter-spacing: 2px;
+        }
+        #nav-bar > .nav-link:first-child { justify-self: start; }
+        .nav-right { justify-self: end; display: flex; align-items: center; gap: 2px; }
+
+        /* ── Article ───────────────────────────── */
+        #article {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 92px 24px 96px 24px;
+        }
+
+        .page-title {
+            font-size: 34px;
+            color: #e8d9b0;
+            line-height: 1.25;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+        }
+        .standfirst {
+            font-size: 17px;
+            color: #b0a086;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .byline {
+            font-size: 13px;
+            color: #8b7355;
+            border-bottom: 1px solid #5a4a36;
+            padding-bottom: 22px;
+            margin-bottom: 34px;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #e8d9b0;
+            margin: 46px 0 8px 0;
+            letter-spacing: 0.5px;
+        }
+        h2 .num {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #8b7355;
+            margin-bottom: 4px;
+        }
+        h3 {
+            font-size: 18px;
+            color: #d4c5a9;
+            margin: 30px 0 6px 0;
+        }
+        p { margin-bottom: 16px; }
+        a { color: #c8b48a; }
+        a:hover { color: #e8d9b0; }
+
+        strong { color: #e8d9b0; font-weight: normal; border-bottom: 1px dotted #5a4a36; }
+
+        code {
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+            font-size: 0.86em;
+            background: #2c2418;
+            border: 1px solid #5a4a36;
+            border-radius: 3px;
+            padding: 1px 5px;
+            color: #d8c9a5;
+            white-space: nowrap;
+        }
+
+        ul, ol { margin: 0 0 16px 22px; }
+        li { margin-bottom: 7px; }
+
+        /* ── Spec tables ───────────────────────── */
+        .table-wrap { overflow-x: auto; margin: 20px 0 24px 0; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+            min-width: 380px;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px 14px 8px 0;
+            border-bottom: 1px solid #3a3227;
+            vertical-align: top;
+        }
+        th {
+            color: #8b7355;
+            font-weight: normal;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border-bottom-color: #5a4a36;
+        }
+        td:first-child { color: #e8d9b0; white-space: nowrap; padding-right: 22px; }
+
+        /* ── Figures ───────────────────────────── */
+        figure {
+            margin: 28px 0;
+            background: #221c14;
+            border: 1px solid #5a4a36;
+            border-radius: 6px;
+            padding: 16px;
+        }
+        .pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .pair div { text-align: center; }
+        .pair img {
+            width: 100%;
+            max-width: 256px;
+            height: auto;
+            image-rendering: auto;
+            border: 1px solid #5a4a36;
+            border-radius: 3px;
+            display: block;
+            margin: 0 auto;
+        }
+        .pair span {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #8b7355;
+            margin-top: 8px;
+        }
+        figcaption {
+            font-size: 13.5px;
+            color: #a8977c;
+            font-style: italic;
+            margin-top: 14px;
+            line-height: 1.6;
+        }
+
+        /* ── Pipeline diagram ──────────────────── */
+        .diagram-wrap {
+            overflow-x: auto;
+            margin: 26px 0 30px 0;
+            background: #221c14;
+            border: 1px solid #5a4a36;
+            border-radius: 6px;
+            padding: 20px 16px;
+        }
+        .diagram-wrap svg { display: block; margin: 0 auto; min-width: 660px; }
+
+        /* ── Callout ───────────────────────────── */
+        .callout {
+            border-left: 3px solid #8b7355;
+            background: #221c14;
+            padding: 14px 18px;
+            margin: 24px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .callout p:last-child { margin-bottom: 0; }
+        .callout .label {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #8b7355;
+            margin-bottom: 6px;
+        }
+
+        footer {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid #5a4a36;
+            font-size: 13px;
+            color: #8b7355;
+            line-height: 1.75;
+        }
+        footer p { margin-bottom: 10px; }
+
+        @media (max-width: 640px) {
+            #article { padding: 78px 18px 70px 18px; }
+            .page-title { font-size: 27px; }
+            h2 { font-size: 21px; }
+            .nav-title { display: none; }
+            .pair { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav id="nav-bar">
+        <a href="index.html" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
+        <span class="nav-title">Middle-earth</span>
+        <span class="nav-right">
+            <a href="timeline.html" class="nav-link">&#x23f3;&#xfe0e; Timeline</a>
+            <a href="about.html" class="nav-link active">&#x1f4dc;&#xfe0e; About</a>
+        </span>
+    </nav>
+
+    <article id="article">
+        <h1 class="page-title">How this map was built</h1>
+        <p class="standfirst">A hand-drawn parchment map, 1,400 image tiles, a coordinate system with no geography in it, and a satellite view of a place that has never been photographed.</p>
+        <p class="byline">A technical account of the whole pipeline &mdash; including the parts that failed.</p>
+
+        <p>This site has two visual layers over the same imaginary ground. The first is a scan of a hand-drawn parchment map, cut into tiles so it can be zoomed and panned smoothly. The second is a synthetic satellite view: an attempt to answer what Middle-earth would look like from orbit, generated from scratch because no such imagery exists and never has.</p>
+
+        <p>The second layer is the interesting one, and most of this page is about it. But it only works because of decisions made in the first, so we start there.</p>
+
+        <h2><span class="num">Part One</span>The parchment map and the tile pyramid</h2>
+
+        <p>The source is a single JPEG, <strong>7680 &times; 4320 pixels</strong>. Serving that as one image would mean a multi-megabyte download before anything appears, and the browser holding the entire decoded bitmap &mdash; roughly 130&nbsp;MB in memory &mdash; whether you are looking at the Shire or at Mordor.</p>
+
+        <p>The standard fix is a <strong>tile pyramid</strong>. The image is pre-cut into a grid of small square images at several resolutions. The viewer downloads only the tiles covering the visible area at the current zoom, typically a few dozen at a time. It is how every web map works, and it is entirely mechanical:</p>
+
+        <div class="table-wrap">
+        <table>
+            <tr><th>Directory</th><th>Scale</th><th>Grid</th><th>Tiles</th></tr>
+            <tr><td><code>tiles/0/</code></td><td>&frac14; &mdash; 1920 &times; 1097</td><td>8 &times; 5</td><td>40</td></tr>
+            <tr><td><code>tiles/1/</code></td><td>&frac12; &mdash; 3840 &times; 2193</td><td>15 &times; 9</td><td>135</td></tr>
+            <tr><td><code>tiles/2/</code></td><td>Native &mdash; 7680 &times; 4386</td><td>30 &times; 18</td><td>540</td></tr>
+        </table>
+        </div>
+
+        <p>That is <strong>715 tiles</strong> totalling about 18&nbsp;MB, each a 256&nbsp;&times;&nbsp;256 JPEG at quality 85, resampled with Lanczos filtering. Tiles at the right and bottom edges do not divide evenly, so they are padded to a full square with the site's background colour rather than left ragged &mdash; a partial tile would otherwise show a hard seam against the page.</p>
+
+        <h3>A coordinate system with no geography</h3>
+
+        <p>Web mapping libraries normally expect latitude and longitude, and project a curved Earth onto a flat screen. Middle-earth has no such thing, and forcing the map into a real projection would stretch it in ways that make no sense.</p>
+
+        <p>So the map runs on <strong>Leaflet</strong> with <code>L.CRS.Simple</code> and an identity transformation. Coordinates are simply pixels in the source image: y down, x across, no projection, no curvature, no datum. A marker at Bag End is stored as <code>px&nbsp;2746,&nbsp;py&nbsp;1115</code> and that is all it means. The whole map is one flat picture with a grid on it.</p>
+
+        <p>Leaflet's zoom levels are offset so that directory <code>2</code> &mdash; the native-resolution tiles &mdash; sits at map zoom 0, with the half and quarter scales at &minus;1 and &minus;2. Zooming beyond that upscales the native tiles rather than loading anything sharper, because nothing sharper exists. The parchment's own paper grain sets the real limit on useful magnification.</p>
+
+        <h2><span class="num">Part Two</span>Putting 128 events in the right place</h2>
+
+        <p>Every marker needs a pixel coordinate, and reading them off a fantasy map by eye is less accurate than it sounds. The first pass was visibly wrong in places &mdash; drifting further off toward the edges, which is the signature of a systematic error rather than random sloppiness.</p>
+
+        <p>The fix was to fix seven locations precisely by hand &mdash; Bag End, Erebor, Mount Doom, Helm's Deep, Osgiliath, Minas Tirith and Moria &mdash; then solve for the <strong>affine transformation</strong> that best mapped the estimated positions onto those known ones, and apply it to every remaining marker. An affine transform captures exactly the errors you get from eyeballing a scanned image: uniform scale, shear, rotation and offset. The seven anchors keep their exact hand-set values; everything else inherits the correction. Remaining outliers were then nudged individually.</p>
+
+        <p>On top of the markers sit <strong>nine journey paths</strong>. Drawn as raw waypoint lists these look like polygons, so each path is smoothed with <strong>Catmull-Rom spline interpolation</strong> &mdash; a curve that passes exactly through its control points rather than merely near them, which matters when a control point is a real place. Interpolation is skipped for waypoints closer than a threshold, since smoothing a tight cluster produces loops and cusps rather than a plausible route.</p>
+
+        <p>The dataset that all of this reads from holds <strong>128 events</strong> across six categories, <strong>43 typed links</strong> between them (cause, sequel, parallel, legacy, location), and the nine journeys. It is a single plain JavaScript file shared by the map and the timeline, so both pages always agree.</p>
+
+        <h2><span class="num">Part Three</span>Building a satellite view of a place that does not exist</h2>
+
+        <p>Here is the actual problem. A satellite image of Middle-earth cannot be photographed, and cannot be derived from real elevation data, because there is none. The only source of truth is a drawing &mdash; and a stylised one, where a mountain range is a row of little hand-inked triangles and a forest is a texture of scribbled canopy.</p>
+
+        <p>Feeding that drawing straight to an image generator does not work. It has no idea which brown squiggle is a mountain and which is a label, and it will happily turn the Sea of Rh&ucirc;n into a desert or write invented text across Rohan. The generated result also drifts: run it on adjacent regions and you get two incompatible worlds that do not join up.</p>
+
+        <p>The pipeline that eventually worked is six stages, and its central idea is that <strong>the diffusion model is never allowed to decide what anything is</strong>. That is settled before it runs. The model only decides what things look like.</p>
+
+        <div class="diagram-wrap">
+        <svg viewBox="0 0 700 132" width="700" height="132" role="img" aria-label="Six-stage pipeline: painted masks, elevation model, hillshade, terrain colour, diffusion, tile pyramid">
+            <defs>
+                <marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                    <polygon points="0 0, 7 3.5, 0 7" fill="#8b7355"/>
+                </marker>
+            </defs>
+            <g font-family="Georgia, serif" font-size="10.5" fill="#d4c5a9" text-anchor="middle">
+                <g>
+                    <rect x="4" y="30" width="98" height="46" rx="4" fill="#2c2418" stroke="#5a4a36"/>
+                    <text x="53" y="49" fill="#e8d9b0">1 &middot; Masks</text>
+                    <text x="53" y="64" font-size="9" fill="#8b7355">13 painted layers</text>
+                </g>
+                <g>
+                    <rect x="120" y="30" width="98" height="46" rx="4" fill="#2c2418" stroke="#5a4a36"/>
+                    <text x="169" y="49" fill="#e8d9b0">2 &middot; Elevation</text>
+                    <text x="169" y="64" font-size="9" fill="#8b7355">synthetic DEM</text>
+                </g>
+                <g>
+                    <rect x="236" y="30" width="98" height="46" rx="4" fill="#2c2418" stroke="#5a4a36"/>
+                    <text x="285" y="49" fill="#e8d9b0">3 &middot; Hillshade</text>
+                    <text x="285" y="64" font-size="9" fill="#8b7355">sun 315&deg; / 45&deg;</text>
+                </g>
+                <g>
+                    <rect x="352" y="30" width="98" height="46" rx="4" fill="#2c2418" stroke="#5a4a36"/>
+                    <text x="401" y="49" fill="#e8d9b0">4 &middot; Colour</text>
+                    <text x="401" y="64" font-size="9" fill="#8b7355">biome palette</text>
+                </g>
+                <g>
+                    <rect x="468" y="30" width="98" height="46" rx="4" fill="#3a2f1d" stroke="#8b7355"/>
+                    <text x="517" y="49" fill="#e8d9b0">5 &middot; Diffusion</text>
+                    <text x="517" y="64" font-size="9" fill="#a8977c">240 patches</text>
+                </g>
+                <g>
+                    <rect x="584" y="30" width="98" height="46" rx="4" fill="#2c2418" stroke="#5a4a36"/>
+                    <text x="633" y="49" fill="#e8d9b0">6 &middot; Tiles</text>
+                    <text x="633" y="64" font-size="9" fill="#8b7355">685 JPEGs</text>
+                </g>
+                <line x1="104" y1="53" x2="116" y2="53" stroke="#8b7355" stroke-width="1.2" marker-end="url(#ar)"/>
+                <line x1="220" y1="53" x2="232" y2="53" stroke="#8b7355" stroke-width="1.2" marker-end="url(#ar)"/>
+                <line x1="336" y1="53" x2="348" y2="53" stroke="#8b7355" stroke-width="1.2" marker-end="url(#ar)"/>
+                <line x1="452" y1="53" x2="464" y2="53" stroke="#8b7355" stroke-width="1.2" marker-end="url(#ar)"/>
+                <line x1="568" y1="53" x2="580" y2="53" stroke="#8b7355" stroke-width="1.2" marker-end="url(#ar)"/>
+                <text x="350" y="18" font-size="9.5" fill="#8b7355" letter-spacing="2">WHAT IS IT? &mdash; DECIDED BEFORE THE MODEL RUNS</text>
+                <text x="350" y="112" font-size="9.5" fill="#8b7355" letter-spacing="2">WHAT DOES IT LOOK LIKE? &mdash; DECIDED BY THE MODEL</text>
+                <line x1="120" y1="24" x2="450" y2="24" stroke="#5a4a36" stroke-width="1"/>
+                <line x1="468" y1="94" x2="566" y2="94" stroke="#5a4a36" stroke-width="1"/>
+            </g>
+        </svg>
+        </div>
+
+        <h3>Stage 1 &mdash; Painting the world by hand</h3>
+
+        <p>The foundation is not code. It is a Photoshop document in which every region of the map was <strong>traced by hand into 13 labelled layers</strong>, one per terrain type. This is the slow, unglamorous part, and everything downstream depends on its accuracy.</p>
+
+        <div class="table-wrap">
+        <table>
+            <tr><th>Layer</th><th>Coverage</th><th>Layer</th><th>Coverage</th></tr>
+            <tr><td>ocean</td><td>35.3%</td><td>ice land</td><td>8.6%</td></tr>
+            <tr><td>prairie</td><td>33.0%</td><td>forest</td><td>3.5%</td></tr>
+            <tr><td>desert</td><td>10.4%</td><td>hills</td><td>1.6%</td></tr>
+            <tr><td>edge</td><td>9.4%</td><td>rivers &amp; lakes</td><td>1.2%</td></tr>
+            <tr><td>mountains</td><td>8.5%</td><td>swamp</td><td>0.4%</td></tr>
+        </table>
+        </div>
+
+        <p>With these masks, every pixel of the map has a known type before any generation happens. The ocean is the ocean because someone said so, not because a model guessed.</p>
+
+        <h3>Stage 2 &mdash; Inventing an elevation model</h3>
+
+        <p>Hillshading &mdash; the effect that makes terrain read as three-dimensional &mdash; needs a height value per pixel. Middle-earth has none, so one is fabricated. Each mask is assigned a base height, then blurred to blend into its neighbours:</p>
+
+        <div class="table-wrap">
+        <table>
+            <tr><th>Terrain</th><th>Height</th><th>Blur &sigma;</th><th>Effect</th></tr>
+            <tr><td>mountains</td><td>240</td><td>5</td><td>Near-maximum, crisp edges so ranges stay sharp</td></tr>
+            <tr><td>hills</td><td>118</td><td>25</td><td>Intermediate, moderate blending</td></tr>
+            <tr><td>forest</td><td>62</td><td>35</td><td>Slightly raised over plains</td></tr>
+            <tr><td>prairie</td><td>55</td><td>40</td><td>Broad, soft transitions</td></tr>
+            <tr><td>swamp</td><td>16</td><td>12</td><td>Low-lying, tight to its boundary</td></tr>
+            <tr><td>ocean</td><td>4</td><td>15</td><td>Effectively sea level</td></tr>
+        </table>
+        </div>
+
+        <p>Flat plateaus per terrain type would look artificial, so the parchment itself is used as a modulation source at <strong>two different blur scales</strong>, and this is the trick that makes the whole thing work:</p>
+
+        <ul>
+            <li><strong>Broad blur (&sigma;&nbsp;=&nbsp;25)</strong> destroys all text and fine linework while preserving large-scale tonal variation. Place names and the compass rose disappear; the paper's broad shading survives as gentle topographic undulation.</li>
+            <li><strong>Fine blur (&sigma;&nbsp;=&nbsp;6)</strong>, blended in strongly <em>only inside mountain zones</em>, preserves the hatching of the individual hand-drawn mountain symbols &mdash; so each inked triangle becomes an actual peak with its own shape.</li>
+        </ul>
+
+        <p>The cartographer's drawing decisions therefore survive into the terrain. Where the illustrator drew a taller triangle, the satellite view has a taller mountain.</p>
+
+        <h3>Stage 3 &mdash; Hillshading</h3>
+
+        <p>The synthetic elevation is lit with a virtual sun at <strong>315&deg; azimuth and 45&deg; altitude</strong> &mdash; the standard cartographic convention of light from the upper left, which the eye reads as raised rather than sunken. A vertical exaggeration factor stretches the modest height range into steep virtual slopes, producing strong shadow contrast, and an unsharp-mask pass emphasises ridgelines.</p>
+
+        <h3>Stage 4 &mdash; Colour</h3>
+
+        <p>Each terrain type gets a base colour, multiplied by the hillshade so that slope shading shows through. Two extra passes add the details that sell it:</p>
+
+        <ul>
+            <li><strong>Beaches.</strong> Coastline is walked in segments of about 180 pixels; roughly 42% of segments become a sandy strip 14 pixels wide on the land side. The randomness is seeded, so the result is identical on every run &mdash; an unbroken beach around every coast would look wrong, but so would a coastline with no beaches at all.</li>
+            <li><strong>Snow.</strong> Applied to the upper portion of each mountain cluster by its peaked height profile rather than by absolute altitude, so isolated peaks get caps proportional to themselves instead of only the tallest range in the world turning white.</li>
+        </ul>
+
+        <h3>Stage 5 &mdash; Diffusion, on a tight leash</h3>
+
+        <p>Only now does a generative model appear, and it is deliberately constrained. The assembled colour-and-shade image is cut into <strong>512&nbsp;&times;&nbsp;512 patches with 96 pixels of overlap</strong> &mdash; 240 of them &mdash; and each is passed through <strong>Stable Diffusion 1.5 in img2img mode</strong>, which starts from the existing image rather than from noise.</p>
+
+        <p>Three things keep it honest:</p>
+
+        <p><strong>Per-biome prompts.</strong> Each patch is described by whatever the masks say is actually in it &mdash; <em>"dense dark green forest canopy from above, individual tree crowns visible"</em> for forest, <em>"murky dark marshland, standing brown pools between reeds"</em> for swamp. A long shared negative prompt suppresses the failure modes: text and labels, parchment texture, illustration style, and &mdash; a specific recurring problem &mdash; modern agricultural field patterns, which diffusion models are strongly inclined to hallucinate across any open plain.</p>
+
+        <p><strong>Per-biome denoising strength.</strong> This is the most important dial. Denoising strength sets how far the model may depart from the input. Ocean is held near <strong>0.30</strong>, because open water should stay flat and any creative freedom there produces unwanted islands and swirls. Mountains are pushed to <strong>0.72</strong>, where the model is free to invent rock, scree and snowfields on top of the hillshaded skeleton. The production run used a base strength of 0.62.</p>
+
+        <p><strong>Settlement awareness.</strong> Twenty known locations carry their own descriptive text, injected into the prompt whenever a patch falls within 350 pixels of them &mdash; <em>"tiered white stone city built into mountainside, concentric walls"</em> at Minas Tirith, <em>"fortress carved into cliff face with long stone dam"</em> at Helm's Deep. The model is not asked to know the lore. It is told.</p>
+
+        <h3>Stage 6 &mdash; Assembly</h3>
+
+        <p>The 240 patches are feathered together across their 96-pixel overlaps, sharpened, and sliced into a second tile pyramid: <strong>685 tiles, about 8&nbsp;MB</strong>, sitting in the same coordinate space as the parchment so the two layers register exactly. The whole run takes a few hours on an Apple Silicon laptop, generating locally with no cloud API involved.</p>
+
+        <h3>What it actually looks like</h3>
+
+        <figure>
+            <div class="pair">
+                <div><img src="tiles/2/15/5.jpg" alt="Parchment tile showing hand-drawn mountain symbols in the Misty Mountains" loading="lazy" width="256" height="256"><span>Parchment</span></div>
+                <div><img src="tiles-sat/2/15/5.jpg" alt="Satellite tile showing rocky ridgelines in the same location" loading="lazy" width="256" height="256"><span>Satellite</span></div>
+            </div>
+            <figcaption>The same 256-pixel tile in the Misty Mountains. Each hand-inked triangle on the left has become a distinct ridge on the right, in the same place and at the same relative size &mdash; the direct result of the fine-blur pass preserving the illustrator's hatching as elevation.</figcaption>
+        </figure>
+
+        <figure>
+            <div class="pair">
+                <div><img src="tiles/2/8/4.jpg" alt="Parchment tile showing the Grey Havens label and stylised water lines" loading="lazy" width="256" height="256"><span>Parchment</span></div>
+                <div><img src="tiles-sat/2/8/4.jpg" alt="Satellite tile showing the same coastline as water and land" loading="lazy" width="256" height="256"><span>Satellite</span></div>
+            </div>
+            <figcaption>The Grey Havens. The lettering and the stylised wave hatching on the left are gone on the right &mdash; removed by the broad blur before the terrain was ever built &mdash; while the coastline itself, defined by the hand-painted ocean mask, is preserved precisely.</figcaption>
+        </figure>
+
+        <h2><span class="num">Part Four</span>The attempts that failed</h2>
+
+        <p>The pipeline above is version six. The earlier ones are worth describing, because each failed in a way that produced the next constraint.</p>
+
+        <p><strong>Straight image-to-image on the parchment.</strong> The first approach upscaled the map and ran diffusion over it with a single global prompt about satellite photography. Without masks the model had no idea what it was looking at, and without per-region prompting it applied one aesthetic everywhere. The output was recognisably Earth rather than Middle-earth: one generation covered the north-west of the map in desert scrub cut through by a highway interchange, complete with the straight lines and right angles of modern road engineering. It was committed to version control before anyone looked at it closely, which is its own lesson.</p>
+
+        <p><strong>Fully procedural, no diffusion.</strong> The opposite extreme also exists in the repository: a generator that builds the terrain entirely from masks, hillshade, hypsometric colour ramps and fractal noise, with no model at all. It is completely controllable and completely consistent &mdash; and it looks synthetic, because procedural noise does not produce the irregularity of real landscape. It is what stage 4 of the final pipeline is descended from. Its lesson was that the model earns its place at exactly one job: surface texture.</p>
+
+        <p><strong>Too much freedom over water.</strong> Uniform denoising strength across the whole map let the model treat open ocean as an invitation. Oceans acquired texture, currents and the occasional island. Hence the per-biome strengths, and hence ocean being clamped hardest of all.</p>
+
+        <div class="callout">
+            <span class="label">The general lesson</span>
+            <p>Every improvement came from taking a decision <em>away</em> from the model and settling it beforehand &mdash; what terrain this is, how high it stands, where the sun is, what colour it starts from, how far the output may drift. The final pipeline is mostly deterministic image processing, with a diffusion model doing one narrow job at the very end.</p>
+        </div>
+
+        <h2><span class="num">Part Five</span>How the site is served</h2>
+
+        <p>There is no build step, no framework and no bundler. The site is hand-written HTML, CSS and JavaScript, with Leaflet as the only runtime dependency, and every page is a static file. The tiles are static files too, which is the whole point of pre-generating them: serving a tile is serving a JPEG, and it costs a CDN nothing.</p>
+
+        <p>It is hosted on Firebase Hosting, with tiles cached for 24 hours and the shared data file for one hour. About 1,400 tiles across the two layers total roughly 26&nbsp;MB &mdash; a large repository, but a small page, because any single view only ever fetches the few dozen tiles you can actually see.</p>
+
+        <footer>
+            <p><strong>Tools:</strong> Photoshop for the masks, Python with Pillow, NumPy and psd-tools for the image pipeline, Stable Diffusion 1.5 via Hugging Face Diffusers running locally on Apple Silicon, and Leaflet in the browser.</p>
+            <p>The base map artwork is not owned by this project and is used for fan and educational purposes only. Middle-earth, its places and its stories are the creation of J.R.R. Tolkien; this is an unofficial fan project with no affiliation to the Tolkien Estate or its licensees.</p>
+            <p><a href="index.html">&larr; Back to the map</a></p>
+        </footer>
+    </article>
+</body>
+</html>
