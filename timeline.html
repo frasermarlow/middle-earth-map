@@ -499,9 +499,15 @@
             #timeline-container { padding: 100px 10px 50px 10px; }
         }
     </style>
+    <script>
+        // The analytics module below is deferred, so it runs after the page
+        // script. Queue anything fired during load and flush it on init.
+        window._trackQueue = [];
+        window.track = (name, params) => window._trackQueue.push([name, params]);
+    </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCp2XeX3C6nu19X1-f3gZRX9HT_BBxg-Fo",
@@ -514,7 +520,21 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+
+        // Only report from the live site. Without this, localhost and
+        // tunnel previews write dev traffic into the production property.
+        const ANALYTICS_HOSTS = [
+            "middle-earth-interactive-map.web.app",
+            "middle-earth-interactive-map.firebaseapp.com"
+        ];
+        if (ANALYTICS_HOSTS.includes(location.hostname)) {
+            const analytics = getAnalytics(app);
+            const queued = window._trackQueue;
+            window.track = (name, params = {}) => logEvent(analytics, name, params);
+            queued.forEach(([name, params]) => window.track(name, params));
+        } else {
+            window.track = () => {};
+        }
     </script>
 </head>
 <body>
@@ -736,6 +756,12 @@
                         full.style.display = 'inline';
                         short.style.display = 'none';
                     }
+                    const card = el.closest('.timeline-event');
+                    const evt = card && eventById[card.dataset.id];
+                    track('read_more', {
+                        me_event: evt ? evt.name : '(unknown)',
+                        state: full.style.display === 'inline' ? 'expanded' : 'collapsed'
+                    });
                 });
             });
 
@@ -745,6 +771,7 @@
                     const px = btn.dataset.px;
                     const py = btn.dataset.py;
                     const name = btn.dataset.name;
+                    track('view_on_map', { me_event: name });
                     window.location.href = `index.html?fly=${px},${py}&event=${encodeURIComponent(name)}`;
                 });
             });
@@ -754,7 +781,13 @@
                 btn.addEventListener('click', () => {
                     const card = btn.closest('.event-card');
                     const panel = card.querySelector('.links-panel');
-                    if (panel) panel.classList.toggle('open');
+                    if (panel) {
+                        panel.classList.toggle('open');
+                        if (panel.classList.contains('open')) {
+                            const evt = eventById[btn.dataset.id];
+                            track('related_events_opened', { me_event: evt ? evt.name : '(unknown)' });
+                        }
+                    }
                 });
             });
 
@@ -763,6 +796,8 @@
                 el.addEventListener('click', () => {
                     const targetId = el.dataset.id;
                     scrollToEvent(targetId);
+                    const evt = eventById[targetId];
+                    track('related_link_followed', { me_event: evt ? evt.name : '(unknown)' });
                 });
             });
         }
@@ -861,8 +896,13 @@
         }
 
         playBtn.addEventListener('click', () => {
-            if (playState === PLAYING) pause();
-            else play();
+            if (playState === PLAYING) {
+                pause();
+                track('timeline_pause');
+            } else {
+                play();
+                track('timeline_play');
+            }
         });
         prevBtn.addEventListener('click', () => {
             if (playState === PLAYING) pause();
@@ -874,6 +914,7 @@
         });
         speedSelect.addEventListener('change', () => {
             playSpeed = parseInt(speedSelect.value);
+            track('timeline_speed_change', { speed_ms: playSpeed });
         });
         scrubber.addEventListener('input', () => {
             const pct = parseInt(scrubber.value);
@@ -892,7 +933,13 @@
                 label.innerHTML = `<input type="checkbox" class="filter-checkbox" data-category="${cat}" checked>
                     <span class="filter-dot" style="background: ${COLORS[cat]};"></span>
                     <span class="filter-name">${CATEGORY_LABELS[cat]}</span>`;
-                label.querySelector('input').addEventListener('change', applyFilters);
+                label.querySelector('input').addEventListener('change', (e) => {
+                    applyFilters();
+                    track('timeline_filter', {
+                        category: cat,
+                        state: e.target.checked ? 'on' : 'off'
+                    });
+                });
                 panel.appendChild(label);
             });
         }

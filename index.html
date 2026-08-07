@@ -629,9 +629,15 @@
             display: none;
         }
     </style>
+    <script>
+        // The analytics module below is deferred, so it runs after the page
+        // script. Queue anything fired during load and flush it on init.
+        window._trackQueue = [];
+        window.track = (name, params) => window._trackQueue.push([name, params]);
+    </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCp2XeX3C6nu19X1-f3gZRX9HT_BBxg-Fo",
@@ -644,7 +650,21 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+
+        // Only report from the live site. Without this, localhost and
+        // tunnel previews write dev traffic into the production property.
+        const ANALYTICS_HOSTS = [
+            "middle-earth-interactive-map.web.app",
+            "middle-earth-interactive-map.firebaseapp.com"
+        ];
+        if (ANALYTICS_HOSTS.includes(location.hostname)) {
+            const analytics = getAnalytics(app);
+            const queued = window._trackQueue;
+            window.track = (name, params = {}) => logEvent(analytics, name, params);
+            queued.forEach(([name, params]) => window.track(name, params));
+        } else {
+            window.track = () => {};
+        }
     </script>
 </head>
 <body>
@@ -768,6 +788,12 @@
 
         Object.values(categoryLayers).forEach(layer => layer.addTo(map));
 
+        // Which locations people actually open
+        map.on('popupopen', (e) => {
+            const evt = e.popup._source && e.popup._source._eventData;
+            if (evt) track('marker_open', { me_event: evt.name, category: evt.category });
+        });
+
         // Catmull-Rom spline interpolation for smooth journey paths
         // Only interpolate segments longer than minDist to avoid loops on close points
         // Points with a truthy third element (e.g. [x, y, 1]) are always smoothed
@@ -869,6 +895,10 @@
                     map.addLayer(journeyLayers[key]);
                 }
                 updateJourneyClearBtn();
+                track('journey_toggle', {
+                    journey: journey.label,
+                    state: toggle.classList.contains('disabled') ? 'off' : 'on'
+                });
             });
             journeyToggles.push(toggle);
             legendEl.appendChild(toggle);
@@ -942,6 +972,10 @@
                     toggle.innerHTML = '&#9660;';
                 }
                 updateEventsClearBtn();
+                track('category_toggle', {
+                    category: cat,
+                    state: div.classList.contains('disabled') ? 'off' : 'on'
+                });
             });
 
             // Click legend item to fly to marker
@@ -951,6 +985,7 @@
                     const evt = events[parseInt(item.dataset.index)];
                     const latlng = toLatLng(evt.px, evt.py);
                     map.flyTo(latlng, 1, { duration: 0.8 });
+                    track('legend_event_click', { me_event: evt.name, category: evt.category });
 
                     // Open the popup
                     categoryLayers[evt.category].eachLayer(marker => {
@@ -1006,6 +1041,7 @@
             if (!coordsEnabled) {
                 coordDisplay.style.display = 'none';
             }
+            track('coords_toggle', { state: coordsEnabled ? 'on' : 'off' });
         });
         legendEl.appendChild(coordToggleRow);
 
@@ -1029,6 +1065,7 @@
             measureToggleRow.classList.toggle('active', measureEnabled);
             document.body.classList.toggle('measure-active', measureEnabled);
             if (!measureEnabled) clearMeasure();
+            track('measure_toggle', { state: measureEnabled ? 'on' : 'off' });
         });
         legendEl.appendChild(measureToggleRow);
 
@@ -1048,6 +1085,7 @@
                 map.removeLayer(satTiles);
                 map.addLayer(mapTiles);
             }
+            track('satellite_toggle', { state: active ? 'on' : 'off', source: 'legend' });
         });
         legendEl.appendChild(satToggleRow);
 
@@ -1174,6 +1212,7 @@
             const fly = params.get('fly');
             const eventName = params.get('event');
             if (fly) {
+                track('deep_link_arrival', { me_event: eventName || '(unnamed)' });
                 const [px, py] = fly.split(',').map(Number);
                 const latlng = toLatLng(px, py);
                 setTimeout(() => {
@@ -1195,6 +1234,7 @@
                 map.removeLayer(mapTiles);
                 map.addLayer(satTiles);
                 satToggleRow.classList.add('active');
+                track('satellite_toggle', { state: 'on', source: 'deep_link' });
             }
         })();
 
@@ -1222,10 +1262,17 @@
 
             if (!localStorage.getItem('me-map-welcomed')) {
                 showSplash();
+                track('splash_shown');
             }
 
-            enterBtn.addEventListener('click', hideSplash);
-            infoBtn.addEventListener('click', showSplash);
+            enterBtn.addEventListener('click', () => {
+                hideSplash();
+                track('splash_dismissed');
+            });
+            infoBtn.addEventListener('click', () => {
+                showSplash();
+                track('info_opened');
+            });
         })();
 
     </script>
