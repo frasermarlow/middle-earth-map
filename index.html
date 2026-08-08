@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
     <title>Middle-earth — Interactive Map</title>
-    <meta name="description" content="Explore an interactive map of Tolkien's Middle-earth with over 100 events from The Silmarillion, The Hobbit, and The Lord of the Rings. Click markers, trace journeys, and discover the history of every age.">
+    <meta name="description" content="Explore an interactive map of Tolkien's Middle-earth with 128 events from The Silmarillion, The Hobbit and The Lord of the Rings. Click markers, trace journeys.">
     <link rel="canonical" href="https://middle-earth-interactive-map.web.app/">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="website">
@@ -35,6 +37,16 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
 
         body {
             font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
@@ -670,8 +682,9 @@
     </script>
 </head>
 <body>
+    <h1 class="visually-hidden">Middle-earth Interactive Map</h1>
     <nav id="nav-bar">
-        <a href="index.html" class="nav-link active">&#x1f5fa;&#xfe0e; Map</a>
+        <a href="/" class="nav-link active">&#x1f5fa;&#xfe0e; Map</a>
         <span class="nav-title">Middle-earth</span>
         <span class="nav-right">
             <a href="timeline.html" class="nav-link">&#x23f3;&#xfe0e; Timeline</a>

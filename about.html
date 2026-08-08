@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
     <title>How the Map of Middle-earth Was Built</title>
-    <meta name="description" content="A technical account of how the Middle-earth interactive map was built: the tile pyramid, the coordinate system, and the six-stage pipeline that turned a hand-drawn parchment map into a synthetic satellite view using hand-painted masks, a synthetic elevation model, hillshading and Stable Diffusion.">
+    <meta name="description" content="How the Middle-earth map was built: the tile pyramid, coordinate system, and the pipeline turning a parchment map into a satellite view with Stable Diffusion.">
     <link rel="canonical" href="https://middle-earth-interactive-map.web.app/about.html">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="article">
@@ -25,11 +27,42 @@
         "headline": "How the Map of Middle-earth Was Built",
         "url": "https://middle-earth-interactive-map.web.app/about.html",
         "description": "A technical account of the tile pyramid, coordinate system, and the six-stage pipeline that generated the synthetic satellite layer.",
+        "author": {
+            "@type": "Person",
+            "name": "Fraser Marlow",
+            "url": "https://github.com/frasermarlow"
+        },
+        "datePublished": "2026-08-07",
+        "dateModified": "2026-08-08",
         "isPartOf": {
             "@type": "WebSite",
             "name": "Middle-earth Interactive Map",
             "url": "https://middle-earth-interactive-map.web.app/"
         }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Why not MBTiles, or a tile server?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "There is no tile server. Every tile is an ordinary static file served by a CDN, using the standard XYZ/slippy-map directory convention that Leaflet and OpenStreetMap already use. MBTiles packs tiles into a SQLite container, which is useful for shipping a tileset as one file, but it requires something to unpack and serve the rows — introducing a server purely to undo packaging that static hosting already avoids. The trade-off is that this approach means about 1,400 small files in version control, which is not what git is designed for."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Which age of Middle-earth does this map show?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "This is a Third Age map. Beleriand, the region where most of The Silmarillion takes place, sank beneath the sea at the end of the First Age during the War of Wrath, so those events cannot be placed on this map at all because the land no longer exists. Most Silmarillion-era markers shown are actually Second Age events that map onto this geography without much trouble. Some place names are also late-Third-Age labels applied to older places — Dol Guldur was called Amon Lanc in the Second Age, and Lothlorien was called Laurelindorenan."
+                }
+            }
+        ]
     }
     </script>
     <script>
@@ -312,7 +345,7 @@
 </head>
 <body>
     <nav id="nav-bar">
-        <a href="/index.html" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
+        <a href="/" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
         <span class="nav-title">Middle-earth</span>
         <span class="nav-right">
             <a href="/timeline.html" class="nav-link">&#x23f3;&#xfe0e; Timeline</a>
@@ -579,7 +612,7 @@
         <footer>
             <p><strong>Tools:</strong> Photoshop for the masks, Python with Pillow, NumPy and psd-tools for the image pipeline, Stable Diffusion 1.5 via Hugging Face Diffusers running locally on Apple Silicon, and Leaflet in the browser.</p>
             <p>The base map artwork is not owned by this project and is used for fan and educational purposes only. Middle-earth, its places and its stories are the creation of J.R.R. Tolkien; this is an unofficial fan project with no affiliation to the Tolkien Estate or its licensees.</p>
-            <p><a href="/index.html">&larr; Back to the map</a></p>
+            <p><a href="/">&larr; Back to the map</a></p>
         </footer>
     </article>
 </body>
