@@ -6,7 +6,7 @@
     <title>Middle-earth &mdash; How This Map Was Built</title>
     <meta name="description" content="A technical account of how the Middle-earth interactive map was built: the tile pyramid, the coordinate system, and the six-stage pipeline that turned a hand-drawn parchment map into a synthetic satellite view using hand-painted masks, a synthetic elevation model, hillshading and Stable Diffusion.">
     <link rel="canonical" href="https://middle-earth-interactive-map.web.app/about.html">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="article">
     <meta property="og:title" content="Middle-earth — How This Map Was Built">
     <meta property="og:description" content="How a hand-drawn parchment map became a tiled, zoomable interactive map — and how the satellite layer was synthesised from hand-painted masks, a fake elevation model, and diffusion.">
@@ -312,11 +312,11 @@
 </head>
 <body>
     <nav id="nav-bar">
-        <a href="index.html" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
+        <a href="/index.html" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
         <span class="nav-title">Middle-earth</span>
         <span class="nav-right">
-            <a href="timeline.html" class="nav-link">&#x23f3;&#xfe0e; Timeline</a>
-            <a href="about.html" class="nav-link active">&#x1f4dc;&#xfe0e; About</a>
+            <a href="/timeline.html" class="nav-link">&#x23f3;&#xfe0e; Timeline</a>
+            <a href="/about.html" class="nav-link active">&#x1f4dc;&#xfe0e; About</a>
         </span>
     </nav>
 
@@ -527,16 +527,16 @@
 
         <figure>
             <div class="pair">
-                <div><img src="tiles/2/15/5.jpg" alt="Parchment tile showing hand-drawn mountain symbols in the Misty Mountains" loading="lazy" width="256" height="256"><span>Parchment</span></div>
-                <div><img src="tiles-sat/2/15/5.jpg" alt="Satellite tile showing rocky ridgelines in the same location" loading="lazy" width="256" height="256"><span>Satellite</span></div>
+                <div><img src="/tiles/2/15/5.jpg" alt="Parchment tile showing hand-drawn mountain symbols in the Misty Mountains" loading="lazy" width="256" height="256"><span>Parchment</span></div>
+                <div><img src="/tiles-sat/2/15/5.jpg" alt="Satellite tile showing rocky ridgelines in the same location" loading="lazy" width="256" height="256"><span>Satellite</span></div>
             </div>
             <figcaption>The same 256-pixel tile in the Misty Mountains. Each hand-inked triangle on the left has become a distinct ridge on the right, in the same place and at the same relative size &mdash; the direct result of the fine-blur pass preserving the illustrator's hatching as elevation.</figcaption>
         </figure>
 
         <figure>
             <div class="pair">
-                <div><img src="tiles/2/8/4.jpg" alt="Parchment tile showing the Grey Havens label and stylised water lines" loading="lazy" width="256" height="256"><span>Parchment</span></div>
-                <div><img src="tiles-sat/2/8/4.jpg" alt="Satellite tile showing the same coastline as water and land" loading="lazy" width="256" height="256"><span>Satellite</span></div>
+                <div><img src="/tiles/2/8/4.jpg" alt="Parchment tile showing the Grey Havens label and stylised water lines" loading="lazy" width="256" height="256"><span>Parchment</span></div>
+                <div><img src="/tiles-sat/2/8/4.jpg" alt="Satellite tile showing the same coastline as water and land" loading="lazy" width="256" height="256"><span>Satellite</span></div>
             </div>
             <figcaption>The Grey Havens. The lettering and the stylised wave hatching on the left are gone on the right &mdash; removed by the broad blur before the terrain was ever built &mdash; while the coastline itself, defined by the hand-painted ocean mask, is preserved precisely.</figcaption>
         </figure>
@@ -581,7 +581,7 @@
         <footer>
             <p><strong>Tools:</strong> Photoshop for the masks, Python with Pillow, NumPy and psd-tools for the image pipeline, Stable Diffusion 1.5 via Hugging Face Diffusers running locally on Apple Silicon, and Leaflet in the browser.</p>
             <p>The base map artwork is not owned by this project and is used for fan and educational purposes only. Middle-earth, its places and its stories are the creation of J.R.R. Tolkien; this is an unofficial fan project with no affiliation to the Tolkien Estate or its licensees.</p>
-            <p><a href="index.html">&larr; Back to the map</a></p>
+            <p><a href="/index.html">&larr; Back to the map</a></p>
         </footer>
     </article>
 </body>

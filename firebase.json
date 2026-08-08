@@ -15,6 +15,9 @@
       "*.psd",
       "_*"
     ],
+    "rewrites": [
+      { "source": "/about", "destination": "/about.html" }
+    ],
     "headers": [
       {
         "source": "**/*.js",
