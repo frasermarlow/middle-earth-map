@@ -321,8 +321,8 @@
     </nav>
 
     <article id="article">
-        <h1 class="page-title">How this map was built</h1>
-        <p class="standfirst">A hand-drawn parchment map, 1,400 image tiles, a coordinate system with no geography in it, and a satellite view of a place that has never been photographed.</p>
+        <h1 class="page-title">How the map of middle earth was built</h1>
+        <p class="standfirst">A photoshop parchment map, 1,400 image tiles, a coordinate system, and a weird satellite view of a place that has never been photographed...</p>
         <p class="byline">A technical account of the whole pipeline &mdash; including the parts that failed.</p>
 
         <p>This site has two visual layers over the same imaginary ground. The first is a scan of a hand-drawn parchment map, cut into tiles so it can be zoomed and panned smoothly. The second is a synthetic satellite view: an attempt to answer what Middle-earth would look like from orbit, generated from scratch because no such imagery exists and never has.</p>
@@ -332,10 +332,8 @@
         <h2><span class="num">Part One</span>The parchment map and the tile pyramid</h2>
 
         <div class="callout callout-strong">
-            <span class="label">Important &mdash; I did not create this map</span>
-            <p>The parchment artwork that this entire site is built on is not mine. I found it in <a href="https://www.reddit.com/r/lotr/comments/18fy0ga/middleearth_map_on_the_movies_8k_7680_4320/" rel="noopener nofollow">a Reddit thread</a> where it was already circulating without any credit attached, and despite searching I have not been able to trace it back to whoever actually drew it.</p>
-            <p>That post is as far back as the trail goes. The file this site is built from is byte-for-byte identical to <a href="https://i.redd.it/r8403tg0wo5c1.jpeg" rel="noopener nofollow">the image posted there</a> &mdash; the same 7680 &times; 4320 pixels and the same 20.6&nbsp;MB, down to the checksum. The thread describes it as a map &ldquo;on the movies&rdquo;, and it does appear to derive from the Peter Jackson films or from artwork produced around them, but I have found no original credited posting.</p>
-            <p>Everything described on this page concerns what was done <em>to</em> that image &mdash; slicing it into tiles, deriving terrain from it, building an interface around it. None of it is a claim on the artwork itself, which remains the work of an illustrator I would very much like to name. If you know who created it, I would genuinely welcome being told, and I will correct this page as soon as I can.</p>
+            <span class="label">Important: I did not create the map!</span>
+            <p>The amazing parchment artwork on this site is not mine. I found it in <a href="https://www.reddit.com/r/lotr/comments/18fy0ga/middleearth_map_on_the_movies_8k_7680_4320/" rel="noopener nofollow">a Reddit thread</a> and the credit goes (I believe) to <a href="https://www.reddit.com/user/kyurtseven7/">Kerem Yurtseven</a> from  İzmir, Turkey.</p>
         </div>
 
         <p>The source is a single JPEG, <strong>7680 &times; 4320 pixels</strong>. Serving that as one image would mean a multi-megabyte download before anything appears, and the browser holding the entire decoded bitmap &mdash; roughly 130&nbsp;MB in memory &mdash; whether you are looking at the Shire or at Mordor.</p>
