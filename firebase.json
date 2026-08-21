@@ -16,10 +16,12 @@
       "_*"
     ],
     "redirects": [
-      { "source": "/index.html", "destination": "/", "type": 301 }
+      { "source": "/index.html", "destination": "/", "type": 301 },
+      { "source": "/places.html", "destination": "/places", "type": 301 }
     ],
     "rewrites": [
-      { "source": "/about", "destination": "/about.html" }
+      { "source": "/about", "destination": "/about.html" },
+      { "source": "/places", "destination": "/places.html" }
     ],
     "headers": [
       {

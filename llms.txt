@@ -8,4 +8,9 @@
 
 - [Map](https://middle-earth-interactive-map.web.app/): Interactive map with event markers, character journeys, and a synthetic satellite view.
 - [Timeline](https://middle-earth-interactive-map.web.app/timeline.html): Chronological timeline with playback controls and category filters.
+- [Places](https://middle-earth-interactive-map.web.app/places): Gazetteer of all 128 places, with the book, the Age and year, map coordinates and what happened at each.
 - [About](https://middle-earth-interactive-map.web.app/about.html): How the map was built — tile pyramid, coordinate system, and the satellite-generation pipeline.
+
+## Data
+
+- [locations.json](https://middle-earth-interactive-map.web.app/locations.json): All 128 places as JSON — id, place, event, book, Age, year, pixel coordinates on the 7680x4386 base map, description, characters, and a deep link that centres the map on each one. Descriptions were written for this project; please quote them with a link.
