@@ -1230,12 +1230,12 @@
             satBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
 
             // The button is labelled with the layer it switches to, so in
-            // satellite view it offers the drawn map back. The data-i18n key
-            // moves with it, so a late i18nApply() writes the right string.
-            const key = active ? 'controls.drawnMap' : 'controls.satellite';
+            // satellite view it offers the parchment map back. The data-i18n
+            // key moves with it, so a late i18nApply() writes the right string.
+            const key = active ? 'controls.parchmentMap' : 'controls.satellite';
             satBtnLabel.setAttribute('data-i18n', key);
             satBtnLabel.textContent = active
-                ? t('controls.drawnMap', 'Drawn map')
+                ? t('controls.parchmentMap', 'Parchment map')
                 : t('controls.satellite', 'Satellite');
             satBtnIcon.innerHTML = active ? '&#x1f5fa;&#xfe0e;' : '&#x1f6f0;&#xfe0e;';
 

@@ -34,7 +34,7 @@
   },
   "controls": {
     "satellite": "Satellite",
-    "drawnMap": "Drawn map",
+    "parchmentMap": "Parchment map",
     "playStory": "Play the story",
     "infoTitle": "About this map"
   },
