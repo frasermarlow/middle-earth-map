@@ -1007,6 +1007,27 @@
         legendEl.appendChild(journeyHeader);
 
         const journeyToggles = [];
+        const journeyToggleByKey = {};
+
+        // Single place where a journey goes on or off, so the legend and the
+        // ?journey= deep link cannot disagree. source=null means "set up the
+        // view", which should not be reported as a user action.
+        function setJourney(key, on, source) {
+            const toggle = journeyToggleByKey[key];
+            if (!toggle) return;
+            toggle.classList.toggle('disabled', !on);
+            if (on) map.addLayer(journeyLayers[key]);
+            else map.removeLayer(journeyLayers[key]);
+            updateJourneyClearBtn();
+            if (source) {
+                track('journey_toggle', {
+                    // English on purpose: a translated value would fragment reporting
+                    journey: JOURNEYS[key].label,
+                    state: on ? 'on' : 'off'
+                });
+            }
+        }
+
         Object.keys(JOURNEYS).forEach(key => {
             const journey = JOURNEYS[key];
             const toggle = document.createElement('div');
@@ -1017,20 +1038,10 @@
                 <span class="journey-label">${t('journeys.' + key, journey.label)}</span>
             `;
             toggle.addEventListener('click', () => {
-                toggle.classList.toggle('disabled');
-                if (toggle.classList.contains('disabled')) {
-                    map.removeLayer(journeyLayers[key]);
-                } else {
-                    map.addLayer(journeyLayers[key]);
-                }
-                updateJourneyClearBtn();
-                track('journey_toggle', {
-                    // English on purpose: a translated value would fragment reporting
-                    journey: journey.label,
-                    state: toggle.classList.contains('disabled') ? 'off' : 'on'
-                });
+                setJourney(key, toggle.classList.contains('disabled'), 'legend');
             });
             journeyToggles.push(toggle);
+            journeyToggleByKey[key] = toggle;
             legendEl.appendChild(toggle);
         });
 
@@ -1074,6 +1085,26 @@
         legendEl.appendChild(eventsHeader);
 
         const categoryDivs = [];
+        const categoryDivByCat = {};
+
+        // As with journeys: one setter shared by the legend and the ?book=
+        // deep link that the Hobbit and Silmarillion pages send visitors to.
+        function setCategory(cat, on, source) {
+            const div = categoryDivByCat[cat];
+            if (!div) return;
+            div.classList.toggle('disabled', !on);
+            const toggle = div.querySelector('.legend-toggle');
+            if (on) {
+                map.addLayer(categoryLayers[cat]);
+                toggle.innerHTML = '&#9660;';
+            } else {
+                map.removeLayer(categoryLayers[cat]);
+                toggle.innerHTML = '&#9654;';
+            }
+            updateEventsClearBtn();
+            if (source) track('category_toggle', { category: cat, state: on ? 'on' : 'off' });
+        }
+
         Object.keys(CATEGORY_LABELS).forEach(cat => {
             const catEvents = events.filter(e => e.category === cat);
 
@@ -1094,20 +1125,7 @@
 
             // Toggle category visibility
             div.querySelector('.legend-category-header').addEventListener('click', () => {
-                div.classList.toggle('disabled');
-                const toggle = div.querySelector('.legend-toggle');
-                if (div.classList.contains('disabled')) {
-                    map.removeLayer(categoryLayers[cat]);
-                    toggle.innerHTML = '&#9654;';
-                } else {
-                    map.addLayer(categoryLayers[cat]);
-                    toggle.innerHTML = '&#9660;';
-                }
-                updateEventsClearBtn();
-                track('category_toggle', {
-                    category: cat,
-                    state: div.classList.contains('disabled') ? 'off' : 'on'
-                });
+                setCategory(cat, div.classList.contains('disabled'), 'legend');
             });
 
             // Click legend item to fly to marker
@@ -1129,6 +1147,7 @@
             });
 
             categoryDivs.push(div);
+            categoryDivByCat[cat] = div;
             legendEl.appendChild(div);
         });
 
@@ -1401,6 +1420,30 @@
                         });
                     }
                 }, 500);
+            }
+
+            // ?book=hobbit narrows the map to one book. This is where the
+            // Hobbit and Silmarillion landing pages send visitors, so the view
+            // has to arrive already focused on that book's places.
+            const book = params.get('book');
+            if (book && categoryLayers[book]) {
+                Object.keys(CATEGORY_LABELS).forEach(cat => setCategory(cat, cat === book, null));
+                const pts = events.filter(e => e.category === book).map(e => toLatLng(e.px, e.py));
+                if (pts.length && !params.get('fly')) {
+                    map.fitBounds(L.latLngBounds(pts).pad(0.12));
+                }
+                track('book_filter_arrival', { category: book });
+            }
+
+            // ?journey=bilbo draws one route. Journeys are all off by default,
+            // so this adds rather than replaces.
+            const journeyParam = params.get('journey');
+            if (journeyParam) {
+                journeyParam.split(',').forEach(key => {
+                    key = key.trim();
+                    if (JOURNEYS[key]) setJourney(key, true, null);
+                });
+                track('journey_deep_link', { journey: journeyParam });
             }
 
             // ?view=satellite activates satellite tiles on load

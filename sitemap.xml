@@ -35,4 +35,16 @@
       <image:caption>An AI-generated satellite view of Middle-earth, rendered from the hand-drawn parchment map.</image:caption>
     </image:image>
   </url>
+  <url>
+    <loc>https://middle-earth-interactive-map.web.app/hobbit-map</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://middle-earth-interactive-map.web.app/silmarillion-map</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

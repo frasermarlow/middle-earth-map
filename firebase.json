@@ -17,11 +17,15 @@
     ],
     "redirects": [
       { "source": "/index.html", "destination": "/", "type": 301 },
-      { "source": "/places.html", "destination": "/places", "type": 301 }
+      { "source": "/places.html", "destination": "/places", "type": 301 },
+      { "source": "/hobbit-map.html", "destination": "/hobbit-map", "type": 301 },
+      { "source": "/silmarillion-map.html", "destination": "/silmarillion-map", "type": 301 }
     ],
     "rewrites": [
       { "source": "/about", "destination": "/about.html" },
-      { "source": "/places", "destination": "/places.html" }
+      { "source": "/places", "destination": "/places.html" },
+      { "source": "/hobbit-map", "destination": "/hobbit-map.html" },
+      { "source": "/silmarillion-map", "destination": "/silmarillion-map.html" }
     ],
     "headers": [
       {
