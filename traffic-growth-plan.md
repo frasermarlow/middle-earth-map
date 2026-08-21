@@ -103,20 +103,20 @@ per-location social images) adds well under 20 MB.
 
 | # | Item | Cost | Modelled return | Confidence |
 | --- | --- | --- | --- | --- |
-| A1 | Head-term titles, meta, rich results | 3h | +54 to +90 clicks/day | High |
-| A2 | Image SEO — enter Google Images | 6h | New channel, currently zero | Medium |
-| C2 | Surface timeline playback | 2h | 10% → 25%+ of map traffic | High |
-| C3 | Promote satellite view out of the legend | 0.5h | 15% → 40%+ feature reach | High |
-| B3 | Publish the dataset for AI answer engines | 3h | Compounding; 16x growth already | Medium |
-| A4 | Hobbit and Silmarillion era landing pages | 8h | +188 clicks/day-28 measured, plus new rankings | Medium |
+| A1 | Head-term titles, meta, rich results ✅ | 3h | +54 to +90 clicks/day | High |
+| A2 | Image SEO — enter Google Images ✅ | 6h | New channel, currently zero | Medium |
+| C2 | Surface timeline playback ✅ | 2h | 10% → 25%+ of map traffic | High |
+| C3 | Promote satellite view out of the legend ✅ | 0.5h | 15% → 40%+ feature reach | High |
+| B3 | Publish the dataset for AI answer engines ✅ | 3h | Compounding; 16x growth already | Medium |
+| A4 | Hobbit and Silmarillion era landing pages ✅ | 8h | +188 clicks/day-28 measured, plus new rankings | Medium |
 | C1 | Share affordances + per-location social images | 13h | Converts 70,849 marker opens/11d into distribution | Medium |
 | B1 | Second press wave — the satellite story | 4h | 1,000–3,000 users in a week + durable backlinks | Speculative |
-| A3 | Per-location pages generated from `data.js` | 20h | +17 to +50 clicks/day at maturity | Medium |
+| A3 | Per-location pages from `data.js` ✅ 98/128 | 20h | +17 to +50 clicks/day at maturity | Medium |
 | A5 | Localisation: de, es, it, ru | ~3h/lang (extraction done) | +46 clicks/day-28 before rank gains | Medium |
 | C4 | Content depth — more markers and eras | ongoing | Primary retention lever | Medium |
 | B2 | Community cadence on Reddit | 1h/week | Already 15 sessions/day unprompted | Speculative |
-| D1 | Measurement hygiene | 1h | Protects every number above | High |
-| D2 | Redirect `/index.html` to `/` | 0.25h | Consolidates ~944 sessions/28d | High |
+| D1 | Measurement hygiene ✅ | 1h | Protects every number above | High |
+| D2 | Redirect `/index.html` to `/` ✅ | 0.25h | Consolidates ~944 sessions/28d | High |
 
 Wave 1 (A1, A2, C2, C3, D1, D2) is **12.75 hours** and carries the
 highest-confidence return in the table. It is complete and live as of 2026-08-21.
@@ -237,6 +237,22 @@ image sitemap validates. Then, at four weeks, Search Console → search type
 
 **Cost: 20h. Return: +17 to +50 clicks/day at maturity. Confidence: Medium.**
 
+**Status: shipped 2026-08-21 — 98 pages of 128.** Each carries the
+description, book, date, coordinates, figures, a parchment crop centred on
+the spot, routes passing within 150 map-pixels, the four nearest places,
+chronological prev/next and a deep link onto the map. WebPage plus
+BreadcrumbList structured data; meta descriptions median 149 characters.
+
+**The 30 held back are the finding worth acting on.** The floor is one
+explainable rule — a description of at least 260 characters or no page — and
+the places that fail it are not the obscure corners but the most-searched
+names on the map: Rivendell, Minas Tirith, Lothlórien, Edoras, Bree,
+Isengard, Moria, Helm's Deep. Each is a one-line entry. Expanding a
+description past the floor and re-running `node build_pages.js` promotes it;
+the generator prints the held list shortest-first on every run. **This is now
+the cheapest ranking work available on the site** — it is writing, not
+engineering, and it targets demand that already exists.
+
 **Evidence.** The site is three URLs. That is the structural ceiling on
 everything: a Leaflet map has almost no crawlable text, so all 204,279
 impressions are won by three pages, and 49% of them by four head keywords.
@@ -286,6 +302,16 @@ after deploy: indexed, not "crawled — currently not indexed".
 ### A4. Hobbit and Silmarillion era landing pages
 
 **Cost: 8h. Return: +188 clicks/28d measured, plus new rankings. Confidence: Medium.**
+
+**Status: shipped 2026-08-21.** `/hobbit-map` and `/silmarillion-map`, 778
+and 868 words, each with that book's places in order and CollectionPage
+structured data. Map support landed with them: `?book=hobbit` narrows the
+markers and fits the view, `?journey=bilbo` draws one route, both behind the
+same shared setters the legend uses.
+
+The Silmarillion page leads with why the list is short — this is a Third Age
+map and Beleriand lies drowned beyond its western edge — and links the two
+peaks that survive, Himling and Tol Fuin.
 
 **Evidence.** Two era-shaped demand pockets are being served by a generic
 homepage. The Hobbit cluster — "the hobbit map" (1,860 impressions, 2.47%,
@@ -413,6 +439,16 @@ and each post is a fresh chance at a link.
 ### B3. Publish the dataset for AI answer engines
 
 **Cost: 3h. Return: compounding — 16x growth already. Confidence: Medium.**
+
+**Status: shipped 2026-08-21.** `/places` lists all 128 with book, date,
+coordinates and a snippet, carrying Dataset structured data and 4,370 words
+of crawlable text; `locations.json` publishes the same data with a `$meta`
+block documenting the coordinate system and the deep-link pattern. Both are
+generated by `build_pages.js`, which evaluates `data.js` rather than parsing
+it, and which now also owns `sitemap.xml`.
+
+`locations.csv` is deliberately *not* published: it is a 154-row research
+gazetteer with no coordinates, not the site's data.
 
 **Evidence.** ChatGPT referrals went from 0.4 sessions/day (May–June) to 6.4
 sessions/day (2026-07-20 → 08-19) — a 16x increase off a small base, and
@@ -604,16 +640,17 @@ impressions around 2026-09-17. Highest confidence in the plan, no new content re
 directly addresses the CTR erosion visible since 2026-08-03. A1 and A2 are
 both edits to `<head>` and page assets, so they ship as one deploy.
 
-**Wave 2 — 24h. Structural.** B3 (3h) → A4 (8h) → A3 (20h, partially
-overlapping B3's output). This is where the three-URL ceiling comes off. B3
-first because A3 needs its link hub.
+**Wave 2 — 24h. Complete, not yet deployed.** B3 (3h) → A4 (8h) → A3 (20h),
+all shipped 2026-08-21 in that order, B3 first because A3 needed its link
+hub. The site went from 3 indexable URLs to 104. What remains is a deploy,
+and then the content work the A3 floor exposed.
 
 **Wave 3 — 17h + ongoing. Compounding.** C1 (13h, cheaper after A3), A5
 (~3h/language, extraction done 2026-08-21), B1 (4h), then B2 and C4 as
 habits rather than projects.
 
-Total to the end of Wave 2: ~37 hours. That is the point at which the site
-stops being three pages competing for four keywords.
+Total to the end of Wave 2: ~37 hours. That point is now passed — the site
+is 104 pages rather than three competing for four keywords.
 
 ---
 
