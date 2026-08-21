@@ -119,7 +119,7 @@ per-location social images) adds well under 20 MB.
 | D2 | Redirect `/index.html` to `/` | 0.25h | Consolidates ~944 sessions/28d | High |
 
 Wave 1 (A1, A2, C2, C3, D1, D2) is **12.75 hours** and carries the
-highest-confidence return in the table. It is complete as of 2026-08-21.
+highest-confidence return in the table. It is complete and live as of 2026-08-21.
 
 ---
 
@@ -129,7 +129,7 @@ highest-confidence return in the table. It is complete as of 2026-08-21.
 
 **Cost: 3h. Return: +54 to +90 clicks/day. Confidence: High.**
 
-**Status: implemented 2026-08-20, not yet deployed.**
+**Status: shipped 2026-08-20.**
 
 **Evidence.** Four queries are half the search business and every one of
 them converts below what its position should earn:
@@ -181,7 +181,7 @@ wander on its own — CTR at constant position is the signal.
 
 **Cost: 6h. Return: a channel that is currently zero. Confidence: Medium.**
 
-**Status: implemented 2026-08-20, not yet deployed.**
+**Status: shipped 2026-08-20.**
 
 **Evidence.** The served `index.html` contains **no `<img>` element at all**
 — verified, not inferred. At runtime Leaflet injects around forty `<img>`
@@ -456,7 +456,7 @@ the marginal cost drops by about half.
 
 **Cost: 2h. Return: 10% → 25%+ of map traffic. Confidence: High.**
 
-**Status: implemented 2026-08-21, not yet deployed.** A "Play the story"
+**Status: shipped 2026-08-21.** A "Play the story"
 control now sits in a bottom-centre bar on the map, linking to
 `timeline.html?play=1`, which autoplays on arrival and reports
 `timeline_play` with `source: map_cta`. The splash bullet names the feature
@@ -480,13 +480,19 @@ feature instead of describing the page.
 
 **Cost: 0.5h. Return: 15% → 40%+ feature reach. Confidence: High.**
 
-**Status: implemented 2026-08-21, not yet deployed.** The satellite toggle
+**Status: shipped 2026-08-21.** The satellite toggle
 is now a top-level button in the same bottom-centre bar. The legend row and
 the button drive one shared `setSatellite()` state, so either reflects the
 other, and the `?view=satellite` deep link reuses the same path. The button
 reports `source: map_control` to distinguish it from `legend`. This matters
 most on mobile, where the legend auto-collapses on load and the satellite
 row was previously unreachable without reopening it.
+
+The button is labelled with the layer it switches *to* — "Satellite" on the
+base map, "Parchment map" once satellite is on, icon included — so it names
+the action rather than the current state. The legend row keeps its fixed
+"Satellite view" wording, because a switch with a visible on-state should
+describe the layer.
 
 1,275 `satellite_toggle` events across ~8,300 sessions in 11 days: roughly
 15% of visitors find it, because it is a row inside a legend panel. It is the
@@ -560,7 +566,7 @@ as the Analytics MCP can list annotations but not create them.
 
 **Cost: 0.25h. Return: consolidates ~944 sessions/28d onto one URL. Confidence: High.**
 
-**Status: implemented 2026-08-21, not yet deployed.**
+**Status: shipped 2026-08-21.**
 
 **Evidence.** This one surfaced out of D1. Item 1.2 of the earlier plan
 repointed all nine internal links from `index.html` to `/`, but that only
@@ -577,17 +583,24 @@ which Firebase serves with the query string intact so `?fly=`, `?event=` and
 item 1.2 missed, in `timeline.html`'s `view_on_map` handler, which was still
 building `index.html?fly=...` and is now `/?fly=...`.
 
-**Verification.** `curl -sI https://…/index.html` returns `301` with
-`location: /`, and a deep link such as `/index.html?fly=100,100` keeps its
-query string through the redirect.
+**Verified 2026-08-21 against the live site.** `/index.html` returns
+`HTTP/2 301` with `location: /`, and `/index.html?fly=3600,2100&event=…`
+redirects to `/?fly=3600%2C2100&event=…` — the comma arrives percent-encoded,
+which `URLSearchParams.get()` decodes back to `3600,2100`, so the deep link
+still parses. Confirmed by landing the redirected URL and reading
+`map.getCenter()`: exactly the requested point.
 
 ---
 
 ## Sequencing
 
-**Wave 1 — 12.75h. Complete.** A1 (3h) and A2 (6h) shipped 2026-08-20;
-C2 (2h), C3 (0.5h), D1 (1h) and D2 (0.25h, which D1 turned up) done
-2026-08-21. D1 leaves two annotations to add by hand in the GA4 UI. Highest confidence in the plan, no new content required, and it
+**Wave 1 — 12.75h. Complete and fully live.** A1 (3h) and A2 (6h) shipped
+2026-08-20; C2 (2h), C3 (0.5h), D1 (1h) and D2 (0.25h, which D1 turned up)
+shipped in the 2026-08-21 release. Two things remain outstanding, neither of
+them code: the two GA4 annotations from D1, which need the UI because the API
+here is read-only for annotations; and the time-gated checks — the head-term
+CTR comparison at matched position around 2026-09-03, and image-search
+impressions around 2026-09-17. Highest confidence in the plan, no new content required, and it
 directly addresses the CTR erosion visible since 2026-08-03. A1 and A2 are
 both edits to `<head>` and page assets, so they ship as one deploy.
 
