@@ -554,31 +554,31 @@
 <body>
     <h1 class="visually-hidden">Timeline of Middle-earth</h1>
     <nav id="nav-bar">
-        <a href="/" class="nav-link">&#x1f5fa;&#xfe0e; Map</a>
-        <span class="nav-title">Middle-earth</span>
+        <a href="/" class="nav-link">&#x1f5fa;&#xfe0e; <span data-i18n="nav.map">Map</span></a>
+        <span class="nav-title" data-i18n="nav.siteTitle">Middle-earth</span>
         <span class="nav-right">
-            <a href="timeline.html" class="nav-link active">&#x23f3;&#xfe0e; Timeline</a>
-            <a href="about.html" class="nav-link">&#x1f4dc;&#xfe0e; About</a>
+            <a href="timeline.html" class="nav-link active">&#x23f3;&#xfe0e; <span data-i18n="nav.timeline">Timeline</span></a>
+            <a href="about.html" class="nav-link">&#x1f4dc;&#xfe0e; <span data-i18n="nav.about">About</span></a>
         </span>
     </nav>
 
     <main>
     <div id="controls">
         <div id="play-controls">
-            <button id="play-btn" title="Play / Pause (Space)">&#9654;</button>
-            <button id="prev-btn" title="Previous (&larr;)">&#9664;&#9664;</button>
-            <button id="next-btn" title="Next (&rarr;)">&#9654;&#9654;</button>
-            <select id="speed-select" title="Playback speed">
-                <option value="4000">Slow</option>
-                <option value="2000" selected>Normal</option>
-                <option value="800">Fast</option>
+            <button id="play-btn" title="Play / Pause (Space)" data-i18n-attr="title:timeline.playPauseTitle">&#9654;</button>
+            <button id="prev-btn" title="Previous (&larr;)" data-i18n-attr="title:timeline.prevTitle">&#9664;&#9664;</button>
+            <button id="next-btn" title="Next (&rarr;)" data-i18n-attr="title:timeline.nextTitle">&#9654;&#9654;</button>
+            <select id="speed-select" title="Playback speed" data-i18n-attr="title:timeline.speedTitle">
+                <option value="4000" data-i18n="timeline.speedSlow">Slow</option>
+                <option value="2000" selected data-i18n="timeline.speedNormal">Normal</option>
+                <option value="800" data-i18n="timeline.speedFast">Fast</option>
             </select>
         </div>
         <div id="scrubber-container">
             <input type="range" id="scrubber" min="0" max="100" value="0">
             <span id="scrubber-label"></span>
         </div>
-        <button id="filter-toggle">Filter &darr;</button>
+        <button id="filter-toggle" data-i18n="timeline.filter">Filter &darr;</button>
         <div id="filter-panel"></div>
     </div>
 
@@ -587,28 +587,33 @@
         <div id="timeline-content"></div>
     </div>
 
-    <div id="keyboard-hint">Space: play &middot; &larr;&rarr;: navigate &middot; Esc: stop</div>
+    <div id="keyboard-hint" data-i18n="timeline.keyboardHint">Space: play &middot; &larr;&rarr;: navigate &middot; Esc: stop</div>
     </main>
 
+    <script src="i18n/i18n.js"></script>
     <script src="data.js"></script>
     <script>
     (function() {
         'use strict';
 
         // ── Helpers ──────────────────────────────────
-        const ERA_LABELS = { FA: 'First Age', SA: 'Second Age', TA: 'Third Age' };
+        const ERA_LABELS = {
+            FA: t('eras.FA', 'First Age'),
+            SA: t('eras.SA', 'Second Age'),
+            TA: t('eras.TA', 'Third Age')
+        };
         const ERA_ORDER = ['FA', 'SA', 'TA'];
         const ERA_RANGES = {
-            FA: 'Years of the Sun \u2014 FA 590',
-            SA: 'SA 1 \u2014 SA 3441',
-            TA: 'TA 1 \u2014 TA 3021'
+            FA: t('eras.rangeFA', 'Years of the Sun \u2014 FA 590'),
+            SA: t('eras.rangeSA', 'SA 1 \u2014 SA 3441'),
+            TA: t('eras.rangeTA', 'TA 1 \u2014 TA 3021')
         };
         const LINK_LABELS = {
-            cause: 'Leads to',
-            sequel: 'Follows from',
-            parallel: 'Simultaneous',
-            legacy: 'Legacy',
-            location: 'Same place'
+            cause: t('linkTypes.cause', 'Leads to'),
+            sequel: t('linkTypes.sequel', 'Follows from'),
+            parallel: t('linkTypes.parallel', 'Simultaneous'),
+            legacy: t('linkTypes.legacy', 'Legacy'),
+            location: t('linkTypes.location', 'Same place')
         };
         const LINK_ARROWS = {
             cause: '\u2192',
@@ -677,7 +682,9 @@
                     if (gap > 100) {
                         const gapEl = document.createElement('div');
                         gapEl.className = 'time-gap';
-                        gapEl.textContent = `\u007e \u007e \u007e ${gap.toLocaleString()} years \u007e \u007e \u007e`;
+                        gapEl.textContent = t('timeline.yearsGap',
+                            '\u007e \u007e \u007e {years} years \u007e \u007e \u007e',
+                            { years: gap.toLocaleString() });
                         container.appendChild(gapEl);
                     }
                 }
@@ -708,15 +715,15 @@
                     <div class="event-dot" style="background: radial-gradient(circle at 35% 35%, ${color}, ${darken(color, 50)});">${icon}</div>
                     <div class="event-card">
                         <div class="event-card-header">
-                            <span class="category-badge" style="background: ${color};">${CATEGORY_LABELS[evt.category]}</span>
+                            <span class="category-badge" style="background: ${color};">${t('books.' + evt.category, CATEGORY_LABELS[evt.category])}</span>
                             <span class="event-name">${evt.name}</span>
                         </div>
                         <div class="event-desc${desc.truncated ? ' truncated' : ''}">${desc.html}</div>
                         <div class="event-footer">
                             <span class="event-characters">${evt.characters}</span>
                             <div class="event-actions">
-                                <button class="view-map-btn" data-px="${evt.px}" data-py="${evt.py}" data-name="${evt.name}">View on Map</button>
-                                ${linkCount > 0 ? `<button class="show-links-btn" data-id="${evt.id}">Related (${linkCount})</button>` : ''}
+                                <button class="view-map-btn" data-px="${evt.px}" data-py="${evt.py}" data-name="${evt.name}">${t('timeline.viewOnMap', 'View on Map')}</button>
+                                ${linkCount > 0 ? `<button class="show-links-btn" data-id="${evt.id}">${t('timeline.related', 'Related ({count})', { count: linkCount })}</button>` : ''}
                             </div>
                         </div>
                         ${linkCount > 0 ? renderLinksPanel(evt) : ''}
@@ -733,7 +740,7 @@
         function renderLinksPanel(evt) {
             const outLinks = linksFrom[evt.id] || [];
             const inLinks = linksTo[evt.id] || [];
-            let html = '<div class="links-panel"><div class="links-title">Related Events</div>';
+            let html = `<div class="links-panel"><div class="links-title">${t('timeline.relatedEvents', 'Related Events')}</div>`;
 
             outLinks.forEach(link => {
                 const target = eventById[link.to];
@@ -910,7 +917,9 @@
 
         function updatePlayBtn() {
             playBtn.innerHTML = playState === PLAYING ? '&#9646;&#9646;' : '&#9654;';
-            playBtn.title = playState === PLAYING ? 'Pause (Space)' : 'Play (Space)';
+            playBtn.title = playState === PLAYING
+                ? t('timeline.pauseTitle', 'Pause (Space)')
+                : t('timeline.playTitle', 'Play (Space)');
         }
 
         playBtn.addEventListener('click', () => {
@@ -950,7 +959,7 @@
                 label.className = 'filter-label';
                 label.innerHTML = `<input type="checkbox" class="filter-checkbox" data-category="${cat}" checked>
                     <span class="filter-dot" style="background: ${COLORS[cat]};"></span>
-                    <span class="filter-name">${CATEGORY_LABELS[cat]}</span>`;
+                    <span class="filter-name">${t('books.' + cat, CATEGORY_LABELS[cat])}</span>`;
                 label.querySelector('input').addEventListener('change', (e) => {
                     applyFilters();
                     track('timeline_filter', {

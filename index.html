@@ -754,56 +754,57 @@
 <body>
     <h1 class="visually-hidden">Interactive Map of Middle-earth</h1>
     <nav id="nav-bar">
-        <a href="/" class="nav-link active">&#x1f5fa;&#xfe0e; Map</a>
-        <span class="nav-title">Middle-earth</span>
+        <a href="/" class="nav-link active">&#x1f5fa;&#xfe0e; <span data-i18n="nav.map">Map</span></a>
+        <span class="nav-title" data-i18n="nav.siteTitle">Middle-earth</span>
         <span class="nav-right">
-            <a href="timeline.html" class="nav-link">&#x23f3;&#xfe0e; Timeline</a>
-            <a href="about.html" class="nav-link">&#x1f4dc;&#xfe0e; About</a>
+            <a href="timeline.html" class="nav-link">&#x23f3;&#xfe0e; <span data-i18n="nav.timeline">Timeline</span></a>
+            <a href="about.html" class="nav-link">&#x1f4dc;&#xfe0e; <span data-i18n="nav.about">About</span></a>
         </span>
     </nav>
     <main>
     <div id="map"></div>
 
     <div id="legend">
-        <h2>Events of Middle-earth<button id="legend-close">&times;</button></h2>
+        <h2><span data-i18n="legend.title">Events of Middle-earth</span><button id="legend-close">&times;</button></h2>
         <div id="legend-content"></div>
     </div>
 
-    <button id="collapse-btn"><div class="menu-icon"><span></span><span></span><span></span></div> Legend</button>
+    <button id="collapse-btn"><div class="menu-icon"><span></span><span></span><span></span></div> <span data-i18n="legend.menuButton">Legend</span></button>
 
     <div id="measure-display"></div>
-    <div id="toast">Scroll to zoom &middot; Drag to pan &middot; Click markers for details</div>
+    <div id="toast" data-i18n="map.toast">Scroll to zoom &middot; Drag to pan &middot; Click markers for details</div>
 
     <div id="splash-overlay" class="hidden">
         <div class="splash-card">
-            <h2>Welcome to Middle-earth</h2>
+            <h2 data-i18n="splash.heading">Welcome to Middle-earth</h2>
             <img class="splash-preview"
                  src="map-of-middle-earth.jpg"
                  srcset="map-of-middle-earth-800.jpg 800w, map-of-middle-earth.jpg 1600w"
                  sizes="(max-width: 560px) 90vw, 424px"
                  width="1600" height="900"
                  alt="Map of Middle-earth on aged parchment, showing the Shire, the Misty Mountains, Rohan, Gondor and Mordor">
-            <p>An interactive map of Tolkien&#8217;s Middle-earth, with events from across the legendarium plotted as markers.</p>
+            <p data-i18n="splash.intro">An interactive map of Tolkien&#8217;s Middle-earth, with events from across the legendarium plotted as markers.</p>
             <ul>
-                <li>Click markers to read about key events</li>
-                <li>Use the Legend panel to filter by book or toggle journey paths</li>
-                <li>Enable &#8220;Measure distance&#8221; in the Legend to measure between two points</li>
-                <li>Hit <a href="timeline.html?play=1" style="color:#c9a435;">Play the story</a> to watch all 128 events unfold in order</li>
+                <li data-i18n="splash.tip1">Click markers to read about key events</li>
+                <li data-i18n="splash.tip2">Use the Legend panel to filter by book or toggle journey paths</li>
+                <li data-i18n="splash.tip3">Enable &#8220;Measure distance&#8221; in the Legend to measure between two points</li>
+                <li data-i18n-html="splash.tip4Html">Hit <a href="timeline.html?play=1" style="color:#c9a435;">Play the story</a> to watch all 128 events unfold in order</li>
             </ul>
-            <p class="splash-disclaimer">The base map image is sourced from the internet and is used here for fan/educational purposes. We do not claim copyright over the map artwork.</p>
-            <button class="splash-btn" id="splash-enter">Enter Middle-earth</button>
+            <p class="splash-disclaimer" data-i18n="splash.disclaimer">The base map image is sourced from the internet and is used here for fan/educational purposes. We do not claim copyright over the map artwork.</p>
+            <button class="splash-btn" id="splash-enter" data-i18n="splash.enter">Enter Middle-earth</button>
         </div>
     </div>
 
     <div id="map-controls">
-        <button id="sat-btn" class="map-ctrl" type="button" aria-pressed="false">&#x1f6f0;&#xfe0e; Satellite</button>
-        <a id="story-btn" class="map-ctrl" href="timeline.html?play=1">&#x25b6;&#xfe0e; Play the story</a>
+        <button id="sat-btn" class="map-ctrl" type="button" aria-pressed="false">&#x1f6f0;&#xfe0e; <span data-i18n="controls.satellite">Satellite</span></button>
+        <a id="story-btn" class="map-ctrl" href="timeline.html?play=1">&#x25b6;&#xfe0e; <span data-i18n="controls.playStory">Play the story</span></a>
     </div>
 
-    <button id="info-btn" title="About this map">i</button>
-    <div id="map-copyright">Map artwork is not owned by this project and is used for fan/educational purposes only.</div>
+    <button id="info-btn" title="About this map" data-i18n-attr="title:controls.infoTitle">i</button>
+    <div id="map-copyright" data-i18n="map.copyright">Map artwork is not owned by this project and is used for fan/educational purposes only.</div>
     </main>
 
+    <script src="i18n/i18n.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="data.js"></script>
     <script>
@@ -875,9 +876,9 @@
                 .bindPopup(`
                     <div style="max-width: 260px;">
                         <div class="popup-title">${evt.name}</div>
-                        <div class="popup-book">${CATEGORY_LABELS[evt.category]}</div>
+                        <div class="popup-book">${t('books.' + evt.category, CATEGORY_LABELS[evt.category])}</div>
                         <div class="popup-description">${evt.description}</div>
-                        <div class="popup-characters"><strong>Key figures:</strong> ${evt.characters}</div>
+                        <div class="popup-characters"><strong>${t('map.keyFigures', 'Key figures:')}</strong> ${evt.characters}</div>
                     </div>
                 `, { maxWidth: 300, autoPanPaddingTopLeft: L.point(10, 54) });
 
@@ -968,10 +969,10 @@
         journeyHeader.className = 'legend-section-header';
         const journeyTitle = document.createElement('div');
         journeyTitle.className = 'legend-journeys-title';
-        journeyTitle.textContent = 'Journeys';
+        journeyTitle.textContent = t('legend.journeys', 'Journeys');
         const journeyClearBtn = document.createElement('button');
         journeyClearBtn.className = 'legend-section-toggle';
-        journeyClearBtn.textContent = 'show all';
+        journeyClearBtn.textContent = t('legend.showAll', 'show all');
         journeyHeader.appendChild(journeyTitle);
         journeyHeader.appendChild(journeyClearBtn);
         legendEl.appendChild(journeyHeader);
@@ -984,7 +985,7 @@
             toggle.dataset.key = key;
             toggle.innerHTML = `
                 <div class="journey-line" style="border-color: ${journey.color};"></div>
-                <span class="journey-label">${journey.label}</span>
+                <span class="journey-label">${t('journeys.' + key, journey.label)}</span>
             `;
             toggle.addEventListener('click', () => {
                 toggle.classList.toggle('disabled');
@@ -995,6 +996,7 @@
                 }
                 updateJourneyClearBtn();
                 track('journey_toggle', {
+                    // English on purpose: a translated value would fragment reporting
                     journey: journey.label,
                     state: toggle.classList.contains('disabled') ? 'off' : 'on'
                 });
@@ -1005,7 +1007,9 @@
 
         function updateJourneyClearBtn() {
             const anyEnabled = journeyToggles.some(t => !t.classList.contains('disabled'));
-            journeyClearBtn.textContent = anyEnabled ? 'clear all' : 'show all';
+            journeyClearBtn.textContent = anyEnabled
+                ? t('legend.clearAll', 'clear all')
+                : t('legend.showAll', 'show all');
         }
 
         journeyClearBtn.addEventListener('click', () => {
@@ -1032,10 +1036,10 @@
         eventsHeader.className = 'legend-section-header';
         const eventsTitle = document.createElement('div');
         eventsTitle.className = 'legend-journeys-title';
-        eventsTitle.textContent = 'Events';
+        eventsTitle.textContent = t('legend.events', 'Events');
         const eventsClearBtn = document.createElement('button');
         eventsClearBtn.className = 'legend-section-toggle';
-        eventsClearBtn.textContent = 'clear all';
+        eventsClearBtn.textContent = t('legend.clearAll', 'clear all');
         eventsHeader.appendChild(eventsTitle);
         eventsHeader.appendChild(eventsClearBtn);
         legendEl.appendChild(eventsHeader);
@@ -1051,7 +1055,7 @@
             div.innerHTML = `
                 <div class="legend-category-header">
                     <div class="legend-dot" style="background: ${COLORS[cat]};"></div>
-                    <span class="legend-category-label">${CATEGORY_LABELS[cat]}</span>
+                    <span class="legend-category-label">${t('books.' + cat, CATEGORY_LABELS[cat])}</span>
                     <span class="legend-toggle">&#9660;</span>
                 </div>
                 <div class="legend-items">
@@ -1101,7 +1105,9 @@
 
         function updateEventsClearBtn() {
             const anyEnabled = categoryDivs.some(d => !d.classList.contains('disabled'));
-            eventsClearBtn.textContent = anyEnabled ? 'clear all' : 'show all';
+            eventsClearBtn.textContent = anyEnabled
+                ? t('legend.clearAll', 'clear all')
+                : t('legend.showAll', 'show all');
         }
 
         eventsClearBtn.addEventListener('click', () => {
@@ -1132,7 +1138,7 @@
         coordToggleRow.className = 'coord-toggle-row active';
         coordToggleRow.innerHTML = `
             <div class="coord-toggle-switch"></div>
-            <span class="coord-toggle-label">Show coordinates</span>
+            <span class="coord-toggle-label">${t('legend.showCoordinates', 'Show coordinates')}</span>
         `;
         coordToggleRow.addEventListener('click', () => {
             coordsEnabled = !coordsEnabled;
@@ -1157,7 +1163,7 @@
         measureToggleRow.className = 'coord-toggle-row';
         measureToggleRow.innerHTML = `
             <div class="coord-toggle-switch"></div>
-            <span class="coord-toggle-label">Measure distance</span>
+            <span class="coord-toggle-label">${t('legend.measureDistance', 'Measure distance')}</span>
         `;
         measureToggleRow.addEventListener('click', () => {
             measureEnabled = !measureEnabled;
@@ -1173,7 +1179,7 @@
         satToggleRow.className = 'coord-toggle-row';
         satToggleRow.innerHTML = `
             <div class="coord-toggle-switch"></div>
-            <span class="coord-toggle-label">Satellite view</span>
+            <span class="coord-toggle-label">${t('legend.satelliteView', 'Satellite view')}</span>
         `;
         // The legend row and the bottom-centre button drive the same state,
         // so either control reflects a change made with the other.
@@ -1245,7 +1251,9 @@
                 const miles = pxDist / PIXELS_PER_MILE;
                 const leagues = miles / MILES_PER_LEAGUE;
 
-                measureDisplay.textContent = `A \u2192 B: ${Math.round(miles)} miles (${leagues.toFixed(1)} leagues)`;
+                measureDisplay.textContent = t('map.measureReadout',
+                    'A \u2192 B: {miles} miles ({leagues} leagues)',
+                    { miles: Math.round(miles), leagues: leagues.toFixed(1) });
                 measureDisplay.style.display = 'block';
             }
         });
@@ -1291,7 +1299,7 @@
             const px = Math.round(e.latlng.lng);
             const py = Math.round(e.latlng.lat);
             coordDisplay.style.display = 'block';
-            coordDisplay.textContent = `px: ${px}, py: ${py}`;
+            coordDisplay.textContent = t('map.coordReadout', 'px: {px}, py: {py}', { px: px, py: py });
             console.log(`{ px: ${px}, py: ${py} }`);
         });
 
@@ -1302,7 +1310,7 @@
             const text = `px: ${px}, py: ${py}`;
             navigator.clipboard.writeText(text);
             coordDisplay.style.display = 'block';
-            coordDisplay.textContent = `${text}  (copied)`;
+            coordDisplay.textContent = t('map.copiedSuffix', '{text}  (copied)', { text: text });
         });
 
         // ── Toast auto-hide ─────────────────────────────

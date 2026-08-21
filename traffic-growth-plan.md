@@ -112,7 +112,7 @@ per-location social images) adds well under 20 MB.
 | C1 | Share affordances + per-location social images | 13h | Converts 70,849 marker opens/11d into distribution | Medium |
 | B1 | Second press wave — the satellite story | 4h | 1,000–3,000 users in a week + durable backlinks | Speculative |
 | A3 | Per-location pages generated from `data.js` | 20h | +17 to +50 clicks/day at maturity | Medium |
-| A5 | Localisation: de, es, it, ru | 14h + 3h/lang | +46 clicks/day-28 before rank gains | Medium |
+| A5 | Localisation: de, es, it, ru | ~3h/lang (extraction done) | +46 clicks/day-28 before rank gains | Medium |
 | C4 | Content depth — more markers and eras | ongoing | Primary retention lever | Medium |
 | B2 | Community cadence on Reddit | 1h/week | Already 15 sessions/day unprompted | Speculative |
 | D1 | Measurement hygiene | 1h | Protects every number above | High |
@@ -313,7 +313,31 @@ no dedicated page is a floor, not a ceiling.
 
 ### A5. Localisation — German first, then Spanish, Italian, Russian
 
-**Cost: 14h for the first language, +3h each after. Return: +46 clicks/28d before rank gains. Confidence: Medium.**
+**Cost: 3h per language. Return: +46 clicks/28d before rank gains. Confidence: Medium.**
+
+**Status: extraction done 2026-08-21; no language shipped yet.** The 14h
+first-language estimate was mostly extraction, and that part is complete, so
+each language is now the ~3h marginal job. See `i18n/README.md`.
+
+- `i18n/en.json` — 77 UI strings in 11 groups, the canonical catalogue.
+- `i18n/i18n.js` — 122-line runtime. English is never fetched: every call
+  site passes the English string as its fallback and the static markup keeps
+  its English text, so with no catalogue the pages render exactly as before.
+  A localised page inlines its catalogue ahead of the script, so translations
+  are present on first paint with no fetch and no flash of English.
+- `?lang=xx` previews a catalogue against the English pages, loading it
+  synchronously so even JS-built strings render translated. Preview and QA
+  only; production inlines.
+- Pseudo-locale QA: the README has a one-liner that wraps every value in
+  guillemets, so any string still rendering bare English is one that was
+  never extracted. Used to verify this work — 30 sampled strings across both
+  pages, none unwrapped.
+
+Analytics deliberately still reports English: `journey_toggle` sends
+`journey.label` from `data.js`, not the translated string, so localised and
+English sessions aggregate into the same GA4 rows instead of splitting.
+Verified by spying on `track()` under the pseudo-locale — the legend shows
+`«The Fellowship»` while the event reports `The Fellowship`.
 
 **Evidence.** Non-English demand is measured, and the site ranks poorly for
 it while ranking well the moment a localised phrase matches:
@@ -330,13 +354,13 @@ existence. GA4 backs it — Germany is the fourth-largest country (443 users
 in 31 days), Spain sixth (363), and `microsiervos.com` still sends ~13
 sessions/day months after its launch coverage, entirely unprompted.
 
-**The work.** The UI carries little text, so the cost is mostly
-infrastructure: extract the interface strings, add `/de/`, `/es/`, `/it/`,
-`/ru/` routes in `firebase.json`, emit localised titles, descriptions and
-`<h1>`, and wire reciprocal `hreflang` plus `x-default`. Marker descriptions
-are the expensive part — translate the interface and the landing copy first,
-leave event descriptions in English initially, and state that plainly on the
-page.
+**The work remaining, per language.** Translate the 77 values in a copy of
+`en.json`; build `/de/index.html` with `<html lang="de">`, the catalogue
+inlined, and a **static translated `<head>`** — title, description and `<h1>`
+must be in the served HTML, never rendered client-side, or a crawler sees
+English; add the route in `firebase.json`, reciprocal `hreflang` plus
+`x-default`, and the new URL in `sitemap.xml`. Marker descriptions stay in
+English initially, stated plainly on the page.
 
 **The model.** +46 clicks/28d from existing German impressions alone if CTR
 reaches 6%. The real prize is unranked demand: the site currently ranks 8th–9th
@@ -571,8 +595,9 @@ both edits to `<head>` and page assets, so they ship as one deploy.
 overlapping B3's output). This is where the three-URL ceiling comes off. B3
 first because A3 needs its link hub.
 
-**Wave 3 — 31h + ongoing. Compounding.** C1 (13h, cheaper after A3), A5
-(14h + 3h/language), B1 (4h), then B2 and C4 as habits rather than projects.
+**Wave 3 — 17h + ongoing. Compounding.** C1 (13h, cheaper after A3), A5
+(~3h/language, extraction done 2026-08-21), B1 (4h), then B2 and C4 as
+habits rather than projects.
 
 Total to the end of Wave 2: ~37 hours. That is the point at which the site
 stops being three pages competing for four keywords.

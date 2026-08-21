@@ -1,0 +1,107 @@
+{
+  "$meta": {
+    "language": "en",
+    "name": "English",
+    "reviewed": true,
+    "note": "Canonical catalogue. Every other language is a copy of this file with the values translated. Keys and {placeholders} must never be renamed or dropped."
+  },
+  "nav": {
+    "siteTitle": "Middle-earth",
+    "map": "Map",
+    "timeline": "Timeline",
+    "about": "About"
+  },
+  "splash": {
+    "heading": "Welcome to Middle-earth",
+    "intro": "An interactive map of Tolkien’s Middle-earth, with events from across the legendarium plotted as markers.",
+    "tip1": "Click markers to read about key events",
+    "tip2": "Use the Legend panel to filter by book or toggle journey paths",
+    "tip3": "Enable “Measure distance” in the Legend to measure between two points",
+    "tip4Html": "Hit <a href=\"timeline.html?play=1\" style=\"color:#c9a435;\">Play the story</a> to watch all 128 events unfold in order",
+    "disclaimer": "The base map image is sourced from the internet and is used here for fan/educational purposes. We do not claim copyright over the map artwork.",
+    "enter": "Enter Middle-earth"
+  },
+  "legend": {
+    "title": "Events of Middle-earth",
+    "menuButton": "Legend",
+    "journeys": "Journeys",
+    "events": "Events",
+    "showAll": "show all",
+    "clearAll": "clear all",
+    "showCoordinates": "Show coordinates",
+    "measureDistance": "Measure distance",
+    "satelliteView": "Satellite view"
+  },
+  "controls": {
+    "satellite": "Satellite",
+    "playStory": "Play the story",
+    "infoTitle": "About this map"
+  },
+  "map": {
+    "toast": "Scroll to zoom · Drag to pan · Click markers for details",
+    "copyright": "Map artwork is not owned by this project and is used for fan/educational purposes only.",
+    "keyFigures": "Key figures:",
+    "measureReadout": "A → B: {miles} miles ({leagues} leagues)",
+    "coordReadout": "px: {px}, py: {py}",
+    "copiedSuffix": "{text}  (copied)"
+  },
+  "timeline": {
+    "playPauseTitle": "Play / Pause (Space)",
+    "playTitle": "Play (Space)",
+    "pauseTitle": "Pause (Space)",
+    "prevTitle": "Previous (←)",
+    "nextTitle": "Next (→)",
+    "speedTitle": "Playback speed",
+    "speedSlow": "Slow",
+    "speedNormal": "Normal",
+    "speedFast": "Fast",
+    "filter": "Filter ↓",
+    "keyboardHint": "Space: play · ←→: navigate · Esc: stop",
+    "yearsGap": "~ ~ ~ {years} years ~ ~ ~",
+    "viewOnMap": "View on Map",
+    "related": "Related ({count})",
+    "relatedEvents": "Related Events"
+  },
+  "eras": {
+    "FA": "First Age",
+    "SA": "Second Age",
+    "TA": "Third Age",
+    "rangeFA": "Years of the Sun — FA 590",
+    "rangeSA": "SA 1 — SA 3441",
+    "rangeTA": "TA 1 — TA 3021"
+  },
+  "linkTypes": {
+    "cause": "Leads to",
+    "sequel": "Follows from",
+    "parallel": "Simultaneous",
+    "legacy": "Legacy",
+    "location": "Same place"
+  },
+  "books": {
+    "silmarillion": "The Silmarillion",
+    "hobbit": "The Hobbit",
+    "fellowship": "The Fellowship of the Ring",
+    "towers": "The Two Towers",
+    "king": "The Return of the King",
+    "appendix": "Appendices"
+  },
+  "journeys": {
+    "fellowship": "The Fellowship",
+    "bilbo": "Bilbo's Journey",
+    "frodo": "Frodo's Journey",
+    "aragorn": "Aragorn's Journey",
+    "boromir": "Boromir's Journey",
+    "merry_pippin": "Merry & Pippin's Journey",
+    "gollum": "Gollum's Journey",
+    "gandalf_hobbit": "Gandalf's Journey (Hobbit)",
+    "gandalf_lotr": "Gandalf's Journey (LOTR)"
+  },
+  "head": {
+    "mapTitle": "Interactive Middle-earth Map — LOTR, Hobbit & Silmarillion",
+    "mapDescription": "An interactive map of Middle-earth: 128 events from The Lord of the Rings, The Hobbit and The Silmarillion, with journey paths and a satellite view.",
+    "mapH1": "Interactive Map of Middle-earth",
+    "timelineTitle": "Middle-earth Timeline — LOTR, Hobbit & Silmarillion",
+    "timelineDescription": "A chronological timeline of Middle-earth: events from The Silmarillion through The Lord of the Rings, with playback controls and category filters.",
+    "timelineH1": "Timeline of Middle-earth"
+  }
+}
