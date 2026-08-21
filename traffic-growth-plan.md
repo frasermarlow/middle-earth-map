@@ -111,7 +111,7 @@ per-location social images) adds well under 20 MB.
 | A4 | Hobbit and Silmarillion era landing pages ✅ | 8h | +188 clicks/day-28 measured, plus new rankings | Medium |
 | C1 | Share affordances + per-location social images | 13h | Converts 70,849 marker opens/11d into distribution | Medium |
 | B1 | Second press wave — the satellite story | 4h | 1,000–3,000 users in a week + durable backlinks | Speculative |
-| A3 | Per-location pages from `data.js` ✅ 98/128 | 20h | +17 to +50 clicks/day at maturity | Medium |
+| A3 | Per-place pages from `data.js` ✅ 96 indexable / 119 | 20h | +17 to +50 clicks/day at maturity | Medium |
 | A5 | Localisation: de, es, it, ru | ~3h/lang (extraction done) | +46 clicks/day-28 before rank gains | Medium |
 | C4 | Content depth — more markers and eras | ongoing | Primary retention lever | Medium |
 | B2 | Community cadence on Reddit | 1h/week | Already 15 sessions/day unprompted | Speculative |
@@ -237,21 +237,65 @@ image sitemap validates. Then, at four weeks, Search Console → search type
 
 **Cost: 20h. Return: +17 to +50 clicks/day at maturity. Confidence: Medium.**
 
-**Status: shipped 2026-08-21 — 98 pages of 128.** Each carries the
-description, book, date, coordinates, figures, a parchment crop centred on
-the spot, routes passing within 150 map-pixels, the four nearest places,
-chronological prev/next and a deep link onto the map. WebPage plus
-BreadcrumbList structured data; meta descriptions median 149 characters.
+**Status: shipped 2026-08-21 — 119 pages, 96 of them indexable.** Each
+carries the description (or both, where a place has two events), book, date,
+coordinates, figures, a parchment crop centred on the spot, routes passing
+within 150 map-pixels, the four nearest places, chronological prev/next and a
+deep link onto the map. WebPage plus BreadcrumbList structured data; meta
+descriptions median 149 characters.
 
-**The 30 held back are the finding worth acting on.** The floor is one
-explainable rule — a description of at least 260 characters or no page — and
-the places that fail it are not the obscure corners but the most-searched
-names on the map: Rivendell, Minas Tirith, Lothlórien, Edoras, Bree,
-Isengard, Moria, Helm's Deep. Each is a one-line entry. Expanding a
-description past the floor and re-running `node build_pages.js` promotes it;
-the generator prints the held list shortest-first on every run. **This is now
-the cheapest ranking work available on the site** — it is writing, not
-engineering, and it targets demand that already exists.
+**Restructured the same day, after checking the actual rules.** The first cut
+used a 260-character floor picked by judgment. Google's published guidance
+says something different, and it changes the design:
+
+- There is **no word count**, and the helpful-content page says so directly:
+  *"Are you writing to a particular word count because you've heard or read
+  that Google has a preferred word count? (No, we don't.)"*
+- Scaled content abuse is *"many pages generated for the primary purpose of
+  manipulating search rankings and not helping users"* — purpose, not volume.
+- The doorway policy names *"substantially similar pages that are closer to
+  search results than a clearly defined, browseable hierarchy."*
+
+The real tests are **similarity between pages** and **whether a browseable
+hierarchy exists**, and a character count measures neither. Measured:
+
+| | before | after |
+| --- | --- | --- |
+| Pages | 98, one per event | 119, one per place |
+| Share of each page unique to it | 73% | 71% |
+| Median pairwise similarity | 15.7% | 16.8% |
+| Most similar pair | grey-havens vs grey-havens-departure, 30.6% | caradhras vs dimrill-dale, 31.7% |
+
+The template was never the problem — about 70% of every page is unique to it.
+The problem was the worst pair: two Grey Havens pages competing for one
+query, which is the doorway shape exactly. Nine places carried two events
+each and so had two pages.
+
+**Pages are now per place.** The nine doubles merged, which also carried them
+past the floor by combining both descriptions — and they include Rivendell,
+Bag End, Minas Tirith, Mount Doom, the Black Gate, Osgiliath, Fangorn, Dol
+Guldur and the Grey Havens, several of the highest-demand names on the map.
+URLs became readable slugs (`/places/rivendell/`) instead of event ids. The
+worst remaining pairs are adjacent places sharing a neighbour list, which is
+what a gazetteer looks like.
+
+**Every place has a page; the floor now decides indexing, not existence.**
+Under 260 characters of prose, a page carries `noindex, follow` and stays out
+of the sitemap — readers still reach it from the index, the map popups and
+its neighbours, and its links still pass through, but Google is not asked to
+rank a stub. 96 indexable, 23 not.
+
+**The 23 remaining are the finding worth acting on.** Merging fixed the
+famous doubles; the rest are still one-line entries — Lothlórien, Edoras,
+Bree, Isengard, Moria, Helm's Deep, Erebor, Lake-town, Minas Morgul.
+Expanding a description past 260 characters and re-running
+`node build_pages.js` flips it to indexable; the generator prints the list
+shortest-first. **This is the cheapest ranking work available on the site** —
+writing, not engineering, against demand that already exists.
+
+A validation sweep (`one h1, canonical matches path, description length,
+JSON-LD parses, sitemap ⊇ indexable and ∩ noindex = ∅, every internal link
+and asset resolves`) runs over all 125 generated pages.
 
 **Evidence.** The site is three URLs. That is the structural ceiling on
 everything: a Leaflet map has almost no crawlable text, so all 204,279
