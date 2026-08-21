@@ -1,7 +1,7 @@
 {
   "$meta": {
     "name": "Places on the Middle-earth interactive map",
-    "source": "https://middle-earth-interactive-map.web.app/places",
+    "source": "https://middle-earth-interactive-map.web.app/places/",
     "generated": "2026-08-21",
     "count": 128,
     "coordinates": {

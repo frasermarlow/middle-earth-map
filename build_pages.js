@@ -5,7 +5,7 @@
  * deploy — there is no CI, so nothing regenerates on its own.
  *
  * Emits:
- *   places.html      the index of every place on the map (item B3)
+ *   places/index.html   the index of every place, served at /places/ (B3)
  *   locations.json   the same data as a citable dataset (item B3)
  *   sitemap.xml      rebuilt to cover every page, hand-written and generated
  *
@@ -165,7 +165,7 @@ function layout(opts) {
     const nav = [
         ['/', 'Map', '&#x1f5fa;&#xfe0e;', 'map'],
         ['/timeline.html', 'Timeline', '&#x23f3;&#xfe0e;', 'timeline'],
-        ['/places', 'Places', '&#x1f4cd;&#xfe0e;', 'places'],
+        ['/places/', 'Places', '&#x1f4cd;&#xfe0e;', 'places'],
         ['/about.html', 'About', '&#x1f4dc;&#xfe0e;', 'about']
     ];
     const navLink = ([href, label, icon, key]) =>
@@ -246,7 +246,7 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
         '@type': 'Dataset',
         name: 'Places on the Middle-earth interactive map',
         description: `Coordinates, dates and descriptions for ${events.length} places and events in Tolkien's Middle-earth, as plotted on the Middle-earth interactive map.`,
-        url: `${SITE}/places`,
+        url: `${SITE}/places/`,
         keywords: ['Middle-earth', 'Tolkien', 'map', 'gazetteer', 'The Lord of the Rings', 'The Hobbit', 'The Silmarillion'],
         creator: { '@type': 'Person', name: 'Fraser Marlow', url: 'https://github.com/frasermarlow' },
         isAccessibleForFree: true,
@@ -260,7 +260,7 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
     const html = layout({
         title: `All ${events.length} Places on the Map of Middle-earth`,
         description: `Every place on the Middle-earth map: ${events.length} locations across the First, Second and Third Ages, with dates, map coordinates and what happened at each.`,
-        canonical: '/places',
+        canonical: '/places/',
         h1: `All ${events.length} places on the map of Middle-earth`,
         standfirst: 'A gazetteer of every location plotted on the map, from the awakening of the Elves at Cuiviénen to the ships leaving the Grey Havens.',
         byline: `${events.length} places &middot; ${byEra.length} Ages &middot; ${EVENT_LINKS.length} links between events &middot; ${Object.keys(JOURNEYS).length} journeys`,
@@ -268,12 +268,13 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
         jsonLd,
         activeNav: 'places'
     });
-    fs.writeFileSync('places.html', html);
+    fs.mkdirSync('places', { recursive: true });
+    fs.writeFileSync(path.join('places', 'index.html'), html);
 
     const dataset = {
         $meta: {
             name: 'Places on the Middle-earth interactive map',
-            source: `${SITE}/places`,
+            source: `${SITE}/places/`,
             generated: TODAY,
             count: events.length,
             coordinates: {
@@ -334,7 +335,7 @@ const BOOK_PAGES = [
             'Every place in <em>The Hobbit</em> that this map plots, in the order Bilbo reaches them. You can <a href="/?book=hobbit&amp;journey=bilbo">open the map showing only these places</a>, with Bilbo’s route drawn across it, or read the same events in sequence on the <a href="/timeline.html">timeline</a>.',
             'The journey is almost perfectly west to east. Bag End sits at x&nbsp;2746 on the base map; Erebor sits at x&nbsp;5161. Between them the road runs through the Trollshaws, over the Misty Mountains by the High Pass and Goblin-town, down to the Carrock and Beorn’s Hall, through Mirkwood to Thranduil’s Halls, and out to Lake-town on the Long Lake beneath the mountain itself. Thirteen of the fifteen places fall on that line.',
             'The other two sit well off it, and both belong to the parts of the story Bilbo never saw. <strong>Mount Gundabad</strong> is far to the north, where the goblin host mustered before the Battle of Five Armies. <strong>Dol Guldur</strong> is far to the south in Mirkwood, where the White Council struck while the dwarves were still on the road — the errand that takes Gandalf away from the company for much of the book.',
-            'Every event here is dated to Third Age 2941, the single year the quest occupies. For the deep past of these same lands, see <a href="/silmarillion-map">The Silmarillion on the map</a>; for all 128 places across every book, see the <a href="/places">full gazetteer</a>.'
+            'Every event here is dated to Third Age 2941, the single year the quest occupies. For the deep past of these same lands, see <a href="/silmarillion-map">The Silmarillion on the map</a>; for all 128 places across every book, see the <a href="/places/">full gazetteer</a>.'
         ]
     },
     {
@@ -346,7 +347,7 @@ const BOOK_PAGES = [
         h1: 'The Silmarillion on the map of Middle-earth',
         standfirst: 'The widest spread of any book here — from the far eastern shore where the Elves first woke, to an island in the western sea that by the Third Age no longer existed.',
         prose: [
-            'These are the places from <em>The Silmarillion</em> and the elder days that this map can show. You can <a href="/?book=silmarillion">open the map with only these places</a> marked, or find them among the rest in the <a href="/places">full gazetteer</a>.',
+            'These are the places from <em>The Silmarillion</em> and the elder days that this map can show. You can <a href="/?book=silmarillion">open the map with only these places</a> marked, or find them among the rest in the <a href="/places/">full gazetteer</a>.',
             'One thing is worth saying plainly, because it explains why the list is short. This is a <strong>Third Age map</strong>. Beleriand — the stage for almost all of <em>The Silmarillion</em>, with Doriath, Gondolin, Nargothrond and the rest — lay west of the Blue Mountains, and was broken and drowned in the War of Wrath at the First Age’s end. It is not off to one side of this map; it is under the sea beyond its western edge. What survived are peaks: the map carries <a href="/?fly=1202,752&amp;event=Himling%20%E2%80%94%20Remnant%20of%20Beleriand">Himling</a>, once Himring where Maedhros held his fortress, and <a href="/?fly=747,874&amp;event=Tol%20Fuin%20%E2%80%94%20Remnant%20of%20Dorthonion">Tol Fuin</a>, all that is left above water of Dorthonion. Both are filed under Appendices rather than here.',
             'What does fall inside the map spans the whole legendarium, edge to edge. <strong>Cuiviénen</strong>, where the Elves awoke, sits at x&nbsp;7091, at the far eastern limit of the parchment; the <strong>Meneltarma</strong> of Númenor sits at x&nbsp;237, out in the western sea. Between them: Durin waking at <strong>Khazad-dûm</strong>, the Dwarven cities of <strong>Ered Luin</strong>, the founding of <strong>Lindon</strong> and the <strong>Grey Havens</strong> after Beleriand’s ruin, the forging of the Rings in <strong>Eregion</strong> and the One in <strong>Mount Doom</strong>, the raising of <strong>Barad-dûr</strong>, the Corsair haven at <strong>Umbar</strong>, the Last Alliance on <strong>Dagorlad</strong>, and the loss of the Ring at the <strong>Gladden Fields</strong>.',
             'It is the only book on this map whose events run through all three Ages — which is the point of it. For the Third Age story that grows out of these events, start with <a href="/hobbit-map">The Hobbit</a> or open the <a href="/">full map</a>.'
@@ -468,7 +469,7 @@ ${near.map(n => {
         const walk = `        <p class="page-footer" style="margin-top:40px">
 ${prev ? `            &#8592; <a href="${pagePath(prev)}">${esc(placeName(prev))}</a><br>` : ''}
 ${next ? `            <a href="${pagePath(next)}">${esc(placeName(next))}</a> &#8594;<br>` : ''}
-            <a href="/places">All ${events.length} places</a> &middot; <a href="/">the map</a> &middot; <a href="/timeline.html">the timeline</a>
+            <a href="/places/">All ${events.length} places</a> &middot; <a href="/">the map</a> &middot; <a href="/timeline.html">the timeline</a>
         </p>`;
 
         const jsonLd = [
@@ -486,7 +487,7 @@ ${next ? `            <a href="${pagePath(next)}">${esc(placeName(next))}</a> &#
                 '@type': 'BreadcrumbList',
                 itemListElement: [
                     { '@type': 'ListItem', position: 1, name: 'Map', item: `${SITE}/` },
-                    { '@type': 'ListItem', position: 2, name: 'Places', item: `${SITE}/places` },
+                    { '@type': 'ListItem', position: 2, name: 'Places', item: `${SITE}/places/` },
                     { '@type': 'ListItem', position: 3, name: place }
                 ]
             }
@@ -545,7 +546,7 @@ function buildSitemap(generated) {
           images: imageEntry(`${SITE}/map-of-middle-earth.jpg`, 'Map of Middle-earth',
               'Map of Middle-earth on aged parchment, showing the Shire, the Misty Mountains, Rohan, Gondor and Mordor.') },
         { loc: '/timeline.html', lastmod: TODAY, changefreq: 'monthly', priority: '0.8' },
-        { loc: '/places', lastmod: TODAY, changefreq: 'monthly', priority: '0.9' },
+        { loc: '/places/', lastmod: TODAY, changefreq: 'monthly', priority: '0.9' },
         { loc: '/about.html', lastmod: '2026-08-20', changefreq: 'yearly', priority: '0.6',
           images: imageEntry(`${SITE}/middle-earth-satellite-map.jpg`, 'Satellite map of Middle-earth',
               'An AI-generated satellite view of Middle-earth, rendered from the hand-drawn parchment map.') },
@@ -584,7 +585,7 @@ const urlCount = buildSitemap([
     ...leaves.shipped.map(e => ({ loc: pagePath(e), priority: '0.5' }))
 ]);
 console.log(`places/*         ${leaves.shipped.length} pages (${leaves.skipped.length} held back below the ${DESCRIPTION_FLOOR}-character floor)`);
-console.log(`places.html      ${places.count} places`);
+console.log(`places/index    ${places.count} places`);
 console.log(`locations.json   ${(fs.statSync('locations.json').size / 1024).toFixed(0)} KB`);
 books.forEach(b => console.log(`${(b.slug + '.html').padEnd(17)}${b.count} places`));
 console.log(`sitemap.xml      ${urlCount} URLs`);
