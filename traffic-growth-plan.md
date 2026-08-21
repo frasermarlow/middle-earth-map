@@ -684,10 +684,12 @@ impressions around 2026-09-17. Highest confidence in the plan, no new content re
 directly addresses the CTR erosion visible since 2026-08-03. A1 and A2 are
 both edits to `<head>` and page assets, so they ship as one deploy.
 
-**Wave 2 — 24h. Complete, not yet deployed.** B3 (3h) → A4 (8h) → A3 (20h),
-all shipped 2026-08-21 in that order, B3 first because A3 needed its link
-hub. The site went from 3 indexable URLs to 104. What remains is a deploy,
-and then the content work the A3 floor exposed.
+**Wave 2 — 24h. Complete and live.** B3 (3h) → A4 (8h) → A3 (20h), all
+shipped in the 2026-08-21 releases, B3 first because A3 needed its link hub.
+The site went from 3 indexable URLs to 104. Two follow-ups came out of it: the
+sitemap needs resubmitting in Search Console (4 URLs → 102), and the 23
+one-line descriptions the A3 floor exposed are now the cheapest ranking work
+on the site.
 
 **Wave 3 — 17h + ongoing. Compounding.** C1 (13h, cheaper after A3), A5
 (~3h/language, extraction done 2026-08-21), B1 (4h), then B2 and C4 as
