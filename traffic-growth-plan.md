@@ -69,10 +69,11 @@ below is aimed squarely at this.
    active user/day) with no change in real behaviour, because GA4 only
    accrues engagement time from events. Never compare engagement time or
    events/user across that date.
-2. 5,651 of ~23,400 sessions in the last 31 days (24%) have no user
-   attribution and zero engaged sessions — almost certainly bots or
-   prefetch. Session counts are inflated by roughly that much; active users
-   and engaged sessions are the trustworthy denominators.
+2. 5,777 of ~23,400 sessions in the last 31 days (24%) have no user
+   attribution and zero engaged sessions. **These are not bots** — see D1,
+   which investigated it. They are real fast-bounce visitors GA4 cannot
+   classify. Active users and engaged sessions remain the trustworthy
+   denominators, but the sessions are genuine and should not be discarded.
 
 **Deploy discipline.** There is no CI: `git push` does not deploy. The last
 release was 2026-08-08 17:09 EDT, so commit `5125f00` (sitemap `lastmod`
@@ -115,9 +116,10 @@ per-location social images) adds well under 20 MB.
 | C4 | Content depth — more markers and eras | ongoing | Primary retention lever | Medium |
 | B2 | Community cadence on Reddit | 1h/week | Already 15 sessions/day unprompted | Speculative |
 | D1 | Measurement hygiene | 1h | Protects every number above | High |
+| D2 | Redirect `/index.html` to `/` | 0.25h | Consolidates ~944 sessions/28d | High |
 
-Wave 1 (A1, A2, C2, C3, D1) is **12.5 hours** and carries the highest-
-confidence return in the table.
+Wave 1 (A1, A2, C2, C3, D1, D2) is **12.75 hours** and carries the
+highest-confidence return in the table. It is complete as of 2026-08-21.
 
 ---
 
@@ -430,6 +432,12 @@ the marginal cost drops by about half.
 
 **Cost: 2h. Return: 10% → 25%+ of map traffic. Confidence: High.**
 
+**Status: implemented 2026-08-21, not yet deployed.** A "Play the story"
+control now sits in a bottom-centre bar on the map, linking to
+`timeline.html?play=1`, which autoplays on arrival and reports
+`timeline_play` with `source: map_cta`. The splash bullet names the feature
+instead of the page.
+
 **Evidence.** `timeline.html` drew 873 pageviews against the map's 8,581 in
 11 days — about 10%. Its playback feature, which animates events
 chronologically across the map, fired **62 times in 11 days**. Sixty-two.
@@ -447,6 +455,14 @@ feature instead of describing the page.
 ### C3. Promote the satellite view out of the legend
 
 **Cost: 0.5h. Return: 15% → 40%+ feature reach. Confidence: High.**
+
+**Status: implemented 2026-08-21, not yet deployed.** The satellite toggle
+is now a top-level button in the same bottom-centre bar. The legend row and
+the button drive one shared `setSatellite()` state, so either reflects the
+other, and the `?view=satellite` deep link reuses the same path. The button
+reports `source: map_control` to distinguish it from `legend`. This matters
+most on mobile, where the legend auto-collapses on load and the satellite
+row was previously unreachable without reopening it.
 
 1,275 `satellite_toggle` events across ~8,300 sessions in 11 days: roughly
 15% of visitors find it, because it is a row inside a legend panel. It is the
@@ -479,22 +495,75 @@ these two should be planned together.
 
 **Cost: 1h. Return: every projection above stays legible. Confidence: High.**
 
-1. Record the baseline table at the top of this document as a GA4 annotation
-   and a dated note here, before Wave 1 deploys.
-2. Add an annotation on 2026-08-08 for the engagement-metric discontinuity,
-   so nobody re-derives it in six months.
-3. Investigate the 5,651 unattributed, zero-engagement sessions (24% of the
-   31-day total). If they are bots, they are inflating session counts and
-   flattening every per-session average in this plan.
+**Status: done 2026-08-21.** Findings below; items 1 and 2 need the GA4 UI,
+as the Analytics MCP can list annotations but not create them.
+
+1. Baseline recorded — the table at the top of this document, measured
+   2026-08-20, is the pre-Wave-1 baseline. **Still to do in the GA4 UI:**
+   add it as an annotation, since the API is read-only here.
+2. **Still to do in the GA4 UI:** annotate 2026-08-08 with the
+   engagement-metric discontinuity, so nobody re-derives it in six months.
+3. **The unattributed sessions are not bots.** Investigated 2026-08-21 and
+   the bot hypothesis is disproven on two independent counts:
+
+   - **Channel mix matches real traffic.** 3,098 of them come from
+     `google / organic` landing on `/`, with a plausible tail behind it —
+     direct, reddit.com, yandex.ru, duckduckgo, microsiervos.com,
+     techbang.com, bing. A bot population does not arrive two-thirds via
+     Google organic with a realistic referrer distribution behind it.
+   - **The cohort predates the instrumentation and shrank after it.** It ran
+     at 140–250 sessions/day through all of July, then *fell* to 110–173/day
+     after the 2026-08-08 deploy.
+
+   What they actually are: sessions of exactly one pageview and two events
+   (`page_view` + `session_start`), with no `first_visit` and no
+   `user_engagement`. The visitor leaves before GA4's engagement threshold
+   fires, so the session can be neither classified as new/returning nor
+   counted as engaged. The browser/OS spread is ordinary consumer traffic,
+   led by Safari on iOS (1,705 sessions).
+
+   Two consequences. The 24% is a **bounce-measurement artefact, not junk
+   traffic** — those are real people, and the fall after 2026-08-08 is
+   itself evidence the custom events are capturing engagement that was
+   previously invisible. And no bot filter should be applied; filtering
+   would delete real visitors.
 4. Set a fortnightly cadence: for each shipped item, compare CTR at matched
    average position, not raw clicks — impressions drift on their own.
 
 ---
 
+### D2. Stop external links splitting the homepage
+
+**Cost: 0.25h. Return: consolidates ~944 sessions/28d onto one URL. Confidence: High.**
+
+**Status: implemented 2026-08-21, not yet deployed.**
+
+**Evidence.** This one surfaced out of D1. Item 1.2 of the earlier plan
+repointed all nine internal links from `index.html` to `/`, but that only
+fixed the internal half. External links and Google's existing index still
+send real traffic to `/index.html`: 568 sessions from `google / organic` and
+376 from direct in the last 31 days within the unattributed cohort alone,
+and `/index.html` drew 689 pageviews against `/`'s 8,581 over the 11-day
+behavioural window. The homepage is still being counted, and ranked, as two
+pages.
+
+**The work.** A `301` redirect from `/index.html` to `/` in `firebase.json`,
+which Firebase serves with the query string intact so `?fly=`, `?event=` and
+`?view=satellite` deep links survive it. Plus the one internal link that
+item 1.2 missed, in `timeline.html`'s `view_on_map` handler, which was still
+building `index.html?fly=...` and is now `/?fly=...`.
+
+**Verification.** `curl -sI https://…/index.html` returns `301` with
+`location: /`, and a deep link such as `/index.html?fly=100,100` keeps its
+query string through the redirect.
+
+---
+
 ## Sequencing
 
-**Wave 1 — 12.5h. Do this first.** A1 (3h) and A2 (6h) are **done as of
-2026-08-20 and awaiting a deploy**; C2 (2h), C3 (0.5h) and D1 (1h) remain. Highest confidence in the plan, no new content required, and it
+**Wave 1 — 12.75h. Complete.** A1 (3h) and A2 (6h) shipped 2026-08-20;
+C2 (2h), C3 (0.5h), D1 (1h) and D2 (0.25h, which D1 turned up) done
+2026-08-21. D1 leaves two annotations to add by hand in the GA4 UI. Highest confidence in the plan, no new content required, and it
 directly addresses the CTR erosion visible since 2026-08-03. A1 and A2 are
 both edits to `<head>` and page assets, so they ship as one deploy.
 

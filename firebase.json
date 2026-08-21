@@ -15,6 +15,9 @@
       "*.psd",
       "_*"
     ],
+    "redirects": [
+      { "source": "/index.html", "destination": "/", "type": 301 }
+    ],
     "rewrites": [
       { "source": "/about", "destination": "/about.html" }
     ],

@@ -790,7 +790,7 @@
                     const py = btn.dataset.py;
                     const name = btn.dataset.name;
                     track('view_on_map', { me_event: name });
-                    window.location.href = `index.html?fly=${px},${py}&event=${encodeURIComponent(name)}`;
+                    window.location.href = `/?fly=${px},${py}&event=${encodeURIComponent(name)}`;
                 });
             });
 
@@ -1035,6 +1035,13 @@
         // Init scrubber label
         if (filteredEvents.length > 0) {
             scrubberLabel.textContent = formatShortDate(filteredEvents[0]);
+        }
+
+        // Autoplay when arriving from the map's "Play the story" control.
+        // The short delay lets the first render settle before it scrolls.
+        if (new URLSearchParams(location.search).get('play') === '1' && filteredEvents.length > 0) {
+            track('timeline_play', { source: 'map_cta' });
+            setTimeout(play, 400);
         }
     })();
     </script>

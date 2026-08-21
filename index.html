@@ -613,6 +613,49 @@
             background: #d4b445;
         }
 
+        /* Map controls (bottom centre) */
+        #map-controls {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001;
+            display: flex;
+            gap: 8px;
+        }
+        .map-ctrl {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(44, 36, 24, 0.95);
+            border: 2px solid #8b7355;
+            border-radius: 8px;
+            color: #d4c5a9;
+            padding: 9px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .map-ctrl:hover {
+            background: rgba(60, 48, 30, 0.95);
+            border-color: #d4c5a9;
+            color: #e8d9b0;
+        }
+        .map-ctrl.active {
+            border-color: #c9a435;
+            color: #e8d9b0;
+        }
+        /* Clear the wrapped copyright line on narrow screens */
+        @media (max-width: 600px) {
+            #map-controls { bottom: 44px; gap: 6px; }
+            .map-ctrl { font-size: 12px; padding: 8px 11px; }
+        }
+
         /* Info button */
         #info-btn {
             position: fixed;
@@ -745,11 +788,16 @@
                 <li>Click markers to read about key events</li>
                 <li>Use the Legend panel to filter by book or toggle journey paths</li>
                 <li>Enable &#8220;Measure distance&#8221; in the Legend to measure between two points</li>
-                <li>Visit the <a href="timeline.html" style="color:#c9a435;">Timeline page</a> for a chronological view</li>
+                <li>Hit <a href="timeline.html?play=1" style="color:#c9a435;">Play the story</a> to watch all 128 events unfold in order</li>
             </ul>
             <p class="splash-disclaimer">The base map image is sourced from the internet and is used here for fan/educational purposes. We do not claim copyright over the map artwork.</p>
             <button class="splash-btn" id="splash-enter">Enter Middle-earth</button>
         </div>
+    </div>
+
+    <div id="map-controls">
+        <button id="sat-btn" class="map-ctrl" type="button" aria-pressed="false">&#x1f6f0;&#xfe0e; Satellite</button>
+        <a id="story-btn" class="map-ctrl" href="timeline.html?play=1">&#x25b6;&#xfe0e; Play the story</a>
     </div>
 
     <button id="info-btn" title="About this map">i</button>
@@ -1127,8 +1175,13 @@
             <div class="coord-toggle-switch"></div>
             <span class="coord-toggle-label">Satellite view</span>
         `;
-        satToggleRow.addEventListener('click', () => {
-            const active = satToggleRow.classList.toggle('active');
+        // The legend row and the bottom-centre button drive the same state,
+        // so either control reflects a change made with the other.
+        const satBtn = document.getElementById('sat-btn');
+        let satActive = false;
+
+        function setSatellite(active, source) {
+            satActive = active;
             if (active) {
                 map.removeLayer(mapTiles);
                 map.addLayer(satTiles);
@@ -1136,7 +1189,16 @@
                 map.removeLayer(satTiles);
                 map.addLayer(mapTiles);
             }
-            track('satellite_toggle', { state: active ? 'on' : 'off', source: 'legend' });
+            satToggleRow.classList.toggle('active', active);
+            satBtn.classList.toggle('active', active);
+            satBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            track('satellite_toggle', { state: active ? 'on' : 'off', source });
+        }
+
+        satToggleRow.addEventListener('click', () => setSatellite(!satActive, 'legend'));
+        satBtn.addEventListener('click', () => setSatellite(!satActive, 'map_control'));
+        document.getElementById('story-btn').addEventListener('click', () => {
+            track('story_open', { source: 'map_control' });
         });
         legendEl.appendChild(satToggleRow);
 
@@ -1282,10 +1344,7 @@
 
             // ?view=satellite activates satellite tiles on load
             if (params.get('view') === 'satellite') {
-                map.removeLayer(mapTiles);
-                map.addLayer(satTiles);
-                satToggleRow.classList.add('active');
-                track('satellite_toggle', { state: 'on', source: 'deep_link' });
+                setSatellite(true, 'deep_link');
             }
         })();
 
