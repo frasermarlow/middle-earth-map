@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
-    <title>Middle-earth — Interactive Map</title>
-    <meta name="description" content="Explore an interactive map of Tolkien's Middle-earth with 128 events from The Silmarillion, The Hobbit and The Lord of the Rings. Click markers, trace journeys.">
+    <title>Interactive Middle-earth Map &mdash; LOTR, Hobbit &amp; Silmarillion</title>
+    <meta name="description" content="An interactive map of Middle-earth: 128 events from The Lord of the Rings, The Hobbit and The Silmarillion, with journey paths and a satellite view.">
     <link rel="canonical" href="https://middle-earth-interactive-map.web.app/">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Middle-earth — Interactive Map">
-    <meta property="og:description" content="Explore an interactive map of Tolkien's Middle-earth with over 100 events from The Silmarillion, The Hobbit, and The Lord of the Rings.">
+    <meta property="og:title" content="Interactive Middle-earth Map — LOTR, Hobbit &amp; Silmarillion">
+    <meta property="og:description" content="An interactive map of Middle-earth: 128 events from The Lord of the Rings, The Hobbit and The Silmarillion, with journey paths and a satellite view.">
     <meta property="og:url" content="https://middle-earth-interactive-map.web.app/">
     <meta property="og:image" content="https://middle-earth-interactive-map.web.app/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Map of Middle-earth on aged parchment, showing the Shire, Rohan, Gondor and Mordor">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Middle-earth — Interactive Map">
-    <meta name="twitter:description" content="Explore an interactive map of Tolkien's Middle-earth with over 100 events from The Silmarillion, The Hobbit, and The Lord of the Rings.">
+    <meta name="twitter:title" content="Interactive Middle-earth Map — LOTR, Hobbit &amp; Silmarillion">
+    <meta name="twitter:description" content="An interactive map of Middle-earth: 128 events from The Lord of the Rings, The Hobbit and The Silmarillion, with journey paths and a satellite view.">
     <meta name="twitter:image" content="https://middle-earth-interactive-map.web.app/og-image.jpg">
+    <meta name="twitter:image:alt" content="Map of Middle-earth on aged parchment, showing the Shire, Rohan, Gondor and Mordor">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -27,6 +29,13 @@
         "name": "Middle-earth Interactive Map",
         "url": "https://middle-earth-interactive-map.web.app/",
         "description": "An interactive map of Tolkien's Middle-earth with events from across the legendarium.",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://middle-earth-interactive-map.web.app/map-of-middle-earth.jpg",
+            "width": 1600,
+            "height": 900,
+            "caption": "Map of Middle-earth on aged parchment, showing the Shire, Rohan, Gondor and Mordor"
+        },
         "author": {
             "@type": "Person",
             "name": "Fraser Marlow",
@@ -530,6 +539,24 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+        .splash-card .splash-preview {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0 0 16px;
+            border: 1px solid #5a4a36;
+            border-radius: 4px;
+        }
+        /* Keep the preview present but short when there is little vertical room,
+           so the Enter button stays reachable without scrolling. */
+        @media (max-height: 700px) {
+            .splash-card .splash-preview {
+                height: 92px;
+                margin-bottom: 12px;
+                object-fit: cover;
+                object-position: center 45%;
+            }
+        }
         .splash-card h2 {
             color: #e8d9b0;
             font-size: 22px;
@@ -682,7 +709,7 @@
     </script>
 </head>
 <body>
-    <h1 class="visually-hidden">Middle-earth Interactive Map</h1>
+    <h1 class="visually-hidden">Interactive Map of Middle-earth</h1>
     <nav id="nav-bar">
         <a href="/" class="nav-link active">&#x1f5fa;&#xfe0e; Map</a>
         <span class="nav-title">Middle-earth</span>
@@ -707,6 +734,12 @@
     <div id="splash-overlay" class="hidden">
         <div class="splash-card">
             <h2>Welcome to Middle-earth</h2>
+            <img class="splash-preview"
+                 src="map-of-middle-earth.jpg"
+                 srcset="map-of-middle-earth-800.jpg 800w, map-of-middle-earth.jpg 1600w"
+                 sizes="(max-width: 560px) 90vw, 424px"
+                 width="1600" height="900"
+                 alt="Map of Middle-earth on aged parchment, showing the Shire, the Misty Mountains, Rohan, Gondor and Mordor">
             <p>An interactive map of Tolkien&#8217;s Middle-earth, with events from across the legendarium plotted as markers.</p>
             <ul>
                 <li>Click markers to read about key events</li>

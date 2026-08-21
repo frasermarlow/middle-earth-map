@@ -257,6 +257,13 @@
             grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
+        figure > img.wide {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid #5a4a36;
+            border-radius: 3px;
+        }
         .pair div { text-align: center; }
         .pair img {
             width: 100%;
@@ -555,6 +562,16 @@
         <p>The 240 patches are feathered together across their 96-pixel overlaps, sharpened, and sliced into a second tile pyramid: <strong>685 tiles, about 8&nbsp;MB</strong>, sitting in the same coordinate space as the parchment so the two layers register exactly. The whole run takes a few hours on an Apple Silicon laptop, generating locally with no cloud API involved.</p>
 
         <h3>What it actually looks like</h3>
+
+        <figure>
+            <img class="wide"
+                 src="middle-earth-satellite-map.jpg"
+                 srcset="middle-earth-satellite-map-800.jpg 800w, middle-earth-satellite-map.jpg 1600w"
+                 sizes="(max-width: 820px) 92vw, 746px"
+                 width="1600" height="885" loading="lazy"
+                 alt="Satellite map of Middle-earth: green plains, snow-capped mountain ranges, blue seas and the deserts of Harad">
+            <figcaption>The finished satellite layer for the whole of Middle-earth, assembled from the deployed tile pyramid. Every coastline, mountain range and forest sits in the same place as on the parchment &mdash; the two layers register exactly, which is what makes the toggle on the map read as the same world seen twice.</figcaption>
+        </figure>
 
         <figure>
             <div class="pair">

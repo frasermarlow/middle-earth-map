@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://middle-earth-interactive-map.web.app/</loc>
-    <lastmod>2026-08-08</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://middle-earth-interactive-map.web.app/map-of-middle-earth.jpg</image:loc>
+      <image:title>Map of Middle-earth</image:title>
+      <image:caption>Map of Middle-earth on aged parchment, showing the Shire, the Misty Mountains, Rohan, Gondor and Mordor.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://middle-earth-interactive-map.web.app/timeline.html</loc>
-    <lastmod>2026-08-08</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://middle-earth-interactive-map.web.app/about.html</loc>
-    <lastmod>2026-08-08</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://middle-earth-interactive-map.web.app/middle-earth-satellite-map.jpg</image:loc>
+      <image:title>Satellite map of Middle-earth</image:title>
+      <image:caption>An AI-generated satellite view of Middle-earth, rendered from the hand-drawn parchment map.</image:caption>
+    </image:image>
   </url>
 </urlset>
