@@ -9,3 +9,6 @@ __pycache__/
 _sat_*.jpg
 _test_*.jpg
 .playwright-mcp/
+
+# build artefact: crop manifest for generate_place_crops.py
+.crops.json

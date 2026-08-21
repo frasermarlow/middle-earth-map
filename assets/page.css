@@ -124,6 +124,31 @@ code {
     white-space: nowrap;
 }
 
+/* ── Figures ───────────────────────────── */
+figure {
+    margin: 28px 0;
+    background: #221c14;
+    border: 1px solid #5a4a36;
+    border-radius: 6px;
+    padding: 16px;
+}
+/* The crop is wrapped in a link, so match both shapes. Without width:100%
+   a 640px crop overflows a 375px screen. */
+figure img,
+figure a img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid #5a4a36;
+    border-radius: 3px;
+}
+figcaption {
+    font-size: 13px;
+    color: #a8987c;
+    line-height: 1.55;
+    margin-top: 10px;
+}
+
 /* ── Tables ────────────────────────────── */
 .table-wrap { overflow-x: auto; margin: 20px 0 24px 0; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 460px; }

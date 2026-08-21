@@ -43,6 +43,7 @@
     "toast": "Scroll to zoom · Drag to pan · Click markers for details",
     "copyright": "Map artwork is not owned by this project and is used for fan/educational purposes only.",
     "keyFigures": "Key figures:",
+    "readAbout": "Read about this place",
     "measureReadout": "A → B: {miles} miles ({leagues} leagues)",
     "coordReadout": "px: {px}, py: {py}",
     "copiedSuffix": "{text}  (copied)"

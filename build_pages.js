@@ -45,9 +45,9 @@ const eventName = evt => {
 const mapUrl = evt =>
     `/?fly=${evt.px},${evt.py}&event=${encodeURIComponent(evt.name)}`;
 
-/* Where the index links a place. A3 will repoint this at the per-place page;
-   until those exist it goes straight to the marker on the map. */
-const placeUrl = evt => mapUrl(evt);
+/* Where the index links a place: its own page when it has one, otherwise
+   straight to the marker on the map. */
+const placeUrl = evt => (hasPage(evt) ? pagePath(evt) : mapUrl(evt));
 
 const firstSentence = (text, max = 150) => {
     const m = text.match(/^(.+?[.!?])(\s|$)/);
@@ -56,7 +56,79 @@ const firstSentence = (text, max = 150) => {
     return out;
 };
 
+/* Meta descriptions carry the click, so a 60-character first sentence is a
+   wasted slot. Take whole sentences until there is enough to be worth
+   reading, then stop before Google truncates. */
+const metaDescription = (text, min = 110, max = 155) => {
+    const sentences = text.match(/[^.!?]+[.!?]?/g) || [text];
+    let out = '';
+    for (const sentence of sentences) {
+        const next = (out + sentence).trim();
+        if (next.length > max) break;
+        out = next;
+        if (out.length >= min) break;
+    }
+    if (!out) out = text.slice(0, max).replace(/\s+\S*$/, '') + '…';
+    // A short opening sentence followed by a long one leaves the slot half
+    // empty; fill it from the rest of the text rather than stopping early.
+    if (out.length < min && text.length > out.length) {
+        out = text.slice(0, max).replace(/\s+\S*$/, '').replace(/[,;:]$/, '') + '…';
+    }
+    return out;
+};
+
 const dateLabel = evt => `${ERA_NAMES[evt.era]} ${evt.year}`;
+
+/* Distance from a point to a line segment, so "a route passes near here"
+   means the road itself and not merely one of its waypoints. */
+function segDist(p, a, b) {
+    const vx = b[0] - a[0], vy = b[1] - a[1];
+    const wx = p[0] - a[0], wy = p[1] - a[1];
+    const L = vx * vx + vy * vy;
+    let t = L ? (wx * vx + wy * vy) / L : 0;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(a[0] + t * vx - p[0], a[1] + t * vy - p[1]);
+}
+
+const JOURNEY_NEAR_PX = 150;
+
+function journeysNear(evt) {
+    return Object.keys(JOURNEYS).filter(key => {
+        const pts = JOURNEYS[key].points;
+        let min = Infinity;
+        for (let i = 0; i < pts.length - 1; i++) {
+            min = Math.min(min, segDist([evt.px, evt.py], pts[i], pts[i + 1]));
+        }
+        return min <= JOURNEY_NEAR_PX;
+    });
+}
+
+function relatedEvents(evt) {
+    const out = [];
+    EVENT_LINKS.forEach(link => {
+        if (link.from === evt.id) out.push({ id: link.to, label: link.label, dir: 'to' });
+        else if (link.to === evt.id) out.push({ id: link.from, label: link.label, dir: 'from' });
+    });
+    return out.map(r => ({ ...r, event: events.find(e => e.id === r.id) })).filter(r => r.event);
+}
+
+function nearestPlaces(evt, n = 4) {
+    return events
+        .filter(e => e.id !== evt.id)
+        .map(e => ({ event: e, d: Math.hypot(e.px - evt.px, e.py - evt.py) }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, n);
+}
+
+/* A place earns its own page when its description can carry one on its own.
+   260 characters is roughly forty words — below that the page would be a
+   stub dressed up with the same structured facts as every other stub, which
+   is the shape search engines treat as doorway content. Everything below the
+   floor still appears on /places and on the map; expanding a description past
+   it and re-running this script is all it takes to promote one. */
+const DESCRIPTION_FLOOR = 260;
+const hasPage = evt => evt.description.length >= DESCRIPTION_FLOOR;
+const pagePath = evt => `/places/${evt.id}/`;
 
 // ── shared place table ───────────────────────────────────────────────────
 function placeTable(items, opts = {}) {
@@ -333,6 +405,126 @@ function buildPlaces() {
     return { pages: ['/places'], count: events.length };
 }
 
+// ── A3: one page per place ───────────────────────────────────────────────
+function buildPlacePages() {
+    const shipped = events.filter(hasPage).sort((a, b) => a.sortKey - b.sortKey);
+    const skipped = events.filter(e => !hasPage(e));
+    const crops = [];
+
+    shipped.forEach((evt, i) => {
+        const place = placeName(evt);
+        const ev = eventName(evt);
+        const prev = shipped[i - 1];
+        const next = shipped[i + 1];
+        const related = relatedEvents(evt);
+        const routes = journeysNear(evt);
+        const near = nearestPlaces(evt);
+        const bookPage = BOOK_PAGES.find(b => b.cat === evt.category);
+
+        const facts = `        <div class="table-wrap">
+            <table>
+                <tbody>
+                    <tr><th>Place</th><td>${esc(place)}</td></tr>
+${ev ? `                    <tr><th>Event</th><td>${esc(ev)}</td></tr>\n` : ''}                    <tr><th>Book</th><td>${bookPage ? `<a href="/${bookPage.slug}">${esc(CATEGORY_LABELS[evt.category])}</a>` : esc(CATEGORY_LABELS[evt.category])}</td></tr>
+                    <tr><th>Date</th><td>${esc(dateLabel(evt))}</td></tr>
+${evt.characters && evt.characters.trim() ? `                    <tr><th>Figures</th><td>${esc(evt.characters)}</td></tr>\n` : ''}                    <tr><th>Map x, y</th><td><code>${evt.px}, ${evt.py}</code></td></tr>
+                </tbody>
+            </table>
+        </div>`;
+
+        const cropImg = `        <figure>
+            <a href="${esc(mapUrl(evt))}"><img class="wide" src="/assets/crops/${evt.id}.jpg" width="640" height="360" loading="lazy" alt="${esc(place)} and its surroundings on the parchment map of Middle-earth"></a>
+            <figcaption>${esc(place)} on the parchment map. <a href="${esc(mapUrl(evt))}">Open this spot on the interactive map</a> to pan, zoom or switch to the satellite view.</figcaption>
+        </figure>`;
+
+        const relatedBlock = related.length ? `        <h2>What this connects to</h2>
+        <ul>
+${related.map(r => `            <li><a href="${esc(placeUrl(r.event))}">${esc(placeName(r.event))}</a> &mdash; ${esc(r.label)}${r.dir === 'from' ? ' (leading here)' : ''}</li>`).join('\n')}
+        </ul>` : '';
+
+        const routesBlock = routes.length ? `        <h2>Routes passing through</h2>
+        <p>${routes.length === 1 ? 'One traced route runs' : `${routes.length} traced routes run`} within ${JOURNEY_NEAR_PX} map-pixels of here:</p>
+        <ul>
+${routes.map(k => `            <li><a href="/?journey=${k}&amp;fly=${evt.px},${evt.py}">${esc(JOURNEYS[k].label)}</a></li>`).join('\n')}
+        </ul>` : '';
+
+        const nearBlock = `        <h2>Nearest places on the map</h2>
+        <ul>
+${near.map(n => {
+        const nev = eventName(n.event);
+        return `            <li><a href="${esc(placeUrl(n.event))}">${esc(placeName(n.event))}</a>${nev ? ` &mdash; ${esc(nev)}` : ''} &mdash; ${Math.round(n.d)} map-pixels away, ${esc(dateLabel(n.event))}</li>`;
+    }).join('\n')}
+        </ul>`;
+
+        const walk = `        <p class="page-footer" style="margin-top:40px">
+${prev ? `            &#8592; <a href="${pagePath(prev)}">${esc(placeName(prev))}</a><br>` : ''}
+${next ? `            <a href="${pagePath(next)}">${esc(placeName(next))}</a> &#8594;<br>` : ''}
+            <a href="/places">All ${events.length} places</a> &middot; <a href="/">the map</a> &middot; <a href="/timeline.html">the timeline</a>
+        </p>`;
+
+        const jsonLd = [
+            {
+                '@context': 'https://schema.org',
+                '@type': 'WebPage',
+                name: `${place}${ev ? ' — ' + ev : ''}`,
+                description: firstSentence(evt.description, 240),
+                url: `${SITE}${pagePath(evt)}`,
+                isPartOf: { '@type': 'WebSite', name: 'Middle-earth Interactive Map', url: `${SITE}/` },
+                about: { '@type': 'Place', name: place, description: evt.description }
+            },
+            {
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    { '@type': 'ListItem', position: 1, name: 'Map', item: `${SITE}/` },
+                    { '@type': 'ListItem', position: 2, name: 'Places', item: `${SITE}/places` },
+                    { '@type': 'ListItem', position: 3, name: place }
+                ]
+            }
+        ];
+
+        const body = [
+            cropImg,
+            `        <p>${esc(evt.description)}</p>`,
+            facts,
+            relatedBlock,
+            routesBlock,
+            nearBlock,
+            walk
+        ].filter(Boolean).join('\n\n');
+
+        const title = `${place} &mdash; Map of Middle-earth`;
+        const dir = path.join('places', evt.id);
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, 'index.html'), layout({
+            title: `${place} — Map of Middle-earth`,
+            description: metaDescription(evt.description),
+            canonical: pagePath(evt),
+            h1: esc(place),
+            standfirst: ev ? esc(ev) : '',
+            byline: `${esc(CATEGORY_LABELS[evt.category])} &middot; ${esc(dateLabel(evt))} &middot; <a href="${esc(mapUrl(evt))}">show on the map</a>`,
+            body,
+            jsonLd,
+            activeNav: 'places'
+        }));
+
+        crops.push({ id: evt.id, px: evt.px, py: evt.py, name: place });
+    });
+
+    // Consumed by generate_place_crops.py; a dotfile so Firebase never uploads it.
+    fs.writeFileSync('.crops.json', JSON.stringify(crops, null, 1) + '\n');
+
+    // The map popups only link a page that exists.
+    fs.writeFileSync('place-pages.js',
+        '// Generated by build_pages.js — ids that have a page under /places/.\n' +
+        'const PLACE_PAGES = ' + JSON.stringify(
+            Object.fromEntries(shipped.map(e => [e.id, 1]))) + ';\n');
+
+    return { shipped, skipped };
+}
+
+// ── A3: one page per place ─── end ───────────────────────────────────────
+
 // ── sitemap ──────────────────────────────────────────────────────────────
 function buildSitemap(generated) {
     const imageEntry = (loc, title, caption) => `
@@ -371,10 +563,20 @@ ${body}
 }
 
 // ── run ──────────────────────────────────────────────────────────────────
+const leaves = buildPlacePages();
 const places = buildPlaces();
 const books = buildBookPages();
-const urlCount = buildSitemap(books.map(b => ({ loc: `/${b.slug}`, priority: '0.7' })));
+const urlCount = buildSitemap([
+    ...books.map(b => ({ loc: `/${b.slug}`, priority: '0.7' })),
+    ...leaves.shipped.map(e => ({ loc: pagePath(e), priority: '0.5' }))
+]);
+console.log(`places/*         ${leaves.shipped.length} pages (${leaves.skipped.length} held back below the ${DESCRIPTION_FLOOR}-character floor)`);
 console.log(`places.html      ${places.count} places`);
 console.log(`locations.json   ${(fs.statSync('locations.json').size / 1024).toFixed(0)} KB`);
 books.forEach(b => console.log(`${(b.slug + '.html').padEnd(17)}${b.count} places`));
 console.log(`sitemap.xml      ${urlCount} URLs`);
+if (leaves.skipped.length) {
+    console.log('\nheld back — expand the description past ' + DESCRIPTION_FLOOR + ' characters to promote:');
+    leaves.skipped.sort((a, b) => a.description.length - b.description.length)
+        .forEach(e => console.log(`  ${String(e.description.length).padStart(3)}  ${placeName(e)}`));
+}

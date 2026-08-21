@@ -331,6 +331,15 @@
             padding-top: 6px;
         }
 
+        .popup-more {
+            font-size: 12px;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #6b5b45;
+        }
+        .popup-more a { color: #c9a435; text-decoration: none; }
+        .popup-more a:hover { color: #e8d9b0; text-decoration: underline; }
+
         /* Leaflet controls theming */
         .leaflet-control-zoom a {
             background: rgba(44, 36, 24, 0.95) !important;
@@ -836,6 +845,7 @@
     <script src="i18n/i18n.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="data.js"></script>
+    <script src="place-pages.js"></script>
     <script>
         // Events, COLORS, CATEGORY_LABELS, CATEGORY_ICONS, FELLOWSHIP_PATH,
         // JOURNEYS, IMG_W, IMG_H loaded from data.js
@@ -908,6 +918,7 @@
                         <div class="popup-book">${t('books.' + evt.category, CATEGORY_LABELS[evt.category])}</div>
                         <div class="popup-description">${evt.description}</div>
                         <div class="popup-characters"><strong>${t('map.keyFigures', 'Key figures:')}</strong> ${evt.characters}</div>
+                        ${PLACE_PAGES[evt.id] ? `<div class="popup-more"><a href="/places/${evt.id}/">${t('map.readAbout', 'Read about this place')} &#8594;</a></div>` : ''}
                     </div>
                 `, { maxWidth: 300, autoPanPaddingTopLeft: L.point(10, 54) });
 
