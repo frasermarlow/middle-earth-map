@@ -918,7 +918,7 @@
                         <div class="popup-book">${t('books.' + evt.category, CATEGORY_LABELS[evt.category])}</div>
                         <div class="popup-description">${evt.description}</div>
                         <div class="popup-characters"><strong>${t('map.keyFigures', 'Key figures:')}</strong> ${evt.characters}</div>
-                        ${PLACE_PAGES[evt.id] ? `<div class="popup-more"><a href="/places/${evt.id}/">${t('map.readAbout', 'Read about this place')} &#8594;</a></div>` : ''}
+                        ${PLACE_PAGES[evt.id] ? `<div class="popup-more"><a href="/places/${PLACE_PAGES[evt.id]}/">${t('map.readAbout', 'Read about this place')} &#8594;</a></div>` : ''}
                     </div>
                 `, { maxWidth: 300, autoPanPaddingTopLeft: L.point(10, 54) });
 

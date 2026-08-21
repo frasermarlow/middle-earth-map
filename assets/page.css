@@ -306,6 +306,26 @@ td.coords {
     font-size: 12px;
 }
 
+/* ── Place page details ────────────────── */
+h2 .event-date {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin-top: 3px;
+}
+.event-figures { font-size: 13.5px; color: #a2947a; }
+.event-figures strong { color: #b0a086; }
+.page-walk {
+    margin-top: 44px;
+    padding-top: 18px;
+    border-top: 1px solid #5a4a36;
+    font-size: 13px;
+    color: #8b7355;
+    line-height: 2;
+}
+
 /* ── Footer ────────────────────────────── */
 .page-footer {
     margin-top: 56px;

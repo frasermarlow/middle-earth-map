@@ -45,9 +45,8 @@ const eventName = evt => {
 const mapUrl = evt =>
     `/?fly=${evt.px},${evt.py}&event=${encodeURIComponent(evt.name)}`;
 
-/* Where the index links a place: its own page when it has one, otherwise
-   straight to the marker on the map. */
-const placeUrl = evt => (hasPage(evt) ? pagePath(evt) : mapUrl(evt));
+/* Every place has a page now, so the index always links to it. */
+const placeUrl = evt => pagePath(evt);
 
 const firstSentence = (text, max = 150) => {
     const m = text.match(/^(.+?[.!?])(\s|$)/);
@@ -126,9 +125,60 @@ function nearestPlaces(evt, n = 4) {
    is the shape search engines treat as doorway content. Everything below the
    floor still appears on /places and on the map; expanding a description past
    it and re-running this script is all it takes to promote one. */
-const DESCRIPTION_FLOOR = 260;
-const hasPage = evt => evt.description.length >= DESCRIPTION_FLOOR;
-const pagePath = evt => `/places/${evt.id}/`;
+/* Pages are per PLACE, not per event. Nine places carry two events each, and
+   splitting them produced the most similar pairs on the site — two Grey
+   Havens pages competing for the same query is precisely the "substantially
+   similar pages" shape Google's doorway policy names. Merged, those pages
+   also carry both descriptions. */
+const slugify = name => name
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // Cuiviénen -> Cuivienen
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+const PLACES = (() => {
+    const byName = new Map();
+    events.forEach(evt => {
+        const name = placeName(evt);
+        if (!byName.has(name)) byName.set(name, []);
+        byName.get(name).push(evt);
+    });
+    const out = [];
+    const seenSlug = new Map();
+    for (const [name, list] of byName) {
+        list.sort((a, b) => a.sortKey - b.sortKey);
+        let slug = slugify(name);
+        if (seenSlug.has(slug)) {                        // never silently collide
+            const n = seenSlug.get(slug) + 1;
+            seenSlug.set(slug, n);
+            slug = `${slug}-${n}`;
+        } else {
+            seenSlug.set(slug, 1);
+        }
+        out.push({
+            name, slug, events: list,
+            sortKey: list[0].sortKey,
+            prose: list.map(e => e.description).join(' ')
+        });
+    }
+    return out.sort((a, b) => a.sortKey - b.sortKey);
+})();
+
+const PLACE_BY_EVENT = new Map();
+PLACES.forEach(pl => pl.events.forEach(e => PLACE_BY_EVENT.set(e.id, pl)));
+
+/* Google publishes no word count, and says so explicitly. What it does name
+   is substantially similar pages and content that adds nothing, so the bar
+   here is about substance rather than length: a place is offered for
+   indexing when its own prose runs past this. Everything else still gets a
+   page — reachable from the index, the map popups and its neighbours — but
+   carries noindex,follow and stays out of the sitemap, so it serves readers
+   without asking Google to rank a stub. Expanding a description and
+   re-running promotes it. */
+const INDEX_FLOOR = 260;
+const isIndexable = place => place.prose.length >= INDEX_FLOOR;
+const pagePathFor = place => `/places/${place.slug}/`;
+const pagePath = evt => pagePathFor(PLACE_BY_EVENT.get(evt.id));
 
 // ── shared place list ───────────────────────────────────────────────────
 /* One row per place: a crop of that spot on the map, the name and event, a
@@ -137,18 +187,22 @@ const pagePath = evt => `/places/${evt.id}/`;
    forcing a sideways scroll. */
 function placeList(items, opts = {}) {
     const showBook = opts.showBook !== false;
-    const rows = items.map(evt => {
-        const ev = eventName(evt);
-        const href = esc(placeUrl(evt));
+    /* Rows are places, like the pages they link to. A place with two events
+       shows both rather than appearing twice. */
+    const rows = items.map(place => {
+        const first = place.events[0];
+        const evNames = place.events.map(e => eventName(e)).filter(Boolean).map(esc);
+        const books = [...new Set(place.events.map(e => e.category))];
+        const href = esc(pagePathFor(place));
         return `                <li class="place-row">
-                    <a class="place-thumb" href="${href}" tabindex="-1" aria-hidden="true"><img src="/assets/thumbs/${evt.id}.jpg" width="144" height="81" loading="lazy" alt=""></a>
+                    <a class="place-thumb" href="${href}" tabindex="-1" aria-hidden="true"><img src="/assets/thumbs/${first.id}.jpg" width="144" height="81" loading="lazy" alt=""></a>
                     <div class="place-body">
-                        <a class="place-name" href="${href}">${esc(placeName(evt))}</a>${ev ? `<span class="place-event">${esc(ev)}</span>` : ''}
-                        <p class="place-snippet">${esc(firstSentence(evt.description, 180))}</p>
+                        <a class="place-name" href="${href}">${esc(place.name)}</a>${evNames.length ? `<span class="place-event">${evNames.join(' &middot; ')}</span>` : ''}
+                        <p class="place-snippet">${esc(firstSentence(first.description, 180))}</p>
                     </div>
                     <div class="place-meta">
-${showBook ? `                        <span class="place-book"><i style="background:${COLORS[evt.category]}"></i>${esc(CATEGORY_LABELS[evt.category])}</span>\n` : ''}                        <span class="place-date">${esc(dateLabel(evt))}</span>
-                        <span class="place-coords">${evt.px}, ${evt.py}</span>
+${showBook ? books.map(c => `                        <span class="place-book"><i style="background:${COLORS[c]}"></i>${esc(CATEGORY_LABELS[c])}</span>`).join('\n') + '\n' : ''}                        <span class="place-date">${place.events.map(e => esc(dateLabel(e))).join(', ')}</span>
+                        <span class="place-coords">${first.px}, ${first.py}</span>
                     </div>
                 </li>`;
     }).join('\n');
@@ -179,6 +233,7 @@ function layout(opts) {
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}">
     <link rel="canonical" href="${SITE}${canonical}">
+${opts.noindex ? '    <meta name="robots" content="noindex, follow">\n' : ''}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta property="og:type" content="website">
     <meta property="og:title" content="${esc(title)}">
@@ -221,7 +276,7 @@ function buildPlaces() {
     const byEra = ERA_ORDER.map(era => ({
         era,
         name: ERA_NAMES[era],
-        items: events.filter(e => e.era === era).sort((a, b) => a.sortKey - b.sortKey)
+        items: PLACES.filter(pl => pl.events[0].era === era)
     })).filter(g => g.items.length);
 
     const anchor = era => era.toLowerCase().replace(/\s+/g, '-');
@@ -245,7 +300,7 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
         '@context': 'https://schema.org',
         '@type': 'Dataset',
         name: 'Places on the Middle-earth interactive map',
-        description: `Coordinates, dates and descriptions for ${events.length} places and events in Tolkien's Middle-earth, as plotted on the Middle-earth interactive map.`,
+        description: `Coordinates, dates and descriptions for ${PLACES.length} places and ${events.length} events in Tolkien's Middle-earth, as plotted on the Middle-earth interactive map.`,
         url: `${SITE}/places/`,
         keywords: ['Middle-earth', 'Tolkien', 'map', 'gazetteer', 'The Lord of the Rings', 'The Hobbit', 'The Silmarillion'],
         creator: { '@type': 'Person', name: 'Fraser Marlow', url: 'https://github.com/frasermarlow' },
@@ -258,12 +313,12 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
     };
 
     const html = layout({
-        title: `All ${events.length} Places on the Map of Middle-earth`,
-        description: `Every place on the Middle-earth map: ${events.length} locations across the First, Second and Third Ages, with dates, map coordinates and what happened at each.`,
+        title: `All ${PLACES.length} Places on the Map of Middle-earth`,
+        description: `Every place on the Middle-earth map: ${PLACES.length} locations across the First, Second and Third Ages, with dates, map coordinates and what happened at each.`,
         canonical: '/places/',
-        h1: `All ${events.length} places on the map of Middle-earth`,
+        h1: `All ${PLACES.length} places on the map of Middle-earth`,
         standfirst: 'A gazetteer of every location plotted on the map, from the awakening of the Elves at Cuiviénen to the ships leaving the Grey Havens.',
-        byline: `${events.length} places &middot; ${byEra.length} Ages &middot; ${EVENT_LINKS.length} links between events &middot; ${Object.keys(JOURNEYS).length} journeys`,
+        byline: `${PLACES.length} places &middot; ${events.length} events &middot; ${byEra.length} Ages &middot; ${EVENT_LINKS.length} links between events &middot; ${Object.keys(JOURNEYS).length} journeys`,
         body: intro + '\n\n' + jump + '\n\n' + sections,
         jsonLd,
         activeNav: 'places'
@@ -313,12 +368,13 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
             py: evt.py,
             description: evt.description,
             characters: evt.characters,
-            map: `${SITE}${mapUrl(evt)}`
+            map: `${SITE}${mapUrl(evt)}`,
+            page: `${SITE}${pagePath(evt)}`
         }))
     };
     fs.writeFileSync('locations.json', JSON.stringify(dataset, null, 2) + '\n');
 
-    return { pages: ['/places'], count: events.length };
+    return { pages: ['/places/'], count: PLACES.length };
 }
 
 // ── A4: book landing pages ───────────────────────────────────────────────
@@ -358,14 +414,13 @@ const BOOK_PAGES = [
 function buildBookPages() {
     const built = [];
     for (const page of BOOK_PAGES) {
-        const items = events.filter(e => e.category === page.cat)
-                            .sort((a, b) => a.sortKey - b.sortKey);
-        const eras = ERA_ORDER.filter(era => items.some(e => e.era === era));
+        const items = PLACES.filter(pl => pl.events.some(e => e.category === page.cat));
+        const eras = ERA_ORDER.filter(era => items.some(pl => pl.events[0].era === era));
         const multiAge = eras.length > 1;
 
         const tables = multiAge
             ? eras.map(era => {
-                  const group = items.filter(e => e.era === era);
+                  const group = items.filter(pl => pl.events[0].era === era);
                   return `        <h2><span class="num">${group.length} place${group.length === 1 ? '' : 's'}</span>${esc(ERA_NAMES[era])}</h2>\n` +
                          placeList(group, { showBook: false });
               }).join('\n\n')
@@ -375,7 +430,7 @@ function buildBookPages() {
         const mapLink = `/?book=${page.cat}` + (page.journey ? `&journey=${page.journey}` : '');
         const yearsNote = multiAge
             ? `${eras.map(e => ERA_NAMES[e]).join(', ')}`
-            : `${ERA_NAMES[items[0].era]} ${items[0].year}`;
+            : `${ERA_NAMES[items[0].events[0].era]} ${items[0].events[0].year}`;
 
         const jsonLd = {
             '@context': 'https://schema.org',
@@ -388,11 +443,11 @@ function buildBookPages() {
             mainEntity: {
                 '@type': 'ItemList',
                 numberOfItems: items.length,
-                itemListElement: items.map((evt, i) => ({
+                itemListElement: items.map((pl, i) => ({
                     '@type': 'ListItem',
                     position: i + 1,
-                    name: placeName(evt),
-                    url: `${SITE}${mapUrl(evt)}`
+                    name: pl.name,
+                    url: `${SITE}${pagePathFor(pl)}`
                 }))
             }
         };
@@ -418,34 +473,48 @@ function buildBookPages() {
 
 // ── A3: one page per place ───────────────────────────────────────────────
 function buildPlacePages() {
-    const shipped = events.filter(hasPage).sort((a, b) => a.sortKey - b.sortKey);
-    const skipped = events.filter(e => !hasPage(e));
+    const indexable = [];
+    const noindexed = [];
 
-    shipped.forEach((evt, i) => {
-        const place = placeName(evt);
-        const ev = eventName(evt);
-        const prev = shipped[i - 1];
-        const next = shipped[i + 1];
-        const related = relatedEvents(evt);
-        const routes = journeysNear(evt);
-        const near = nearestPlaces(evt);
-        const bookPage = BOOK_PAGES.find(b => b.cat === evt.category);
+    PLACES.forEach((place, i) => {
+        const first = place.events[0];
+        const prev = PLACES[i - 1];
+        const next = PLACES[i + 1];
+        const indexed = isIndexable(place);
+        const routes = journeysNear(first);
+        const near = nearestPlaces(first).filter(n => PLACE_BY_EVENT.get(n.event.id) !== place).slice(0, 4);
+        const related = place.events.flatMap(e => relatedEvents(e))
+            .filter(r => PLACE_BY_EVENT.get(r.event.id) !== place);
+        const books = [...new Set(place.events.map(e => e.category))];
+        const bookPage = BOOK_PAGES.find(b => books.includes(b.cat));
+
+        const cropImg = `        <figure>
+            <a href="${esc(mapUrl(first))}"><img src="/assets/crops/${place.slug}.jpg" width="640" height="360" loading="lazy" alt="${esc(place.name)} and its surroundings on the parchment map of Middle-earth"></a>
+            <figcaption>${esc(place.name)} on the parchment map. <a href="${esc(mapUrl(first))}">Open this spot on the interactive map</a> to pan, zoom or switch to the satellite view.</figcaption>
+        </figure>`;
+
+        /* One section per event at this place. Nine places carry two. */
+        const eventSections = place.events.map(evt => {
+            const ev = eventName(evt);
+            const heading = place.events.length > 1
+                ? `        <h2>${esc(ev || dateLabel(evt))}<span class="event-date">${esc(dateLabel(evt))}</span></h2>\n`
+                : '';
+            const figures = evt.characters && evt.characters.trim()
+                ? `        <p class="event-figures"><strong>Figures:</strong> ${esc(evt.characters)}</p>\n`
+                : '';
+            return heading + `        <p>${esc(evt.description)}</p>\n` + figures;
+        }).join('\n');
 
         const facts = `        <div class="table-wrap">
             <table>
                 <tbody>
-                    <tr><th>Place</th><td>${esc(place)}</td></tr>
-${ev ? `                    <tr><th>Event</th><td>${esc(ev)}</td></tr>\n` : ''}                    <tr><th>Book</th><td>${bookPage ? `<a href="/${bookPage.slug}">${esc(CATEGORY_LABELS[evt.category])}</a>` : esc(CATEGORY_LABELS[evt.category])}</td></tr>
-                    <tr><th>Date</th><td>${esc(dateLabel(evt))}</td></tr>
-${evt.characters && evt.characters.trim() ? `                    <tr><th>Figures</th><td>${esc(evt.characters)}</td></tr>\n` : ''}                    <tr><th>Map x, y</th><td><code>${evt.px}, ${evt.py}</code></td></tr>
+                    <tr><th>Place</th><td>${esc(place.name)}</td></tr>
+                    <tr><th>Book${books.length > 1 ? 's' : ''}</th><td>${books.map(c => bookPage && bookPage.cat === c ? `<a href="/${bookPage.slug}">${esc(CATEGORY_LABELS[c])}</a>` : esc(CATEGORY_LABELS[c])).join(', ')}</td></tr>
+                    <tr><th>Date${place.events.length > 1 ? 's' : ''}</th><td>${place.events.map(e => esc(dateLabel(e))).join(', ')}</td></tr>
+                    <tr><th>Map x, y</th><td><code>${first.px}, ${first.py}</code></td></tr>
                 </tbody>
             </table>
         </div>`;
-
-        const cropImg = `        <figure>
-            <a href="${esc(mapUrl(evt))}"><img class="wide" src="/assets/crops/${evt.id}.jpg" width="640" height="360" loading="lazy" alt="${esc(place)} and its surroundings on the parchment map of Middle-earth"></a>
-            <figcaption>${esc(place)} on the parchment map. <a href="${esc(mapUrl(evt))}">Open this spot on the interactive map</a> to pan, zoom or switch to the satellite view.</figcaption>
-        </figure>`;
 
         const relatedBlock = related.length ? `        <h2>What this connects to</h2>
         <ul>
@@ -455,32 +524,29 @@ ${related.map(r => `            <li><a href="${esc(placeUrl(r.event))}">${esc(pl
         const routesBlock = routes.length ? `        <h2>Routes passing through</h2>
         <p>${routes.length === 1 ? 'One traced route runs' : `${routes.length} traced routes run`} within ${JOURNEY_NEAR_PX} map-pixels of here:</p>
         <ul>
-${routes.map(k => `            <li><a href="/?journey=${k}&amp;fly=${evt.px},${evt.py}">${esc(JOURNEYS[k].label)}</a></li>`).join('\n')}
+${routes.map(k => `            <li><a href="/?journey=${k}&amp;fly=${first.px},${first.py}">${esc(JOURNEYS[k].label)}</a></li>`).join('\n')}
         </ul>` : '';
 
         const nearBlock = `        <h2>Nearest places on the map</h2>
         <ul>
-${near.map(n => {
-        const nev = eventName(n.event);
-        return `            <li><a href="${esc(placeUrl(n.event))}">${esc(placeName(n.event))}</a>${nev ? ` &mdash; ${esc(nev)}` : ''} &mdash; ${Math.round(n.d)} map-pixels away, ${esc(dateLabel(n.event))}</li>`;
-    }).join('\n')}
+${near.map(n => `            <li><a href="${esc(placeUrl(n.event))}">${esc(placeName(n.event))}</a> &mdash; ${Math.round(n.d)} map-pixels away, ${esc(dateLabel(n.event))}</li>`).join('\n')}
         </ul>`;
 
-        const walk = `        <p class="page-footer" style="margin-top:40px">
-${prev ? `            &#8592; <a href="${pagePath(prev)}">${esc(placeName(prev))}</a><br>` : ''}
-${next ? `            <a href="${pagePath(next)}">${esc(placeName(next))}</a> &#8594;<br>` : ''}
-            <a href="/places/">All ${events.length} places</a> &middot; <a href="/">the map</a> &middot; <a href="/timeline.html">the timeline</a>
+        const walk = `        <p class="page-walk">
+${prev ? `            &#8592; <a href="${pagePathFor(prev)}">${esc(prev.name)}</a><br>` : ''}
+${next ? `            <a href="${pagePathFor(next)}">${esc(next.name)}</a> &#8594;<br>` : ''}
+            <a href="/places/">All ${PLACES.length} places</a> &middot; <a href="/">the map</a> &middot; <a href="/timeline.html">the timeline</a>
         </p>`;
 
         const jsonLd = [
             {
                 '@context': 'https://schema.org',
                 '@type': 'WebPage',
-                name: `${place}${ev ? ' — ' + ev : ''}`,
-                description: firstSentence(evt.description, 240),
-                url: `${SITE}${pagePath(evt)}`,
+                name: `${place.name} — Map of Middle-earth`,
+                description: metaDescription(place.prose),
+                url: `${SITE}${pagePathFor(place)}`,
                 isPartOf: { '@type': 'WebSite', name: 'Middle-earth Interactive Map', url: `${SITE}/` },
-                about: { '@type': 'Place', name: place, description: evt.description }
+                about: { '@type': 'Place', name: place.name, description: place.prose }
             },
             {
                 '@context': 'https://schema.org',
@@ -488,46 +554,42 @@ ${next ? `            <a href="${pagePath(next)}">${esc(placeName(next))}</a> &#
                 itemListElement: [
                     { '@type': 'ListItem', position: 1, name: 'Map', item: `${SITE}/` },
                     { '@type': 'ListItem', position: 2, name: 'Places', item: `${SITE}/places/` },
-                    { '@type': 'ListItem', position: 3, name: place }
+                    { '@type': 'ListItem', position: 3, name: place.name }
                 ]
             }
         ];
 
-        const body = [
-            cropImg,
-            `        <p>${esc(evt.description)}</p>`,
-            facts,
-            relatedBlock,
-            routesBlock,
-            nearBlock,
-            walk
-        ].filter(Boolean).join('\n\n');
+        // escape each name, then join with the entity — escaping the joined
+        // string would turn "&middot;" into "&amp;middot;"
+        const eventNames = place.events.map(e => eventName(e)).filter(Boolean).map(esc);
+        const body = [cropImg, eventSections, facts, relatedBlock, routesBlock, nearBlock, walk]
+            .filter(Boolean).join('\n\n');
 
-        const title = `${place} &mdash; Map of Middle-earth`;
-        const dir = path.join('places', evt.id);
+        const dir = path.join('places', place.slug);
         fs.mkdirSync(dir, { recursive: true });
         fs.writeFileSync(path.join(dir, 'index.html'), layout({
-            title: `${place} — Map of Middle-earth`,
-            description: metaDescription(evt.description),
-            canonical: pagePath(evt),
-            h1: esc(place),
-            standfirst: ev ? esc(ev) : '',
-            byline: `${esc(CATEGORY_LABELS[evt.category])} &middot; ${esc(dateLabel(evt))} &middot; <a href="${esc(mapUrl(evt))}">show on the map</a>`,
+            title: `${place.name} — Map of Middle-earth`,
+            description: metaDescription(place.prose),
+            canonical: pagePathFor(place),
+            h1: esc(place.name),
+            standfirst: eventNames.join(' &middot; '),
+            byline: `${books.map(c => esc(CATEGORY_LABELS[c])).join(', ')} &middot; ${place.events.map(e => esc(dateLabel(e))).join(', ')} &middot; <a href="${esc(mapUrl(first))}">show on the map</a>`,
             body,
             jsonLd,
-            activeNav: 'places'
+            activeNav: 'places',
+            noindex: !indexed
         }));
 
+        (indexed ? indexable : noindexed).push(place);
     });
 
-
-    // The map popups only link a page that exists.
+    // The map popups link every place, so the id -> slug map covers them all.
     fs.writeFileSync('place-pages.js',
-        '// Generated by build_pages.js — ids that have a page under /places/.\n' +
+        '// Generated by build_pages.js — event id to the place page it belongs to.\n' +
         'const PLACE_PAGES = ' + JSON.stringify(
-            Object.fromEntries(shipped.map(e => [e.id, 1]))) + ';\n');
+            Object.fromEntries(events.map(e => [e.id, PLACE_BY_EVENT.get(e.id).slug]))) + ';\n');
 
-    return { shipped, skipped };
+    return { indexable, noindexed };
 }
 
 // ── A3: one page per place ─── end ───────────────────────────────────────
@@ -573,24 +635,27 @@ ${body}
 const leaves = buildPlacePages();
 
 /* Consumed by generate_place_crops.py; a dotfile so Firebase never uploads
-   it. Every place needs a thumbnail for the /places index; only those with a
-   page of their own need the larger crop. */
-fs.writeFileSync('.crops.json', JSON.stringify(events.map(e => ({
-    id: e.id, px: e.px, py: e.py, name: placeName(e), large: hasPage(e)
-})), null, 1) + '\n');
+   it. Thumbnails are keyed by event because the index has a row per event;
+   crops are keyed by place slug because pages are per place. */
+fs.writeFileSync('.crops.json', JSON.stringify({
+    thumbs: events.map(e => ({ id: e.id, px: e.px, py: e.py })),
+    crops: PLACES.map(pl => ({ id: pl.slug, px: pl.events[0].px, py: pl.events[0].py }))
+}, null, 1) + '\n');
 const places = buildPlaces();
 const books = buildBookPages();
+/* Only indexable pages go in the sitemap — listing a noindex URL asks Google
+   to index something the page itself refuses. */
 const urlCount = buildSitemap([
     ...books.map(b => ({ loc: `/${b.slug}`, priority: '0.7' })),
-    ...leaves.shipped.map(e => ({ loc: pagePath(e), priority: '0.5' }))
+    ...leaves.indexable.map(pl => ({ loc: pagePathFor(pl), priority: '0.5' }))
 ]);
-console.log(`places/*         ${leaves.shipped.length} pages (${leaves.skipped.length} held back below the ${DESCRIPTION_FLOOR}-character floor)`);
+console.log(`places/*         ${PLACES.length} place pages — ${leaves.indexable.length} indexable, ${leaves.noindexed.length} noindex,follow`);
 console.log(`places/index    ${places.count} places`);
 console.log(`locations.json   ${(fs.statSync('locations.json').size / 1024).toFixed(0)} KB`);
 books.forEach(b => console.log(`${(b.slug + '.html').padEnd(17)}${b.count} places`));
 console.log(`sitemap.xml      ${urlCount} URLs`);
-if (leaves.skipped.length) {
-    console.log('\nheld back — expand the description past ' + DESCRIPTION_FLOOR + ' characters to promote:');
-    leaves.skipped.sort((a, b) => a.description.length - b.description.length)
-        .forEach(e => console.log(`  ${String(e.description.length).padStart(3)}  ${placeName(e)}`));
+if (leaves.noindexed.length) {
+    console.log('\nnoindex — expand the description past ' + INDEX_FLOOR + ' characters to promote:');
+    leaves.noindexed.sort((a, b) => a.prose.length - b.prose.length)
+        .forEach(pl => console.log(`  ${String(pl.prose.length).padStart(3)}  ${pl.name}`));
 }

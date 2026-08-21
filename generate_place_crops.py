@@ -3,8 +3,8 @@
 
 Reads .crops.json (written by build_pages.js) and produces two sizes:
 
-  assets/crops/<id>.jpg   640x360, for the place's own page (98 of them)
-  assets/thumbs/<id>.jpg  288x162, for every row of the /places index (128)
+  assets/crops/<slug>.jpg   640x360, one per place page
+  assets/thumbs/<id>.jpg    288x162, one per event row on the /places index
 
 Both come from the same window, so a thumbnail is the same view as the crop.
 
@@ -57,43 +57,45 @@ def main():
     manifest = pathlib.Path(".crops.json")
     if not manifest.exists():
         sys.exit("no .crops.json — run `node build_pages.js` first")
-    places = json.loads(manifest.read_text())
+    manifest_data = json.loads(manifest.read_text())
+    thumbs = manifest_data["thumbs"]
+    crops = manifest_data["crops"]
     OUT.mkdir(parents=True, exist_ok=True)
     THUMBS.mkdir(parents=True, exist_ok=True)
 
     print(f"stitching {TILES}…")
     canvas = stitch()
-    print(f"canvas {canvas.size[0]}x{canvas.size[1]}, cutting {len(places)} places")
+    print(f"canvas {canvas.size[0]}x{canvas.size[1]}: "
+          f"{len(crops)} crops, {len(thumbs)} thumbs")
 
-    crop_bytes = crop_count = thumb_bytes = 0
-    for place in places:
-        window = crop_for(canvas, place["px"], place["py"])
-
-        thumb = window.resize(THUMB, Image.LANCZOS)
-        tpath = THUMBS / f"{place['id']}.jpg"
-        thumb.save(tpath, quality=THUMB_QUALITY, optimize=True, progressive=True)
+    crop_bytes = thumb_bytes = 0
+    for entry in thumbs:
+        window = crop_for(canvas, entry["px"], entry["py"])
+        tpath = THUMBS / f"{entry['id']}.jpg"
+        window.resize(THUMB, Image.LANCZOS).save(
+            tpath, quality=THUMB_QUALITY, optimize=True, progressive=True)
         thumb_bytes += tpath.stat().st_size
 
-        if place.get("large", True):
-            path = OUT / f"{place['id']}.jpg"
-            window.save(path, quality=QUALITY, optimize=True, progressive=True)
-            crop_bytes += path.stat().st_size
-            crop_count += 1
+    for entry in crops:
+        window = crop_for(canvas, entry["px"], entry["py"])
+        cpath = OUT / f"{entry['id']}.jpg"
+        window.save(cpath, quality=QUALITY, optimize=True, progressive=True)
+        crop_bytes += cpath.stat().st_size
 
-    # Drop files for places that no longer need them
+    # Drop files nothing references any more
     for directory, keep in (
-        (OUT, {f"{p['id']}.jpg" for p in places if p.get("large", True)}),
-        (THUMBS, {f"{p['id']}.jpg" for p in places}),
+        (OUT, {f"{c['id']}.jpg" for c in crops}),
+        (THUMBS, {f"{t['id']}.jpg" for t in thumbs}),
     ):
         for stale in directory.glob("*.jpg"):
             if stale.name not in keep:
                 stale.unlink()
                 print(f"removed stale {directory}/{stale.name}")
 
-    print(f"{crop_count} crops, {crop_bytes / 1024 / 1024:.1f} MB "
-          f"({crop_bytes / max(crop_count, 1) / 1024:.0f} KB avg)")
-    print(f"{len(places)} thumbs, {thumb_bytes / 1024 / 1024:.1f} MB "
-          f"({thumb_bytes / len(places) / 1024:.0f} KB avg)")
+    print(f"{len(crops)} crops, {crop_bytes / 1024 / 1024:.1f} MB "
+          f"({crop_bytes / max(len(crops), 1) / 1024:.0f} KB avg)")
+    print(f"{len(thumbs)} thumbs, {thumb_bytes / 1024 / 1024:.1f} MB "
+          f"({thumb_bytes / max(len(thumbs), 1) / 1024:.0f} KB avg)")
 
 
 if __name__ == "__main__":
