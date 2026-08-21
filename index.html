@@ -492,7 +492,8 @@
         /* Instructions toast */
         #toast {
             position: absolute;
-            bottom: 24px;
+            /* Sits above #map-controls, which now owns the bottom-centre band */
+            bottom: 66px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
@@ -654,6 +655,8 @@
         @media (max-width: 600px) {
             #map-controls { bottom: 44px; gap: 6px; }
             .map-ctrl { font-size: 12px; padding: 8px 11px; }
+            /* The bar sits higher here, so lift the hint above it */
+            #toast { bottom: 92px; }
         }
 
         /* Info button */
@@ -697,9 +700,9 @@
         /* Distance measure tool */
         .measure-active #map { cursor: crosshair; }
 
-        #measure-display {
+        #coord-display {
             position: absolute;
-            bottom: 60px;
+            bottom: 24px;
             left: 16px;
             z-index: 1000;
             background: rgba(44, 36, 24, 0.95);
@@ -711,6 +714,31 @@
             font-family: monospace;
             pointer-events: none;
             display: none;
+        }
+
+        #measure-display {
+            position: absolute;
+            /* 72px, not 60px: at 60 it clipped the coordinate readout below it */
+            bottom: 72px;
+            left: 16px;
+            z-index: 1000;
+            background: rgba(44, 36, 24, 0.95);
+            border: 2px solid #8b7355;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #d4c5a9;
+            font-size: 13px;
+            font-family: monospace;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* Mobile stack: #map-controls sits higher here, so the two readouts
+           move above it. Must come after the rules it overrides — same
+           specificity, so source order is what decides. */
+        @media (max-width: 600px) {
+            #coord-display { bottom: 88px; }
+            #measure-display { bottom: 135px; }
         }
     </style>
     <script>
@@ -1290,8 +1318,7 @@
 
         // ── Coordinate Picker (calibration tool) ────────
         const coordDisplay = document.createElement('div');
-        coordDisplay.id = 'coord-display';
-        coordDisplay.style.cssText = 'position:absolute;bottom:24px;left:16px;z-index:1000;background:rgba(44,36,24,0.95);border:2px solid #8b7355;border-radius:8px;padding:10px 14px;color:#d4c5a9;font-size:13px;font-family:monospace;pointer-events:none;display:none;';
+        coordDisplay.id = 'coord-display';   // styled by the #coord-display rule
         document.body.appendChild(coordDisplay);
 
         map.on('click', function(e) {
@@ -1314,9 +1341,21 @@
         });
 
         // ── Toast auto-hide ─────────────────────────────
-        setTimeout(() => {
-            document.getElementById('toast').classList.add('hidden');
-        }, 5000);
+        // Whichever comes first: five seconds, or the first sign that the
+        // visitor has worked out how to move the map. Hiding on interaction
+        // also keeps it from ever sharing the lower screen with the
+        // coordinate and measurement readouts, which only appear on a click.
+        (function () {
+            const toastEl = document.getElementById('toast');
+            const hideToast = () => toastEl.classList.add('hidden');
+            setTimeout(hideToast, 5000);
+            // Real input only. Leaflet's movestart/zoomstart also fire for the
+            // opening fitBounds(), which would retire the hint before it is read.
+            const container = map.getContainer();
+            ['mousedown', 'touchstart', 'wheel'].forEach(function (evt) {
+                container.addEventListener(evt, hideToast, { once: true, passive: true });
+            });
+        })();
 
         // ── Utility: darken a hex color ─────────────────
         function darken(hex, amount) {
