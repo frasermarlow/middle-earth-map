@@ -19,7 +19,6 @@
     "redirects": [
       { "source": "/index.html", "destination": "/", "type": 301 },
       { "source": "/places.html", "destination": "/places/", "type": 301 },
-      { "source": "/places", "destination": "/places/", "type": 301 },
       { "source": "/hobbit-map.html", "destination": "/hobbit-map", "type": 301 },
       { "source": "/silmarillion-map.html", "destination": "/silmarillion-map", "type": 301 }
     ],
