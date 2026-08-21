@@ -22,9 +22,9 @@ const TODAY = new Date().toISOString().slice(0, 10);
 // data.js is a plain script, not a module: evaluate it and take what we need.
 const data = eval(
     fs.readFileSync(path.join(__dirname, 'data.js'), 'utf8') +
-    '; ({ events, CATEGORY_LABELS, EVENT_LINKS, JOURNEYS, IMG_W, IMG_H })'
+    '; ({ events, CATEGORY_LABELS, COLORS, EVENT_LINKS, JOURNEYS, IMG_W, IMG_H })'
 );
-const { events, CATEGORY_LABELS, EVENT_LINKS, JOURNEYS, IMG_W, IMG_H } = data;
+const { events, CATEGORY_LABELS, COLORS, EVENT_LINKS, JOURNEYS, IMG_W, IMG_H } = data;
 
 const ERA_NAMES = { FA: 'First Age', SA: 'Second Age', TA: 'Third Age' };
 const ERA_ORDER = ['FA', 'SA', 'TA'];
@@ -130,123 +130,32 @@ const DESCRIPTION_FLOOR = 260;
 const hasPage = evt => evt.description.length >= DESCRIPTION_FLOOR;
 const pagePath = evt => `/places/${evt.id}/`;
 
-// ── shared place table ───────────────────────────────────────────────────
-function placeTable(items, opts = {}) {
+// ── shared place list ───────────────────────────────────────────────────
+/* One row per place: a crop of that spot on the map, the name and event, a
+   one-sentence snippet, and the book/date/coordinates. Rows are a grid rather
+   than a <table> so they can collapse to two columns on a phone instead of
+   forcing a sideways scroll. */
+function placeList(items, opts = {}) {
     const showBook = opts.showBook !== false;
     const rows = items.map(evt => {
         const ev = eventName(evt);
-        return `                <tr>
-                    <td class="place"><a href="${esc(placeUrl(evt))}">${esc(placeName(evt))}</a>${ev ? ` &mdash; ${esc(ev)}` : ''}<span class="snippet">${esc(firstSentence(evt.description))}</span></td>
-${showBook ? `                    <td class="meta">${esc(CATEGORY_LABELS[evt.category])}</td>\n` : ''}                    <td class="meta">${esc(dateLabel(evt))}</td>
-                    <td class="coords">${evt.px}, ${evt.py}</td>
-                </tr>`;
+        const href = esc(placeUrl(evt));
+        return `                <li class="place-row">
+                    <a class="place-thumb" href="${href}" tabindex="-1" aria-hidden="true"><img src="/assets/thumbs/${evt.id}.jpg" width="144" height="81" loading="lazy" alt=""></a>
+                    <div class="place-body">
+                        <a class="place-name" href="${href}">${esc(placeName(evt))}</a>${ev ? `<span class="place-event">${esc(ev)}</span>` : ''}
+                        <p class="place-snippet">${esc(firstSentence(evt.description, 180))}</p>
+                    </div>
+                    <div class="place-meta">
+${showBook ? `                        <span class="place-book"><i style="background:${COLORS[evt.category]}"></i>${esc(CATEGORY_LABELS[evt.category])}</span>\n` : ''}                        <span class="place-date">${esc(dateLabel(evt))}</span>
+                        <span class="place-coords">${evt.px}, ${evt.py}</span>
+                    </div>
+                </li>`;
     }).join('\n');
 
-    return `        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>Place and event</th>${showBook ? '<th>Book</th>' : ''}<th>Date</th><th>Map x, y</th></tr>
-                </thead>
-                <tbody>
+    return `        <ul class="place-list">
 ${rows}
-                </tbody>
-            </table>
-        </div>`;
-}
-
-// ── A4: book landing pages ───────────────────────────────────────────────
-const BOOK_PAGES = [
-    {
-        cat: 'hobbit',
-        slug: 'hobbit-map',
-        journey: 'bilbo',
-        title: "The Hobbit Map — Bilbo's Journey from Bag End to Erebor",
-        description: 'The Hobbit on an interactive map of Middle-earth: all 15 places from Bag End to the Lonely Mountain, with Bilbo’s route traced across the parchment.',
-        h1: 'The Hobbit on the map of Middle-earth',
-        standfirst: 'Fifteen places and a single year, along a road that runs most of the width of the map — from a hobbit-hole in the Shire to a dragon’s door under the Lonely Mountain.',
-        prose: [
-            'Every place in <em>The Hobbit</em> that this map plots, in the order Bilbo reaches them. You can <a href="/?book=hobbit&amp;journey=bilbo">open the map showing only these places</a>, with Bilbo’s route drawn across it, or read the same events in sequence on the <a href="/timeline.html">timeline</a>.',
-            'The journey is almost perfectly west to east. Bag End sits at x&nbsp;2746 on the base map; Erebor sits at x&nbsp;5161. Between them the road runs through the Trollshaws, over the Misty Mountains by the High Pass and Goblin-town, down to the Carrock and Beorn’s Hall, through Mirkwood to Thranduil’s Halls, and out to Lake-town on the Long Lake beneath the mountain itself. Thirteen of the fifteen places fall on that line.',
-            'The other two sit well off it, and both belong to the parts of the story Bilbo never saw. <strong>Mount Gundabad</strong> is far to the north, where the goblin host mustered before the Battle of Five Armies. <strong>Dol Guldur</strong> is far to the south in Mirkwood, where the White Council struck while the dwarves were still on the road — the errand that takes Gandalf away from the company for much of the book.',
-            'Every event here is dated to Third Age 2941, the single year the quest occupies. For the deep past of these same lands, see <a href="/silmarillion-map">The Silmarillion on the map</a>; for all 128 places across every book, see the <a href="/places">full gazetteer</a>.'
-        ]
-    },
-    {
-        cat: 'silmarillion',
-        slug: 'silmarillion-map',
-        journey: null,
-        title: 'The Silmarillion Map — Elder Days on the Middle-earth Map',
-        description: 'The Silmarillion on a map of Middle-earth: 13 places from Cuiviénen to Dol Guldur, and why Beleriand lies drowned beyond the map’s western edge.',
-        h1: 'The Silmarillion on the map of Middle-earth',
-        standfirst: 'The widest spread of any book here — from the far eastern shore where the Elves first woke, to an island in the western sea that by the Third Age no longer existed.',
-        prose: [
-            'These are the places from <em>The Silmarillion</em> and the elder days that this map can show. You can <a href="/?book=silmarillion">open the map with only these places</a> marked, or find them among the rest in the <a href="/places">full gazetteer</a>.',
-            'One thing is worth saying plainly, because it explains why the list is short. This is a <strong>Third Age map</strong>. Beleriand — the stage for almost all of <em>The Silmarillion</em>, with Doriath, Gondolin, Nargothrond and the rest — lay west of the Blue Mountains, and was broken and drowned in the War of Wrath at the First Age’s end. It is not off to one side of this map; it is under the sea beyond its western edge. What survived are peaks: the map carries <a href="/?fly=1202,752&amp;event=Himling%20%E2%80%94%20Remnant%20of%20Beleriand">Himling</a>, once Himring where Maedhros held his fortress, and <a href="/?fly=747,874&amp;event=Tol%20Fuin%20%E2%80%94%20Remnant%20of%20Dorthonion">Tol Fuin</a>, all that is left above water of Dorthonion. Both are filed under Appendices rather than here.',
-            'What does fall inside the map spans the whole legendarium, edge to edge. <strong>Cuiviénen</strong>, where the Elves awoke, sits at x&nbsp;7091, at the far eastern limit of the parchment; the <strong>Meneltarma</strong> of Númenor sits at x&nbsp;237, out in the western sea. Between them: Durin waking at <strong>Khazad-dûm</strong>, the Dwarven cities of <strong>Ered Luin</strong>, the founding of <strong>Lindon</strong> and the <strong>Grey Havens</strong> after Beleriand’s ruin, the forging of the Rings in <strong>Eregion</strong> and the One in <strong>Mount Doom</strong>, the raising of <strong>Barad-dûr</strong>, the Corsair haven at <strong>Umbar</strong>, the Last Alliance on <strong>Dagorlad</strong>, and the loss of the Ring at the <strong>Gladden Fields</strong>.',
-            'It is the only book on this map whose events run through all three Ages — which is the point of it. For the Third Age story that grows out of these events, start with <a href="/hobbit-map">The Hobbit</a> or open the <a href="/">full map</a>.'
-        ]
-    }
-];
-
-function buildBookPages() {
-    const built = [];
-    for (const page of BOOK_PAGES) {
-        const items = events.filter(e => e.category === page.cat)
-                            .sort((a, b) => a.sortKey - b.sortKey);
-        const eras = ERA_ORDER.filter(era => items.some(e => e.era === era));
-        const multiAge = eras.length > 1;
-
-        const tables = multiAge
-            ? eras.map(era => {
-                  const group = items.filter(e => e.era === era);
-                  return `        <h2><span class="num">${group.length} place${group.length === 1 ? '' : 's'}</span>${esc(ERA_NAMES[era])}</h2>\n` +
-                         placeTable(group, { showBook: false });
-              }).join('\n\n')
-            : `        <h2><span class="num">${items.length} places</span>Every place, in order</h2>\n` +
-              placeTable(items, { showBook: false });
-
-        const mapLink = `/?book=${page.cat}` + (page.journey ? `&journey=${page.journey}` : '');
-        const yearsNote = multiAge
-            ? `${eras.map(e => ERA_NAMES[e]).join(', ')}`
-            : `${ERA_NAMES[items[0].era]} ${items[0].year}`;
-
-        const jsonLd = {
-            '@context': 'https://schema.org',
-            '@type': 'CollectionPage',
-            name: page.title,
-            description: page.description,
-            url: `${SITE}/${page.slug}`,
-            isPartOf: { '@type': 'WebSite', name: 'Middle-earth Interactive Map', url: `${SITE}/` },
-            about: { '@type': 'Book', name: CATEGORY_LABELS[page.cat], author: { '@type': 'Person', name: 'J. R. R. Tolkien' } },
-            mainEntity: {
-                '@type': 'ItemList',
-                numberOfItems: items.length,
-                itemListElement: items.map((evt, i) => ({
-                    '@type': 'ListItem',
-                    position: i + 1,
-                    name: placeName(evt),
-                    url: `${SITE}${mapUrl(evt)}`
-                }))
-            }
-        };
-
-        const body = page.prose.map(par => `        <p>${par}</p>`).join('\n\n') +
-                     '\n\n' + tables;
-
-        fs.writeFileSync(`${page.slug}.html`, layout({
-            title: page.title,
-            description: page.description,
-            canonical: `/${page.slug}`,
-            h1: page.h1,
-            standfirst: page.standfirst,
-            byline: `${items.length} places &middot; ${yearsNote} &middot; <a href="${esc(mapLink)}">show these on the map</a>`,
-            body,
-            jsonLd,
-            activeNav: 'places'
-        }));
-        built.push({ slug: page.slug, count: items.length });
-    }
-    return built;
+        </ul>`;
 }
 
 // ── page shell ───────────────────────────────────────────────────────────
@@ -315,16 +224,22 @@ function buildPlaces() {
         items: events.filter(e => e.era === era).sort((a, b) => a.sortKey - b.sortKey)
     })).filter(g => g.items.length);
 
+    const anchor = era => era.toLowerCase().replace(/\s+/g, '-');
+    const jump = `        <nav class="age-jump" aria-label="Jump to an Age">
+${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>${g.items.length}</span></a>`).join('\n')}
+        </nav>`;
+
     const sections = byEra.map(g =>
+        `        <section id="${anchor(g.name)}">\n` +
         `        <h2><span class="num">${g.items.length} places</span>${esc(g.name)}</h2>\n` +
-        placeTable(g.items)
+        placeList(g.items) + '\n        </section>'
     ).join('\n\n');
 
-    const intro = `        <p>Every place plotted on the <a href="/">interactive map of Middle-earth</a>, in the order the events happen. ${events.length} places across the three Ages, drawn from The Silmarillion, The Hobbit and The Lord of the Rings. Each name links to that spot on the map; the <a href="/timeline.html">timeline</a> shows the same events chronologically.</p>
+    const intro = `        <p>Every place plotted on the <a href="/">interactive map of Middle-earth</a>, in the order the events happen. ${events.length} places across the three Ages, drawn from The Silmarillion, The Hobbit and The Lord of the Rings. Each name opens that place's own page where it has one, and otherwise goes straight to its marker on the map; the <a href="/timeline.html">timeline</a> shows the same events chronologically.</p>
 
         <p>Two books have their own page: <a href="/hobbit-map">The Hobbit</a>, whose fifteen places run the width of the map in a single year, and <a href="/silmarillion-map">The Silmarillion</a>, whose thirteen span all three Ages.</p>
 
-        <p>The <strong>Map x, y</strong> column gives pixel coordinates on the ${IMG_W}&nbsp;&times;&nbsp;${IMG_H} base map, which is what the map's own deep links use: <code>/?fly=x,y</code> centres the map on a point. The same data, including the full descriptions, is published as <a href="/locations.json">locations.json</a>.</p>`;
+        <p>Each row shows that place as it appears on the parchment, with its <strong>x, y</strong> position on the ${IMG_W}&nbsp;&times;&nbsp;${IMG_H} base map &mdash; the coordinates the map's own deep links use, so <code>/?fly=x,y</code> centres the map on a point. The same data, including the full descriptions, is published as <a href="/locations.json">locations.json</a>.</p>`;
 
     const jsonLd = {
         '@context': 'https://schema.org',
@@ -349,7 +264,7 @@ function buildPlaces() {
         h1: `All ${events.length} places on the map of Middle-earth`,
         standfirst: 'A gazetteer of every location plotted on the map, from the awakening of the Elves at Cuiviénen to the ships leaving the Grey Havens.',
         byline: `${events.length} places &middot; ${byEra.length} Ages &middot; ${EVENT_LINKS.length} links between events &middot; ${Object.keys(JOURNEYS).length} journeys`,
-        body: intro + '\n\n' + sections,
+        body: intro + '\n\n' + jump + '\n\n' + sections,
         jsonLd,
         activeNav: 'places'
     });
@@ -405,11 +320,105 @@ function buildPlaces() {
     return { pages: ['/places'], count: events.length };
 }
 
+// ── A4: book landing pages ───────────────────────────────────────────────
+const BOOK_PAGES = [
+    {
+        cat: 'hobbit',
+        slug: 'hobbit-map',
+        journey: 'bilbo',
+        title: "The Hobbit Map — Bilbo's Journey from Bag End to Erebor",
+        description: 'The Hobbit on an interactive map of Middle-earth: all 15 places from Bag End to the Lonely Mountain, with Bilbo’s route traced across the parchment.',
+        h1: 'The Hobbit on the map of Middle-earth',
+        standfirst: 'Fifteen places and a single year, along a road that runs most of the width of the map — from a hobbit-hole in the Shire to a dragon’s door under the Lonely Mountain.',
+        prose: [
+            'Every place in <em>The Hobbit</em> that this map plots, in the order Bilbo reaches them. You can <a href="/?book=hobbit&amp;journey=bilbo">open the map showing only these places</a>, with Bilbo’s route drawn across it, or read the same events in sequence on the <a href="/timeline.html">timeline</a>.',
+            'The journey is almost perfectly west to east. Bag End sits at x&nbsp;2746 on the base map; Erebor sits at x&nbsp;5161. Between them the road runs through the Trollshaws, over the Misty Mountains by the High Pass and Goblin-town, down to the Carrock and Beorn’s Hall, through Mirkwood to Thranduil’s Halls, and out to Lake-town on the Long Lake beneath the mountain itself. Thirteen of the fifteen places fall on that line.',
+            'The other two sit well off it, and both belong to the parts of the story Bilbo never saw. <strong>Mount Gundabad</strong> is far to the north, where the goblin host mustered before the Battle of Five Armies. <strong>Dol Guldur</strong> is far to the south in Mirkwood, where the White Council struck while the dwarves were still on the road — the errand that takes Gandalf away from the company for much of the book.',
+            'Every event here is dated to Third Age 2941, the single year the quest occupies. For the deep past of these same lands, see <a href="/silmarillion-map">The Silmarillion on the map</a>; for all 128 places across every book, see the <a href="/places">full gazetteer</a>.'
+        ]
+    },
+    {
+        cat: 'silmarillion',
+        slug: 'silmarillion-map',
+        journey: null,
+        title: 'The Silmarillion Map — Elder Days on the Middle-earth Map',
+        description: 'The Silmarillion on a map of Middle-earth: 13 places from Cuiviénen to Dol Guldur, and why Beleriand lies drowned beyond the map’s western edge.',
+        h1: 'The Silmarillion on the map of Middle-earth',
+        standfirst: 'The widest spread of any book here — from the far eastern shore where the Elves first woke, to an island in the western sea that by the Third Age no longer existed.',
+        prose: [
+            'These are the places from <em>The Silmarillion</em> and the elder days that this map can show. You can <a href="/?book=silmarillion">open the map with only these places</a> marked, or find them among the rest in the <a href="/places">full gazetteer</a>.',
+            'One thing is worth saying plainly, because it explains why the list is short. This is a <strong>Third Age map</strong>. Beleriand — the stage for almost all of <em>The Silmarillion</em>, with Doriath, Gondolin, Nargothrond and the rest — lay west of the Blue Mountains, and was broken and drowned in the War of Wrath at the First Age’s end. It is not off to one side of this map; it is under the sea beyond its western edge. What survived are peaks: the map carries <a href="/?fly=1202,752&amp;event=Himling%20%E2%80%94%20Remnant%20of%20Beleriand">Himling</a>, once Himring where Maedhros held his fortress, and <a href="/?fly=747,874&amp;event=Tol%20Fuin%20%E2%80%94%20Remnant%20of%20Dorthonion">Tol Fuin</a>, all that is left above water of Dorthonion. Both are filed under Appendices rather than here.',
+            'What does fall inside the map spans the whole legendarium, edge to edge. <strong>Cuiviénen</strong>, where the Elves awoke, sits at x&nbsp;7091, at the far eastern limit of the parchment; the <strong>Meneltarma</strong> of Númenor sits at x&nbsp;237, out in the western sea. Between them: Durin waking at <strong>Khazad-dûm</strong>, the Dwarven cities of <strong>Ered Luin</strong>, the founding of <strong>Lindon</strong> and the <strong>Grey Havens</strong> after Beleriand’s ruin, the forging of the Rings in <strong>Eregion</strong> and the One in <strong>Mount Doom</strong>, the raising of <strong>Barad-dûr</strong>, the Corsair haven at <strong>Umbar</strong>, the Last Alliance on <strong>Dagorlad</strong>, and the loss of the Ring at the <strong>Gladden Fields</strong>.',
+            'It is the only book on this map whose events run through all three Ages — which is the point of it. For the Third Age story that grows out of these events, start with <a href="/hobbit-map">The Hobbit</a> or open the <a href="/">full map</a>.'
+        ]
+    }
+];
+
+function buildBookPages() {
+    const built = [];
+    for (const page of BOOK_PAGES) {
+        const items = events.filter(e => e.category === page.cat)
+                            .sort((a, b) => a.sortKey - b.sortKey);
+        const eras = ERA_ORDER.filter(era => items.some(e => e.era === era));
+        const multiAge = eras.length > 1;
+
+        const tables = multiAge
+            ? eras.map(era => {
+                  const group = items.filter(e => e.era === era);
+                  return `        <h2><span class="num">${group.length} place${group.length === 1 ? '' : 's'}</span>${esc(ERA_NAMES[era])}</h2>\n` +
+                         placeList(group, { showBook: false });
+              }).join('\n\n')
+            : `        <h2><span class="num">${items.length} places</span>Every place, in order</h2>\n` +
+              placeList(items, { showBook: false });
+
+        const mapLink = `/?book=${page.cat}` + (page.journey ? `&journey=${page.journey}` : '');
+        const yearsNote = multiAge
+            ? `${eras.map(e => ERA_NAMES[e]).join(', ')}`
+            : `${ERA_NAMES[items[0].era]} ${items[0].year}`;
+
+        const jsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: page.title,
+            description: page.description,
+            url: `${SITE}/${page.slug}`,
+            isPartOf: { '@type': 'WebSite', name: 'Middle-earth Interactive Map', url: `${SITE}/` },
+            about: { '@type': 'Book', name: CATEGORY_LABELS[page.cat], author: { '@type': 'Person', name: 'J. R. R. Tolkien' } },
+            mainEntity: {
+                '@type': 'ItemList',
+                numberOfItems: items.length,
+                itemListElement: items.map((evt, i) => ({
+                    '@type': 'ListItem',
+                    position: i + 1,
+                    name: placeName(evt),
+                    url: `${SITE}${mapUrl(evt)}`
+                }))
+            }
+        };
+
+        const body = page.prose.map(par => `        <p>${par}</p>`).join('\n\n') +
+                     '\n\n' + tables;
+
+        fs.writeFileSync(`${page.slug}.html`, layout({
+            title: page.title,
+            description: page.description,
+            canonical: `/${page.slug}`,
+            h1: page.h1,
+            standfirst: page.standfirst,
+            byline: `${items.length} places &middot; ${yearsNote} &middot; <a href="${esc(mapLink)}">show these on the map</a>`,
+            body,
+            jsonLd,
+            activeNav: 'places'
+        }));
+        built.push({ slug: page.slug, count: items.length });
+    }
+    return built;
+}
+
 // ── A3: one page per place ───────────────────────────────────────────────
 function buildPlacePages() {
     const shipped = events.filter(hasPage).sort((a, b) => a.sortKey - b.sortKey);
     const skipped = events.filter(e => !hasPage(e));
-    const crops = [];
 
     shipped.forEach((evt, i) => {
         const place = placeName(evt);
@@ -508,11 +517,8 @@ ${next ? `            <a href="${pagePath(next)}">${esc(placeName(next))}</a> &#
             activeNav: 'places'
         }));
 
-        crops.push({ id: evt.id, px: evt.px, py: evt.py, name: place });
     });
 
-    // Consumed by generate_place_crops.py; a dotfile so Firebase never uploads it.
-    fs.writeFileSync('.crops.json', JSON.stringify(crops, null, 1) + '\n');
 
     // The map popups only link a page that exists.
     fs.writeFileSync('place-pages.js',
@@ -564,6 +570,13 @@ ${body}
 
 // ── run ──────────────────────────────────────────────────────────────────
 const leaves = buildPlacePages();
+
+/* Consumed by generate_place_crops.py; a dotfile so Firebase never uploads
+   it. Every place needs a thumbnail for the /places index; only those with a
+   page of their own need the larger crop. */
+fs.writeFileSync('.crops.json', JSON.stringify(events.map(e => ({
+    id: e.id, px: e.px, py: e.py, name: placeName(e), large: hasPage(e)
+})), null, 1) + '\n');
 const places = buildPlaces();
 const books = buildBookPages();
 const urlCount = buildSitemap([

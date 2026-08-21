@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Crop a map thumbnail for each generated place page.
+"""Cut map imagery for each place out of the parchment tile pyramid.
 
-Reads .crops.json (written by build_pages.js) and cuts a window out of the
-parchment tile pyramid around each place, so every place page shows that spot
-on the real map rather than a generic image.
+Reads .crops.json (written by build_pages.js) and produces two sizes:
+
+  assets/crops/<id>.jpg   640x360, for the place's own page (98 of them)
+  assets/thumbs/<id>.jpg  288x162, for every row of the /places index (128)
+
+Both come from the same window, so a thumbnail is the same view as the crop.
 
     node build_pages.js && python3 generate_place_crops.py
 
@@ -20,9 +23,12 @@ from PIL import Image
 TILES = pathlib.Path("tiles/2")          # full-resolution layer: 30 x 17 tiles
 TILE = 256
 OUT = pathlib.Path("assets/crops")
+THUMBS = pathlib.Path("assets/thumbs")
 WINDOW = (1280, 720)                     # source pixels around the place
-FINAL = (640, 360)                       # what the page displays
+FINAL = (640, 360)                       # what a place page displays
+THUMB = (288, 162)                       # 2x the 144x81 index thumbnail
 QUALITY = 72
+THUMB_QUALITY = 68
 
 
 def stitch():
@@ -53,27 +59,41 @@ def main():
         sys.exit("no .crops.json — run `node build_pages.js` first")
     places = json.loads(manifest.read_text())
     OUT.mkdir(parents=True, exist_ok=True)
+    THUMBS.mkdir(parents=True, exist_ok=True)
 
     print(f"stitching {TILES}…")
     canvas = stitch()
-    print(f"canvas {canvas.size[0]}x{canvas.size[1]}, cropping {len(places)} places")
+    print(f"canvas {canvas.size[0]}x{canvas.size[1]}, cutting {len(places)} places")
 
-    total = 0
+    crop_bytes = crop_count = thumb_bytes = 0
     for place in places:
-        img = crop_for(canvas, place["px"], place["py"])
-        out = OUT / f"{place['id']}.jpg"
-        img.save(out, quality=QUALITY, optimize=True, progressive=True)
-        total += out.stat().st_size
+        window = crop_for(canvas, place["px"], place["py"])
 
-    # Drop crops for places that no longer have a page
-    keep = {f"{p['id']}.jpg" for p in places}
-    for stale in OUT.glob("*.jpg"):
-        if stale.name not in keep:
-            stale.unlink()
-            print(f"removed stale crop {stale.name}")
+        thumb = window.resize(THUMB, Image.LANCZOS)
+        tpath = THUMBS / f"{place['id']}.jpg"
+        thumb.save(tpath, quality=THUMB_QUALITY, optimize=True, progressive=True)
+        thumb_bytes += tpath.stat().st_size
 
-    print(f"{len(places)} crops, {total / 1024 / 1024:.1f} MB total, "
-          f"{total / len(places) / 1024:.0f} KB average")
+        if place.get("large", True):
+            path = OUT / f"{place['id']}.jpg"
+            window.save(path, quality=QUALITY, optimize=True, progressive=True)
+            crop_bytes += path.stat().st_size
+            crop_count += 1
+
+    # Drop files for places that no longer need them
+    for directory, keep in (
+        (OUT, {f"{p['id']}.jpg" for p in places if p.get("large", True)}),
+        (THUMBS, {f"{p['id']}.jpg" for p in places}),
+    ):
+        for stale in directory.glob("*.jpg"):
+            if stale.name not in keep:
+                stale.unlink()
+                print(f"removed stale {directory}/{stale.name}")
+
+    print(f"{crop_count} crops, {crop_bytes / 1024 / 1024:.1f} MB "
+          f"({crop_bytes / max(crop_count, 1) / 1024:.0f} KB avg)")
+    print(f"{len(places)} thumbs, {thumb_bytes / 1024 / 1024:.1f} MB "
+          f"({thumb_bytes / len(places) / 1024:.0f} KB avg)")
 
 
 if __name__ == "__main__":

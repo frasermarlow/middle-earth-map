@@ -149,6 +149,127 @@ figcaption {
     margin-top: 10px;
 }
 
+/* ── Age jump links ────────────────────── */
+.age-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 34px;
+}
+.age-jump a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    border: 1px solid #5a4a36;
+    border-radius: 20px;
+    padding: 6px 15px;
+    font-size: 13px;
+    color: #c8b48a;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.age-jump a:hover {
+    background: rgba(139, 115, 85, 0.18);
+    border-color: #8b7355;
+    color: #e8d9b0;
+}
+.age-jump span { color: #8b7355; font-size: 12px; }
+
+/* The nav bar is fixed, so an anchor jump would otherwise land with the
+   heading hidden underneath it. */
+#article section[id] { scroll-margin-top: 62px; }
+
+/* ── Place rows ────────────────────────── */
+/* A grid rather than a table so the columns can restack on a phone instead
+   of forcing the whole page sideways. */
+.place-list { list-style: none; margin: 0 0 8px; padding: 0; }
+.place-row {
+    display: grid;
+    grid-template-columns: 144px minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: start;
+    padding: 14px 10px;
+    margin: 0 -10px;
+    border-bottom: 1px solid #322b21;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.place-row:last-child { border-bottom: none; }
+.place-row:hover { background: rgba(139, 115, 85, 0.09); }
+
+.place-thumb { display: block; line-height: 0; }
+.place-thumb img {
+    width: 144px;
+    height: 81px;
+    object-fit: cover;
+    border: 1px solid #5a4a36;
+    border-radius: 3px;
+    transition: border-color 0.15s, filter 0.15s;
+    filter: saturate(0.92);
+}
+.place-row:hover .place-thumb img { border-color: #8b7355; filter: saturate(1.05); }
+
+.place-name {
+    color: #e8d9b0;
+    font-size: 17px;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+.place-name:hover { color: #fff; border-bottom-color: #c9a435; }
+.place-event {
+    color: #a8987c;
+    font-style: italic;
+    font-size: 14px;
+    margin-left: 9px;
+}
+.place-snippet {
+    font-size: 13.5px;
+    color: #a2947a;
+    line-height: 1.55;
+    margin: 5px 0 0;
+}
+
+.place-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 148px;
+    font-size: 12px;
+    color: #8b7355;
+    padding-top: 3px;
+}
+.place-book { display: inline-flex; align-items: center; gap: 7px; color: #b0a086; }
+.place-book i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: none;
+}
+.place-coords {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 11px;
+    color: #7d6c52;
+}
+
+@media (max-width: 720px) {
+    .place-row { grid-template-columns: 96px minmax(0, 1fr); gap: 13px; }
+    .place-thumb img { width: 96px; height: 54px; }
+    .place-name { font-size: 16px; }
+    .place-event { display: block; margin-left: 0; }
+    .place-meta {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 6px 14px;
+        min-width: 0;
+        padding-top: 2px;
+    }
+}
+
 /* ── Tables ────────────────────────────── */
 .table-wrap { overflow-x: auto; margin: 20px 0 24px 0; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 460px; }
