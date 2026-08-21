@@ -824,7 +824,7 @@
     </div>
 
     <div id="map-controls">
-        <button id="sat-btn" class="map-ctrl" type="button" aria-pressed="false">&#x1f6f0;&#xfe0e; <span data-i18n="controls.satellite">Satellite</span></button>
+        <button id="sat-btn" class="map-ctrl" type="button" aria-pressed="false"><span id="sat-btn-icon">&#x1f6f0;&#xfe0e;</span> <span id="sat-btn-label" data-i18n="controls.satellite">Satellite</span></button>
         <a id="story-btn" class="map-ctrl" href="timeline.html?play=1">&#x25b6;&#xfe0e; <span data-i18n="controls.playStory">Play the story</span></a>
     </div>
 
@@ -1212,6 +1212,8 @@
         // The legend row and the bottom-centre button drive the same state,
         // so either control reflects a change made with the other.
         const satBtn = document.getElementById('sat-btn');
+        const satBtnIcon = document.getElementById('sat-btn-icon');
+        const satBtnLabel = document.getElementById('sat-btn-label');
         let satActive = false;
 
         function setSatellite(active, source) {
@@ -1226,6 +1228,17 @@
             satToggleRow.classList.toggle('active', active);
             satBtn.classList.toggle('active', active);
             satBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+
+            // The button is labelled with the layer it switches to, so in
+            // satellite view it offers the drawn map back. The data-i18n key
+            // moves with it, so a late i18nApply() writes the right string.
+            const key = active ? 'controls.drawnMap' : 'controls.satellite';
+            satBtnLabel.setAttribute('data-i18n', key);
+            satBtnLabel.textContent = active
+                ? t('controls.drawnMap', 'Drawn map')
+                : t('controls.satellite', 'Satellite');
+            satBtnIcon.innerHTML = active ? '&#x1f5fa;&#xfe0e;' : '&#x1f6f0;&#xfe0e;';
+
             track('satellite_toggle', { state: active ? 'on' : 'off', source });
         }
 

@@ -34,6 +34,7 @@
   },
   "controls": {
     "satellite": "Satellite",
+    "drawnMap": "Drawn map",
     "playStory": "Play the story",
     "infoTitle": "About this map"
   },
