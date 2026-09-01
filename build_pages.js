@@ -305,6 +305,7 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
         keywords: ['Middle-earth', 'Tolkien', 'map', 'gazetteer', 'The Lord of the Rings', 'The Hobbit', 'The Silmarillion'],
         creator: { '@type': 'Person', name: 'Fraser Marlow', url: 'https://github.com/frasermarlow' },
         isAccessibleForFree: true,
+        license: 'https://creativecommons.org/licenses/by-nc/4.0/',
         distribution: [{
             '@type': 'DataDownload',
             encodingFormat: 'application/json',
@@ -353,7 +354,8 @@ ${byEra.map(g => `            <a href="#${anchor(g.name)}">${esc(g.name)}<span>$
                 characters: 'figures involved',
                 map: 'deep link that centres the map on this place'
             },
-            attribution: 'Descriptions written for this project — quote with a link. The parchment base map artwork is not owned by this project and is used for fan and educational purposes only.'
+            attribution: 'Descriptions written for this project — quote with a link. The parchment base map artwork is not owned by this project and is used for fan and educational purposes only.',
+            license: 'https://creativecommons.org/licenses/by-nc/4.0/'
         },
         places: events.map(evt => ({
             id: evt.id,

@@ -2,7 +2,7 @@
   "$meta": {
     "name": "Places on the Middle-earth interactive map",
     "source": "https://middle-earth-interactive-map.web.app/places/",
-    "generated": "2026-08-21",
+    "generated": "2026-09-01",
     "count": 128,
     "coordinates": {
       "system": "pixel coordinates on the base map image",
@@ -25,7 +25,8 @@
       "characters": "figures involved",
       "map": "deep link that centres the map on this place"
     },
-    "attribution": "Descriptions written for this project — quote with a link. The parchment base map artwork is not owned by this project and is used for fan and educational purposes only."
+    "attribution": "Descriptions written for this project — quote with a link. The parchment base map artwork is not owned by this project and is used for fan and educational purposes only.",
+    "license": "https://creativecommons.org/licenses/by-nc/4.0/"
   },
   "places": [
     {
